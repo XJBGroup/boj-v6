@@ -1,0 +1,28 @@
+<server-config>
+    <database>
+        <connection-type>
+            mysql
+        </connection-type>
+        <user_name>
+            user_name
+        </user_name>
+        <password>
+            password
+        </password>
+        <host>
+            localhost
+        </host>
+        <database-name>
+            database-name
+        </database-name>
+        <charset>
+            charset
+        </charset>
+        <parse-time>
+            true
+        </parse-time>
+        <location>
+            Local
+        </location>
+    </database>
+</server-config>

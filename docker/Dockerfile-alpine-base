@@ -1,0 +1,47 @@
+FROM ubuntu:latest
+
+RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install -y conntrack openntpd ipset jq curl sysstat libseccomp-dev iptables ipvsadm
+RUN apt-get install -y tzdata
+RUN apt-get install -y openssh-client openssh-server
+RUN apt-get install -y vim
+RUN groupadd docker && useradd -m docker -g docker
+RUN mkdir /root/.ssh
+#RUN iptables -F && iptables -X && iptables -F -t nat && iptables -X -t nat
+#RUN swapoff -a
+#RUN sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+#RUN rc-update add sshd
+#RUN rc-status
+#RUN touch /run/openrc/softlevel
+#RUN mkdir .ssh
+#RUN /etc/init.d/sshd start
+
+RUN echo "root:root" | chpasswd
+RUN mkdir -p /opt
+RUN mkdir -p /opt/k8s
+RUN mkdir -p /opt/k8s/bin/
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+
+RUN wget https://mirrors.ustc.edu.cn/kubernetes/apt/pool/kubectl_1.14.2-00_amd64_98c512ffae2ab4b42b86ba3ae51c9a3621828867c395f6729931d977b5c51ddb.deb && \
+    dpkg -i kubectl_1.14.2-00_amd64_98c512ffae2ab4b42b86ba3ae51c9a3621828867c395f6729931d977b5c51ddb.deb && \
+    rm kubectl_1.14.2-00_amd64_98c512ffae2ab4b42b86ba3ae51c9a3621828867c395f6729931d977b5c51ddb.deb
+
+RUN mkdir -p /opt/k8s/work/
+RUN mkdir -p /opt/k8s/cert && cd /opt/k8s
+RUN wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
+RUN mv cfssl_linux-amd64 /opt/k8s/bin/cfssl
+
+RUN wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
+RUN mv cfssljson_linux-amd64 /opt/k8s/bin/cfssljson
+
+RUN wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64
+RUN mv cfssl-certinfo_linux-amd64 /opt/k8s/bin/cfssl-certinfo
+
+RUN chmod +x /opt/k8s/bin/*
+ENV PATH $PATH:/opt/k8s/bin
+COPY docker/ca-config.json /opt/k8s/work
+COPY docker/ca-csr.json /opt/k8s/work
+
+ENTRYPOINT /etc/init.d/ssh start && bash

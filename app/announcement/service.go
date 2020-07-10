@@ -1,0 +1,172 @@
+package announcement
+
+import (
+	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
+	"github.com/Myriad-Dreamin/boj-v6/api"
+	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/config"
+	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
+	"github.com/Myriad-Dreamin/boj-v6/types"
+	"github.com/Myriad-Dreamin/core-oj/log"
+	"github.com/Myriad-Dreamin/minimum-lib/controller"
+	"github.com/Myriad-Dreamin/minimum-lib/module"
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+type Service struct {
+	db     announcement.DB
+	userDB user.DB
+	logger log.TendermintLogger
+	key    string
+}
+
+func NewService(m module.Module) (*Service, error) {
+	s := new(Service)
+	s.db = m.Require(config.ModulePath.Provider.Model).(*provider.DB).AnnouncementDB()
+	s.userDB = m.Require(config.ModulePath.Provider.Model).(*provider.DB).UserDB()
+	s.key = "aid"
+	return s, nil
+}
+
+func (svc *Service) AnnouncementServiceSignatureXXX() interface{} {
+	return svc
+}
+
+func (svc *Service) ListAnnouncements(c controller.MContext) {
+	page, pageSize, ok := ginhelper.RosolvePageVariable(c)
+	if !ok {
+		return
+	}
+
+	ancs, err := svc.db.Find(page, pageSize)
+	if ginhelper.MaybeSelectError(c, ancs, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.SerializeListAnnouncementsReply(types.CodeOK, ancs))
+	return
+}
+
+func (svc *Service) CountAnnouncement(c controller.MContext) {
+	count, err := svc.db.Count()
+	if ginhelper.MaybeCountError(c, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":  types.CodeOK,
+		"count": count,
+	})
+}
+
+/**
+PostAnnouncement v1/announcement POST
+requiring for the identity of administrator.
+which means that the request to this method must be with header
+"Authorization": "Bearer {your token}"
+and, the operating user must be in the group of admin.
+*/
+func (svc *Service) PostAnnouncement(c controller.MContext) {
+	var req = new(api.PostAnnouncementRequest)
+	if !ginhelper.BindRequest(c, req) {
+		return
+	}
+
+	var obj = new(announcement.Announcement)
+	obj.Title = req.Title
+	obj.Content = req.Content
+
+	cc := ginhelper.GetCustomFields(c)
+	obj.Author = cc.UID
+	obj.LastUpdateUser = cc.UID
+
+	a, e := svc.db.Create(obj)
+	if ginhelper.CreateObj(c, a, e) {
+		c.JSON(http.StatusOK, &api.PostAnnouncementReply{
+			Code:         types.CodeOK,
+			Announcement: obj,
+		})
+	}
+}
+
+/**
+GetAnnouncement v1/announcement/:aid GET
+requiring nothing, so anyone is ok.
+*/
+func (svc *Service) GetAnnouncement(c controller.MContext) {
+	id, ok := ginhelper.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+	obj, err := svc.db.ID(id)
+	if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
+		return
+	}
+
+	//author, err := svc.userDB.ID(obj.Author)
+	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "author") {
+	//	return
+	//}
+	//
+	//luu, err := svc.userDB.ID(obj.LastUpdateUser)
+	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "last update user") {
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, api.SerializeGetAnnouncementReply(types.CodeOK, obj))
+}
+
+func (svc *Service) PutAnnouncement(c controller.MContext) {
+	var req = new(api.PutAnnouncementRequest)
+	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	if !ok {
+		return
+	}
+
+	obj, err := svc.db.ID(id)
+	if ginhelper.MaybeSelectError(c, obj, err) {
+		return
+	}
+
+	cc := ginhelper.GetCustomFields(c)
+	obj.LastUpdateUser = cc.UID
+
+	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
+	if ginhelper.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	}
+}
+
+/**
+DeleteAnnouncement v1/announcement/:aid DELETE
+requiring the aiming announcement's write privilege
+*/
+func (svc *Service) Delete(c controller.MContext) {
+	obj := new(announcement.Announcement)
+	var ok bool
+	obj.ID, ok = ginhelper.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+
+	a, e := svc.db.Delete(obj)
+	if ginhelper.DeleteObj(c, a, e) {
+		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	}
+}
+
+func (svc *Service) FillPutFields(obj *announcement.Announcement, req *api.PutAnnouncementRequest) (fields []string) {
+	if len(req.Title) != 0 {
+		obj.Title = req.Title
+		fields = append(fields, "title")
+	}
+
+	if len(req.Content) != 0 {
+		obj.Content = req.Content
+		fields = append(fields, "content")
+	}
+
+	return
+}
