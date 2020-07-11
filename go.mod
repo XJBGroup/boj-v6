@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586
-	github.com/Myriad-Dreamin/artisan v0.8.1
+	github.com/Myriad-Dreamin/artisan v0.8.2-0.20200709163242-922f840d617f
 	github.com/Myriad-Dreamin/blog-backend-v2 v0.0.0-20200131153830-fc9fdc1e0ee2
 	github.com/Myriad-Dreamin/core-oj v1.0.1
 	github.com/Myriad-Dreamin/dorm v0.0.0-20191205101004-33dbc61bb34e

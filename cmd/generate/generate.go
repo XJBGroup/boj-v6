@@ -7,8 +7,7 @@ import (
 )
 
 var codeField = artisan.Param("code", new(types.CodeRawType))
-
-//var required = artisan.Tag("binding", "required")
+var required = artisan.Tag("binding", "required")
 
 type Meta struct {
 	artisan.RouterMeta
@@ -29,31 +28,33 @@ func main() {
 	//instantiate
 	userCate := DescribeUserService()
 	announcementCate := DescribeAnnouncementService()
+	commentCate := DescribeCommentService()
 
 	svc := artisan.NewService(
 		userCate,
 		announcementCate,
+		commentCate,
 	).Base(v1).SetPackageName("api").Final()
-
-	userSvc := svc.GetService(userCate)
-	delete(svc.GetServices(), userCate)
 
 	sugar.HandlerError0(svc.PublishRouter("api/router.go"))
 
-	sugar.HandlerError0(svc.PublishObjects(
-		userSvc.SetFilePath("api/user.go")))
-	sugar.HandlerError0(userSvc.SetFilePath(
-		"abstract/control/user-interface.go").PublishInterface(
-		"control", svc.Opts))
+	for _, tsk := range []struct {
+		cate artisan.ProposingService
+		name string
+	}{
+		{userCate, "user"},
+		{announcementCate, "announcement"},
+		{commentCate, "comment"},
+	} {
+		subSvc := svc.GetService(tsk.cate)
+		delete(svc.GetServices(), tsk.cate)
 
-	announcementSvc := svc.GetService(announcementCate)
-	delete(svc.GetServices(), announcementCate)
-
-	sugar.HandlerError0(announcementSvc.SetFilePath(
-		"abstract/control/announcement-interface.go").PublishInterface(
-		"control", svc.Opts))
-	sugar.HandlerError0(svc.PublishObjects(
-		announcementSvc.SetFilePath("api/announcement.go")))
+		sugar.HandlerError0(svc.PublishObjects(
+			subSvc.SetFilePath("api/" + tsk.name + ".go")))
+		sugar.HandlerError0(subSvc.SetFilePath(
+			"abstract/control/"+tsk.name+"-interface.go").PublishInterface(
+			"control", svc.Opts))
+	}
 
 	sugar.HandlerError0(svc.Publish())
 }

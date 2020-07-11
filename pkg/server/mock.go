@@ -68,7 +68,7 @@ func Mock(options ...Option) (srv *Mocker) {
 
 	if !(srv.PrepareMiddleware() &&
 		srv.PrepareService() &&
-		srv.BuildRouter()) {
+		srv.BuildRouter(true)) {
 		srv = nil
 		return
 	}

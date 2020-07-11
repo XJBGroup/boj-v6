@@ -117,7 +117,7 @@ func New(cfgPath string, options ...Option) (srv *Server) {
 
 	if !(srv.PrepareMiddleware() &&
 		srv.PrepareService() &&
-		srv.BuildRouter()) {
+		srv.BuildRouter(false)) {
 		srv = nil
 		return
 	}
@@ -241,7 +241,7 @@ func (srv *Server) ServeTLS(port, crtFile, privateKeyFile string) {
 	wg.Wait()
 }
 
-func (srv *Server) WithPProf(port string) *Server {
+func (srv *Server) WithPProf() *Server {
 	ginpprof.Wrap(srv.HttpEngine)
 	return srv
 }

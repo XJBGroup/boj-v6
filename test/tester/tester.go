@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
+	"github.com/Myriad-Dreamin/minimum-lib/mock"
+	"github.com/Myriad-Dreamin/minimum-lib/rbac"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"io"
+	"log"
+	"strconv"
 	"testing"
 )
 
@@ -85,47 +90,47 @@ func (tester *Tester) Release() {
 }
 
 func (tester *Tester) MakeAdminContext() bool {
-	//resp := tester.Post("/v1/user", control.RegisterRequest{
-	//	Name:     "admin_context",
-	//	Password: "Admin12345678",
-	//	NickName: "admin_context",
-	//	Phone:    "1234567891011",
-	//}, mock.Comment("admin register for test"))
-	//if !tester.NoErr(resp) {
-	//	return false
-	//}
-	//
-	//var r control.RegisterReply
-	//err := resp.JSON(&r)
-	//if err != nil {
-	//	log.Fatal(err)
-	//	return false
-	//}
-	//resp = tester.Post("/v1/login",
-	//	control.LoginRequest{
-	//		Id:       r.Id,
-	//		Password: "Admin12345678",
-	//	}, mock.Comment("admin login for test"))
-	//if !tester.NoErr(resp) {
-	//	return false
-	//}
-	//
-	//var r2 control.LoginReply
-	//err = resp.JSON(&r2)
-	//if err != nil {
-	//	log.Fatal(err)
-	//	return false
-	//}
-	//
-	////fmt.Println(r2)
-	////r2.RefreshToken
-	//_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.Id)), types.GroupAdmin)
-	//if err != nil {
-	//	tester.Logger.Debug("update group error", "error", err)
-	//}
-	//fmt.Println("QAQQQ", rbac.GetPolicy())
-	//fmt.Println("QAQQQ", rbac.GetGroupingPolicy())
-	//tester.UseToken(r2.Token)
+	resp := tester.Post("/v1/user/register", api.RegisterRequest{
+		UserName: "admin_context",
+		Password: "Admin12345678",
+		NickName: "admin_context",
+		//Phone:    "1234567891011",
+	}, mock.Comment("admin register for test"))
+	if !tester.NoErr(resp) {
+		return false
+	}
+
+	var r api.RegisterReply
+	err := resp.JSON(&r)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	resp = tester.Post("/v1/user/login",
+		api.LoginUserRequest{
+			Id:       r.Id,
+			Password: "Admin12345678",
+		}, mock.Comment("admin login for test"))
+	if !tester.NoErr(resp) {
+		return false
+	}
+
+	var r2 api.LoginUserReply
+	err = resp.JSON(&r2)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	//fmt.Println(r2)
+	//r2.RefreshToken
+	_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.User.ID)), "admin")
+	if err != nil {
+		tester.Logger.Debug("update group error", "error", err)
+	}
+	fmt.Println("QAQQQ", rbac.GetPolicy())
+	fmt.Println("QAQQQ", rbac.GetGroupingPolicy())
+	tester.UseToken(r2.Token)
 	return true
 }
 

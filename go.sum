@@ -11,6 +11,8 @@ github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6Xge
 github.com/Myriad-Dreamin/artisan v0.8.1-0.20200118100121-229688818652/go.mod h1:zxrF+fyxIJhhQK+hyEZPGZVjD/xldrmB5j+Ys7OXnj0=
 github.com/Myriad-Dreamin/artisan v0.8.1 h1:R1pUAsGt6xsanIo+Yf98lFA3+8tCMav3S0RmgGS1Vrg=
 github.com/Myriad-Dreamin/artisan v0.8.1/go.mod h1:zxrF+fyxIJhhQK+hyEZPGZVjD/xldrmB5j+Ys7OXnj0=
+github.com/Myriad-Dreamin/artisan v0.8.2-0.20200709163242-922f840d617f h1:hF3saBhz2rX8GjwwFi+cNZT2MqPYyZUAkXw58cHZrBw=
+github.com/Myriad-Dreamin/artisan v0.8.2-0.20200709163242-922f840d617f/go.mod h1:DwrLp5B5eWpQVylzq4c6GlmINHFGIdTJ4VjxwzM17sg=
 github.com/Myriad-Dreamin/blog-backend-v2 v0.0.0-20200131153830-fc9fdc1e0ee2 h1:s8gTwAK+U9gL3n+IA//xPUqHrqFv7mgaOM/bGupj3eA=
 github.com/Myriad-Dreamin/blog-backend-v2 v0.0.0-20200131153830-fc9fdc1e0ee2/go.mod h1:i4kltu44s8NtOwc8K4KLYNnRA0qIfs/iKB/ybNaUTsU=
 github.com/Myriad-Dreamin/core-oj v1.0.0/go.mod h1:Bzykxe9H/YQkIXpqDy1Pk6sWduxwJ503opA/rH8nEQ4=

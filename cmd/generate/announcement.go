@@ -41,7 +41,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 			),
 		Post: artisan.Ink().
 			Path("announcement").
-			Method(artisan.POST, "PostAnnouncement",
+			Method(artisan.POST, "PostAnnouncement", artisan.AuthMeta("~"),
 				artisan.Request(
 					artisan.SPsC(&announcementModel.Title, &announcementModel.Content),
 				),

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/app/announcement"
+	"github.com/Myriad-Dreamin/boj-v6/app/comment"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/functional-go"
@@ -19,11 +20,22 @@ func (srv *Server) registerDatabaseService() bool {
 	for _, dbResult := range []dbResult{
 		{"announcementDB", functional.Decay(announcement.NewDB(srv.Module))},
 		{"userDB", functional.Decay(user.NewDB(srv.Module))},
+		{"commentDB", functional.Decay(comment.NewDB(srv.Module))},
 	} {
 		if dbResult.Err != nil {
 			srv.Logger.Debug(fmt.Sprintf("init %T DB error", dbResult.First), "error", dbResult.Err)
 			return false
 		}
+
+		if migratingDB, ok := dbResult.First.(interface {
+			Migrate() error
+		}); ok {
+			if err := migratingDB.Migrate(); err != nil {
+				srv.Logger.Debug(fmt.Sprintf("migrate %T DB error", migratingDB), "error", dbResult.Err)
+				return false
+			}
+		}
+
 		srv.ModelProvider.Register(dbResult.dbName, dbResult.First)
 	}
 	return true

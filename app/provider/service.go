@@ -3,6 +3,8 @@ package provider
 import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"path"
 )
@@ -11,13 +13,13 @@ type Service struct {
 	module.BaseModuler
 	//authService         *authservice.Service
 	announcementService announcement.Service
-	//commentService      *commentservice.Service
+	commentService      comment.Service
 	//contestFAQService *contestFAQservice.Service
 	//submissionService   *submissionservice.Service
 	//contestSubmissionService   *contestsubmissionservice.Service
 	//contestService      *contestservice.Service
 	//problemService      *problemservice.Service
-	//userService         *userservice.Service
+	userService user.Service
 	//groupService        *groupservice.Service
 	//classService        *classservice.Service
 }
@@ -47,12 +49,12 @@ func (s *Service) Register(name string, service interface{}) {
 	//	s.contestFAQService = ss
 	//case *contestservice.Service:
 	//	s.contestService = ss
-	//case *commentservice.Service:
-	//	s.commentService = ss
+	case comment.Service:
+		s.commentService = ss
 	//case *problemservice.Service:
 	//	s.problemService = ss
-	//case *userservice.Service:
-	//	s.userService = ss
+	case user.Service:
+		s.userService = ss
 	//case *authservice.Service:
 	//	s.authService = ss
 	//case *groupservice.Service:
@@ -84,14 +86,15 @@ func (s *Service) Register(name string, service interface{}) {
 //	return s.problemService
 //}
 //
-//func (s *Service) CommentService() *commentservice.Service {
-//	return s.commentService
-//}
-//
-//func (s *Service) UserService() *userservice.Service {
-//	return s.userService
-//}
-//
+
+func (s *Service) CommentService() comment.Service {
+	return s.commentService
+}
+
+func (s *Service) UserService() user.Service {
+	return s.userService
+}
+
 //func (s *Service) AuthService() *authservice.Service {
 //	return s.authService
 //}

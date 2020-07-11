@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/casbin/casbin/v2"
@@ -13,6 +14,7 @@ type DB struct {
 	module.BaseModuler
 	announcementDB announcement.DB
 	userDB         user.DB
+	commentDB      comment.DB
 	enforcer       *Enforcer
 }
 
@@ -31,6 +33,9 @@ func (s *DB) AnnouncementDB() announcement.DB {
 func (s *DB) UserDB() user.DB {
 	return s.userDB
 }
+func (s *DB) CommentDB() comment.DB {
+	return s.commentDB
+}
 
 type Enforcer = casbin.SyncedEnforcer
 
@@ -48,6 +53,8 @@ func (s *DB) Register(name string, database interface{}) {
 		s.announcementDB = ss
 	case user.DB:
 		s.userDB = ss
+	case comment.DB:
+		s.commentDB = ss
 	case *Enforcer:
 		s.enforcer = ss
 	default:

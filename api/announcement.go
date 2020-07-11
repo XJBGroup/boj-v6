@@ -20,8 +20,8 @@ type CountAnnouncementReply struct {
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Title   string `form:"title" json:"title"`
+	Content string `form:"content" json:"content"`
 }
 
 type PostAnnouncementReply struct {
@@ -30,12 +30,12 @@ type PostAnnouncementReply struct {
 }
 
 type GetAnnouncementReply struct {
-	Code         int                        `json:"code" form:"code"`
+	Code         int                        `form:"code" json:"code"`
 	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
 }
 
 type PutAnnouncementRequest struct {
-	Title   string `json:"title" form:"title"`
+	Title   string `form:"title" json:"title"`
 	Content string `json:"content" form:"content"`
 }
 
