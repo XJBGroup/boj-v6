@@ -15,7 +15,7 @@ type ListAnnouncementsReply struct {
 type CountAnnouncementsRequest = gorm_crud_dao.Filter
 
 type CountAnnouncementReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
@@ -26,7 +26,7 @@ type PostAnnouncementRequest struct {
 
 type PostAnnouncementReply struct {
 	Code         int                        `json:"code" form:"code"`
-	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
+	Announcement *announcement.Announcement `form:"announcement" json:"announcement"`
 }
 
 type GetAnnouncementReply struct {

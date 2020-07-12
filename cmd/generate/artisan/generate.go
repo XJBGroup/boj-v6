@@ -31,9 +31,13 @@ func main() {
 		name string
 	}{
 		{DescribeUserService(), "user"},
+		{DescribeAuthService(), "auth"},
 		{DescribeAnnouncementService(), "announcement"},
 		{DescribeCommentService(), "comment"},
 		{DescribeSubmissionService(), "submission"},
+		{DescribeProblemService(), "problem"},
+		{DescribeContestService(), "contest"},
+		{DescribeGroupService(), "group"},
 	}
 
 	var svc *artisan.PublishedServices

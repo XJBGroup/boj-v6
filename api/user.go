@@ -21,7 +21,7 @@ type ListUserReply struct {
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
 	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
+	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 
@@ -36,26 +36,26 @@ type RegisterRequest struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
 	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
-	Gender   uint8  `form:"gender" json:"gender"`
+	Gender   uint8  `json:"gender" form:"gender"`
 }
 
 type RegisterReply struct {
 	Code int  `json:"code" form:"code"`
-	Id   uint `form:"id" json:"id"`
+	Id   uint `json:"id" form:"id"`
 }
 
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
-	UserName string `form:"user_name" json:"user_name"`
+	UserName string `json:"user_name" form:"user_name"`
 	Email    string `json:"email" form:"email"`
-	Password string `form:"password" binding:"required" json:"password"`
+	Password string `binding:"required" json:"password" form:"password"`
 }
 
 type LoginUserReply struct {
 	Code         int        `json:"code" form:"code"`
 	User         *user.User `json:"user" form:"user"`
 	RefreshToken string     `json:"refresh_token" form:"refresh_token"`
-	Token        string     `form:"token" json:"token"`
+	Token        string     `json:"token" form:"token"`
 	Identities   []string   `json:"identities" form:"identities"`
 }
 
@@ -65,12 +65,12 @@ type RefreshTokenReply struct {
 }
 
 type BindEmailRequest struct {
-	Email string `json:"email" form:"email" binding:"email"`
+	Email string `form:"email" binding:"email" json:"email"`
 }
 
 type InspectUserReply struct {
 	Code int        `json:"code" form:"code"`
-	User *user.User `form:"user" json:"user"`
+	User *user.User `json:"user" form:"user"`
 }
 
 type GetUserReply struct {
@@ -80,8 +80,8 @@ type GetUserReply struct {
 
 type PutUserRequest struct {
 	Gender   uint8  `json:"gender" form:"gender"`
-	NickName string `json:"nick_name" form:"nick_name"`
-	Motto    string `json:"motto" form:"motto"`
+	NickName string `form:"nick_name" json:"nick_name"`
+	Motto    string `form:"motto" json:"motto"`
 }
 
 func PSerializeListUsersReply(_code int, _data []ListUserReply) *ListUsersReply {

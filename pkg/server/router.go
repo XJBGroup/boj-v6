@@ -51,6 +51,14 @@ func (rt routerTraits) ApplyRouteMeta(m *api.Middleware, routeMeta string) *api.
 		return m.MustGroup("user", rm[1])
 	case "comment":
 		return m.MustGroup("comment", rm[1])
+	case "problem":
+		return m.MustGroup("problem", rm[1])
+	case "contest":
+		return m.MustGroup("contest", rm[1])
+	case "submission":
+		return m.MustGroup("submission", rm[1])
+	case "group":
+		return m.MustGroup("group", rm[1])
 	case "~":
 		fallthrough
 	case "":
@@ -68,6 +76,16 @@ func (rt routerTraits) GetServiceInstance(svcName string) interface{} {
 		return rt.Service.CommentService()
 	case "UserService":
 		return rt.Service.UserService()
+	case "SubmissionService":
+		return rt.Service.SubmissionService()
+	case "ProblemService":
+		return rt.Service.ProblemService()
+	case "AuthService":
+		return rt.Service.AuthService()
+	case "GroupService":
+		return rt.Service.GroupService()
+	case "ContestService":
+		return rt.Service.ContestService()
 	default:
 		panic(svcName + " not found")
 	}
