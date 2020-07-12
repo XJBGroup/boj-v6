@@ -50,6 +50,7 @@ type RootRouter struct {
 	UserService         *UserServiceRouter
 	AnnouncementService *AnnouncementServiceRouter
 	CommentService      *CommentServiceRouter
+	SubmissionService   *SubmissionServiceRouter
 	Ping                *LeafRouter
 	//Images   *LeafRouter
 	//Musics   *LeafRouter
@@ -83,6 +84,7 @@ func NewRootRouter(traits GenerateRouterTraits) (r *RootRouter) {
 	r.UserService = NewUserServiceRouter(traits, r.H)
 	r.AnnouncementService = NewAnnouncementServiceRouter(traits, r.H)
 	r.CommentService = NewCommentServiceRouter(traits, r.H)
+	r.SubmissionService = NewSubmissionServiceRouter(traits, r.H)
 
 	traits.AfterBuild(r)
 	traits.ApplyAuth(r)
@@ -220,8 +222,8 @@ func NewUserServiceRefreshTokenRouter(traits GenerateRouterTraits, h H) (r *User
 
 type UserServiceIdGroupRouter struct {
 	H
-	Inspect *IdGroupInspectRouter
 	Email   *IdGroupEmailRouter
+	Inspect *IdGroupInspectRouter
 
 	GetUser *LeafRouter
 	PutUser *LeafRouter
@@ -237,32 +239,12 @@ func NewUserServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *UserServi
 		},
 	}
 
-	r.Inspect = NewIdGroupInspectRouter(traits, r.H)
 	r.Email = NewIdGroupEmailRouter(traits, r.H)
+	r.Inspect = NewIdGroupInspectRouter(traits, r.H)
 
 	r.GetUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).GetUser)
 	r.PutUser = r.GetRouter().PUT("", traits.GetServiceInstance("UserService").(UserService).PutUser)
 	r.Delete = r.GetRouter().DELETE("", traits.GetServiceInstance("UserService").(UserService).Delete)
-
-	return
-}
-
-type IdGroupInspectRouter struct {
-	H
-
-	InspectUser *LeafRouter
-}
-
-func NewIdGroupInspectRouter(traits GenerateRouterTraits, h H) (r *IdGroupInspectRouter) {
-	r = &IdGroupInspectRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/inspect"),
-			AuthRouter: h.GetAuthRouter().Group("/inspect"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.InspectUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).InspectUser)
 
 	return
 }
@@ -283,6 +265,26 @@ func NewIdGroupEmailRouter(traits GenerateRouterTraits, h H) (r *IdGroupEmailRou
 	}
 
 	r.BindEmail = r.GetRouter().PUT("", traits.GetServiceInstance("UserService").(UserService).BindEmail)
+
+	return
+}
+
+type IdGroupInspectRouter struct {
+	H
+
+	InspectUser *LeafRouter
+}
+
+func NewIdGroupInspectRouter(traits GenerateRouterTraits, h H) (r *IdGroupInspectRouter) {
+	r = &IdGroupInspectRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/inspect"),
+			AuthRouter: h.GetAuthRouter().Group("/inspect"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.InspectUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).InspectUser)
 
 	return
 }
@@ -502,6 +504,137 @@ func NewCommentServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *Commen
 	r.GetComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).GetComment)
 	r.PutComment = r.GetRouter().PUT("", traits.GetServiceInstance("CommentService").(CommentService).PutComment)
 	r.Delete = r.GetRouter().DELETE("", traits.GetServiceInstance("CommentService").(CommentService).Delete)
+
+	return
+}
+
+type SubmissionServiceRouter struct {
+	H
+	List    *SubmissionServiceListRouter
+	Count   *SubmissionServiceCountRouter
+	Post    *SubmissionServicePostRouter
+	IdGroup *SubmissionServiceIdGroupRouter
+}
+
+func NewSubmissionServiceRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceRouter) {
+	r = &SubmissionServiceRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Extend("SubmissionService"),
+			AuthRouter: h.GetAuthRouter().Extend("SubmissionService"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.List = NewSubmissionServiceListRouter(traits, r.H)
+	r.Count = NewSubmissionServiceCountRouter(traits, r.H)
+	r.Post = NewSubmissionServicePostRouter(traits, r.H)
+	r.IdGroup = NewSubmissionServiceIdGroupRouter(traits, r.H)
+
+	return
+}
+
+type SubmissionServiceListRouter struct {
+	H
+
+	ListSubmissions *LeafRouter
+}
+
+func NewSubmissionServiceListRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceListRouter) {
+	r = &SubmissionServiceListRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission-list"),
+			AuthRouter: h.GetAuthRouter().Group("submission-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListSubmissions = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).ListSubmissions)
+
+	return
+}
+
+type SubmissionServiceCountRouter struct {
+	H
+
+	CountSubmissions *LeafRouter
+}
+
+func NewSubmissionServiceCountRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceCountRouter) {
+	r = &SubmissionServiceCountRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission-count"),
+			AuthRouter: h.GetAuthRouter().Group("submission-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountSubmissions = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).CountSubmissions)
+
+	return
+}
+
+type SubmissionServicePostRouter struct {
+	H
+
+	PostSubmission *LeafRouter
+}
+
+func NewSubmissionServicePostRouter(traits GenerateRouterTraits, h H) (r *SubmissionServicePostRouter) {
+	r = &SubmissionServicePostRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/problem/:pid/submission"),
+			AuthRouter: h.GetAuthRouter().Group("/problem/:pid/submission"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "problem:pid"),
+		},
+	}
+
+	r.PostSubmission = r.GetAuthRouter().POST("", traits.GetServiceInstance("SubmissionService").(SubmissionService).PostSubmission)
+	r.PostSubmission = traits.ApplyAuthOnMethod(r.PostSubmission, "~")
+
+	return
+}
+
+type SubmissionServiceIdGroupRouter struct {
+	H
+	GetContent *IdGroupGetContentRouter
+
+	GetSubmission *LeafRouter
+	Delete        *LeafRouter
+}
+
+func NewSubmissionServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceIdGroupRouter) {
+	r = &SubmissionServiceIdGroupRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission/:sid"),
+			AuthRouter: h.GetAuthRouter().Group("submission/:sid"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "submission:sid"),
+		},
+	}
+
+	r.GetContent = NewIdGroupGetContentRouter(traits, r.H)
+
+	r.GetSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetSubmission)
+	r.Delete = r.GetRouter().DELETE("", traits.GetServiceInstance("SubmissionService").(SubmissionService).Delete)
+
+	return
+}
+
+type IdGroupGetContentRouter struct {
+	H
+
+	GetContent *LeafRouter
+}
+
+func NewIdGroupGetContentRouter(traits GenerateRouterTraits, h H) (r *IdGroupGetContentRouter) {
+	r = &IdGroupGetContentRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/content"),
+			AuthRouter: h.GetAuthRouter().Group("/content"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.GetContent = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetContent)
 
 	return
 }

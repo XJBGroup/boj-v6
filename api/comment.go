@@ -8,14 +8,14 @@ import (
 type ListCommentsRequest = gorm_crud_dao.Filter
 
 type ListCommentsReply struct {
-	Code int               `form:"code" json:"code"`
-	Data []comment.Comment `form:"data" json:"data"`
+	Code int               `json:"code" form:"code"`
+	Data []comment.Comment `json:"data" form:"data"`
 }
 
 type CountCommentsRequest = gorm_crud_dao.Filter
 
 type CountCommentReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
@@ -26,7 +26,7 @@ type PostCommentRequest struct {
 
 type PostCommentReply struct {
 	Code    int              `json:"code" form:"code"`
-	Comment *comment.Comment `json:"comment" form:"comment"`
+	Comment *comment.Comment `form:"comment" json:"comment"`
 }
 
 type GetCommentReply struct {
@@ -36,7 +36,7 @@ type GetCommentReply struct {
 
 type PutCommentRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 func PSerializeListCommentsReply(_code int, _data []comment.Comment) *ListCommentsReply {

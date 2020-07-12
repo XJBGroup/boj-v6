@@ -5,15 +5,19 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Myriad-Dreamin/boj-v6/lib/control"
+	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/go-magic-package/instance"
 	parser "github.com/Myriad-Dreamin/go-parse-package"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
+	"github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -45,6 +49,22 @@ type MockerContext struct {
 type Res = mock.GinResultI
 
 func Mock(options ...Option) (srv *Mocker) {
+	errorc.RegisterCheckInsertError(func(err error) (code errorc.Code, s string) {
+		if sqlError, ok := err.(sqlite3.Error); ok {
+			switch sqlError.ExtendedCode {
+			case 1062:
+				return types.CodeDuplicatePrimaryKey, ""
+			case 1366:
+				return types.CodeDatabaseIncorrectStringValue, ""
+			case 2067:
+				return types.CodeUniqueConstraintFailed, ""
+			default:
+				return types.CodeInsertError, strconv.Itoa(int(sqlError.ExtendedCode))
+			}
+		}
+		return types.CodeOK, ""
+	})
+
 	srv = new(Mocker)
 	srv.Server = newServer(options)
 	srv.header = make(map[string]string)
@@ -368,9 +388,26 @@ func (mocker *Mocker) SetHeader(k, v string) {
 	mocker.header[k] = v
 }
 
+func (mocker *Mocker) GetHeader(k string) (v string, ok bool) {
+	v, ok = mocker.header[k]
+	return
+}
+
+func (mocker *Mocker) RemoveHeader(k string) {
+	delete(mocker.header, k)
+}
+
 func (mocker *Mocker) UseToken(token string) {
-	mocker.header[mocker.jwtMW.JWTHeaderKey] =
-		mocker.jwtMW.JWTHeaderPrefixWithSplitChar + token
+	mocker.SetHeader(mocker.jwtMW.JWTHeaderKey, mocker.jwtMW.JWTHeaderPrefixWithSplitChar+token)
+}
+
+func (mocker *Mocker) GetToken() (token string, ok bool) {
+	token, ok = mocker.GetHeader(mocker.jwtMW.JWTHeaderKey)
+	return
+}
+
+func (mocker *Mocker) RemoveToken() {
+	mocker.RemoveHeader(mocker.jwtMW.JWTHeaderKey)
 }
 
 func (mocker *Mocker) CollectResults(collectResults bool) *Mocker {

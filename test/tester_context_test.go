@@ -11,6 +11,8 @@ const (
 	normalUserIdKey       = "user/normal/key"
 	normalUserPassword    = "yY11112222"
 	normalUserNewPassword = "xX11122222"
+
+	AnnouncementIdKey = "announcement/normal/key"
 )
 
 var intT = 1

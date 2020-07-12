@@ -7,3 +7,5 @@ type AnnouncementService = control.AnnouncementService
 type UserService = control.UserService
 
 type CommentService = control.CommentService
+
+type SubmissionService = control.SubmissionService

@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
-
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 

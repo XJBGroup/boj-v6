@@ -1,4 +1,4 @@
-package traits
+package dao
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ type GORMDBImpl struct {
 	db *gorm.DB
 }
 
-func NewGORMTraits(db *gorm.DB) GORMDBImpl {
+func NewGORMBasic(db *gorm.DB) GORMDBImpl {
 	return GORMDBImpl{db}
 }
 
@@ -78,5 +78,9 @@ func (db GORMDBImpl) Count(tb string) (c int64, err error) {
 }
 
 func (db GORMDBImpl) Find(page, pageSize int, obj interface{}) error {
-	return db.db.Limit(pageSize).Offset((page - 1) * pageSize).Find(obj).Error
+	return db.Page(page, pageSize).Find(obj).Error
+}
+
+func (db GORMDBImpl) Page(page, pageSize int) *gorm.DB {
+	return db.db.Limit(pageSize).Offset((page - 1) * pageSize)
 }

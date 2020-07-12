@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/app/announcement"
 	"github.com/Myriad-Dreamin/boj-v6/app/comment"
+	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/functional-go"
 )
@@ -21,6 +22,8 @@ func (srv *Server) PrepareService() bool {
 			functional.Decay(user.NewService(srv.Module))},
 		{"commentService",
 			functional.Decay(comment.NewService(srv.Module))},
+		{"submissionService",
+			functional.Decay(submission.NewService(srv.Module))},
 	} {
 		// build Router failed when requesting service with database, report and return
 		if serviceResult.Err != nil {

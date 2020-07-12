@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/casbin/casbin/v2"
@@ -15,6 +16,7 @@ type DB struct {
 	announcementDB announcement.DB
 	userDB         user.DB
 	commentDB      comment.DB
+	submissionDB   submission.DB
 	enforcer       *Enforcer
 }
 
@@ -28,6 +30,10 @@ func NewDB(namespace string) *DB {
 
 func (s *DB) AnnouncementDB() announcement.DB {
 	return s.announcementDB
+}
+
+func (s *DB) SubmissionDB() submission.DB {
+	return s.submissionDB
 }
 
 func (s *DB) UserDB() user.DB {
@@ -55,6 +61,8 @@ func (s *DB) Register(name string, database interface{}) {
 		s.userDB = ss
 	case comment.DB:
 		s.commentDB = ss
+	case submission.DB:
+		s.submissionDB = ss
 	case *Enforcer:
 		s.enforcer = ss
 	default:

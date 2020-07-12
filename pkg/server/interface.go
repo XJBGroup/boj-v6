@@ -20,7 +20,13 @@ type MockInterface interface {
 	NoErr(resp mock.ResponseI) bool
 
 	SetHeader(k, v string)
+	GetHeader(k string) (v string, ok bool)
+	RemoveHeader(k string)
+
 	UseToken(token string)
+	GetToken() (token string, ok bool)
+	RemoveToken()
+
 	Context(t *testing.T) *MockerContext
 	FetchError(resp mock.ResponseI) Error
 

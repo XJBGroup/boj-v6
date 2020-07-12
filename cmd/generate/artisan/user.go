@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
-
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
@@ -31,11 +30,18 @@ func DescribeUserService() artisan.ProposingService {
 				artisan.QT("ListUsersRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", artisan.Object("ListUserReply", artisan.SPsC(
-						&_valueUserModel.ID, &_valueUserModel.Gender, &_valueUserModel.LastLogin, &_valueUserModel.UserName,
-						&_valueUserModel.NickName, &_valueUserModel.Email, &_valueUserModel.Motto, &_valueUserModel.SolvedProblemsCount,
-						&_valueUserModel.TriedProblemsCount,
-					)))),
+					artisan.ArrayParam(artisan.Param("data",
+						artisan.Object("ListUserReply", artisan.SPsC(
+							&_valueUserModel.ID,
+							&_valueUserModel.Gender,
+							&_valueUserModel.LastLogin,
+							&_valueUserModel.UserName,
+							&_valueUserModel.NickName,
+							&_valueUserModel.Email,
+							&_valueUserModel.Motto,
+							&_valueUserModel.SolvedProblemsCount,
+							&_valueUserModel.TriedProblemsCount,
+						)))),
 				),
 			),
 		Count: artisan.Ink().
@@ -47,15 +53,6 @@ func DescribeUserService() artisan.ProposingService {
 					artisan.ArrayParam(artisan.Param("data", new(int))),
 				),
 			),
-		//ListNameLike: artisan.Ink().
-		//	Path("user-list-name-like").
-		//	Method(artisan.GET, "ListUsersNameLike",
-		//		artisan.QT("ListUsersNameLikeRequest", mytraits.Filter{}),
-		//		artisan.Reply(
-		//			codeField,
-		//			artisan.ArrayParam(artisan.Param("data", _userModel)),
-		//		),
-		//	),
 		Register: artisan.Ink().
 			Path("user/register").
 			Method(artisan.POST, "Register",

@@ -2,7 +2,7 @@ package ginhelper
 
 import (
 	"fmt"
-	"github.com/Myriad-Dreamin/blog-backend-v2/lib/errorc"
+	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"

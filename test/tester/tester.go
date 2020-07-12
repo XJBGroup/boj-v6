@@ -18,10 +18,11 @@ import (
 type Tester struct {
 	*server.Mocker
 
-	ContextVars map[string]interface{}
+	ContextVars   map[string]interface{}
+	identityToken map[string]string
 }
 
-type TesterContext struct {
+type Context struct {
 	*server.MockerContext
 	t *testing.T
 	sugar.HandlerErrorLogger
@@ -53,6 +54,7 @@ func (tester Tester) MustGet(k string) interface{} {
 func StartTester(serverOptions []server.Option) (tester *Tester) {
 	tester = new(Tester)
 	tester.ContextVars = make(map[string]interface{})
+	tester.identityToken = make(map[string]string)
 	tester.Mocker = server.Mock(serverOptions...)
 	if tester.Mocker == nil {
 		panic(errors.New("req mocker error"))
@@ -60,15 +62,15 @@ func StartTester(serverOptions []server.Option) (tester *Tester) {
 	return tester
 }
 
-func (tester *Tester) Context(tt *testing.T) (s *TesterContext) {
-	return &TesterContext{
+func (tester *Tester) Context(tt *testing.T) (s *Context) {
+	return &Context{
 		MockerContext:      tester.Mocker.Context(tt),
 		t:                  tt,
 		HandlerErrorLogger: sugar.NewHandlerErrorLogger(tt),
 	}
 }
 
-func (t *TesterContext) AssertNoError(noErr bool) *TesterContext {
+func (t *Context) AssertNoError(noErr bool) *Context {
 	t.MockerContext = t.MockerContext.AssertNoError(noErr)
 	return t
 }
@@ -78,7 +80,7 @@ type ErrorObject struct {
 	Error string `json:"error"`
 }
 
-func (t *TesterContext) DecodeJSON(body io.Reader, req interface{}) interface{} {
+func (t *Context) DecodeJSON(body io.Reader, req interface{}) interface{} {
 	if err := json.NewDecoder(body).Decode(req); err != nil {
 		t.t.Fatal(err)
 	}
@@ -131,6 +133,7 @@ func (tester *Tester) MakeAdminContext() bool {
 	fmt.Println("QAQQQ", rbac.GetPolicy())
 	fmt.Println("QAQQQ", rbac.GetGroupingPolicy())
 	tester.UseToken(r2.Token)
+	tester.identityToken["admin"] = r2.Token
 	return true
 }
 
@@ -155,16 +158,71 @@ func (tester *Tester) Main(doSomething func()) {
 }
 
 type GoStyleTestFunc func(*testing.T)
-type MinimumStyleTestFunc func(ctx *TesterContext)
+type MinimumStyleTestFunc func(ctx *Context)
 
-func (tester *Tester) HandleTest(testFunc MinimumStyleTestFunc) GoStyleTestFunc {
+type Identity = string
+
+const (
+	IdentifyDefault = ""
+	IdentityNoAuth  = "no-auth"
+	IdentityNormal  = "normal"
+	IdentityAdmin   = "admin"
+)
+
+type Option struct {
+	NoError  bool
+	Identity Identity
+}
+
+func NewOption() *Option {
+	return &Option{NoError: true}
+}
+
+func (o *Option) AssertWithoutError(e bool) *Option {
+	o.NoError = e
+	return o
+}
+
+func (o *Option) WithIdentity(identity string) *Option {
+	o.Identity = identity
+	return o
+}
+
+func (*Tester) NewOption() *Option {
+	return &Option{NoError: true}
+}
+
+func (tester *Tester) HandleTest(testFunc MinimumStyleTestFunc, option *Option) GoStyleTestFunc {
 	return func(t *testing.T) {
-		testFunc(tester.Context(t))
+		ctx := tester.Context(t)
+		ctx = ctx.AssertNoError(option.NoError)
+		var tok string
+		var ok bool
+		if option.Identity != IdentifyDefault {
+			tok, ok = tester.GetToken()
+			if option.Identity == IdentityNoAuth {
+				tester.RemoveToken()
+			} else {
+				tester.UseToken(tester.identityToken[option.Identity])
+			}
+		}
+
+		testFunc(ctx)
+
+		if option.Identity != IdentifyDefault {
+			if ok {
+				tester.UseToken(tok)
+			} else {
+				tester.RemoveToken()
+			}
+		}
 	}
 }
 
-func (tester *Tester) HandleTestWithOutError(testFunc MinimumStyleTestFunc) GoStyleTestFunc {
-	return func(t *testing.T) {
-		testFunc(tester.Context(t).AssertNoError(true))
-	}
+func (tester *Tester) HandleTestWithoutError(testFunc MinimumStyleTestFunc) GoStyleTestFunc {
+	return tester.HandleTest(testFunc, &Option{NoError: true})
+}
+
+func (tester *Tester) HandlePureTest(testFunc MinimumStyleTestFunc) GoStyleTestFunc {
+	return tester.HandleTest(testFunc, &Option{NoError: false, Identity: IdentityNoAuth})
 }

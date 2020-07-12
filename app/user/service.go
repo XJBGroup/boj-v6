@@ -69,7 +69,7 @@ func (svc *Service) CountUser(c controller.MContext) {
 	})
 }
 
-func (svc *Service) Register(c controller.MContext) {
+func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	var req = new(api.RegisterRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -84,7 +84,6 @@ func (svc *Service) Register(c controller.MContext) {
 	// check default value
 	aff, err := svc.db.Create(usr)
 	if err != nil {
-		//fmt.Println(reflect.TypeOf(err))
 		if ginhelper.CheckInsertError(c, err) {
 			return
 		}
@@ -100,12 +99,26 @@ func (svc *Service) Register(c controller.MContext) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, &api.RegisterReply{
+
+	r = &api.RegisterReply{
 		Code: types.CodeOK,
 		Id:   usr.ID,
-	})
+	}
+	c.JSON(http.StatusOK, r)
+	return
+}
 
-	_, err = svc.enforcer.AddGroupingPolicy("user:"+strconv.Itoa(int(usr.ID)), "admin")
+func (svc *Service) Register(c controller.MContext) {
+	svc.DoRegister(c)
+}
+
+func (svc *Service) RegisterAdmin(c controller.MContext) {
+	resp := svc.DoRegister(c)
+	if resp == nil {
+		return
+	}
+
+	_, err := svc.enforcer.AddGroupingPolicy("user:"+strconv.Itoa(int(resp.Id)), "admin")
 	if err != nil {
 		svc.logger.Debug("update group error", "error", err)
 	}

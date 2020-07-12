@@ -26,26 +26,26 @@ func main() {
 	v1 := "v1"
 
 	//instantiate
-	userCate := DescribeUserService()
-	announcementCate := DescribeAnnouncementService()
-	commentCate := DescribeCommentService()
-
-	svc := artisan.NewService(
-		userCate,
-		announcementCate,
-		commentCate,
-	).Base(v1).SetPackageName("api").Final()
-
-	sugar.HandlerError0(svc.PublishRouter("api/router.go"))
-
-	for _, tsk := range []struct {
+	var meta = []struct {
 		cate artisan.ProposingService
 		name string
 	}{
-		{userCate, "user"},
-		{announcementCate, "announcement"},
-		{commentCate, "comment"},
-	} {
+		{DescribeUserService(), "user"},
+		{DescribeAnnouncementService(), "announcement"},
+		{DescribeCommentService(), "comment"},
+		{DescribeSubmissionService(), "submission"},
+	}
+
+	var svc *artisan.PublishedServices
+	var svcs []artisan.ProposingService
+	for _, tsk := range meta {
+		svcs = append(svcs, tsk.cate)
+	}
+	svc = artisan.NewService(svcs...).Base(v1).SetPackageName("api").Final()
+
+	sugar.HandlerError0(svc.PublishRouter("api/router.go"))
+
+	for _, tsk := range meta {
 		subSvc := svc.GetService(tsk.cate)
 		delete(svc.GetServices(), tsk.cate)
 
