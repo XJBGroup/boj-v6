@@ -8,8 +8,8 @@ import (
 type SubmissionFilter struct {
 	Page         int   `json:"page" form:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
-	MemOrder     *bool `form:"mem_order" json:"mem_order"`
-	TimeOrder    *bool `json:"time_order" form:"time_order"`
+	MemOrder     *bool `json:"mem_order" form:"mem_order"`
+	TimeOrder    *bool `form:"time_order" json:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
 	OnProblem    uint  `json:"on_problem" form:"on_problem"`
@@ -30,7 +30,7 @@ type ListSubmissionReply struct {
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `json:"run_memory" form:"run_memory"`
+	RunMemory  int64     `form:"run_memory" json:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
@@ -55,21 +55,21 @@ type PostSubmissionReply struct {
 
 type GetSubmissionReply struct {
 	Code       int                     `json:"code" form:"code"`
-	Submission GetSubmissionInnerReply `form:"submission" json:"submission"`
+	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
 }
 
 type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
-	UserId     uint      `form:"user_id" json:"user_id"`
+	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `form:"run_time" json:"run_time"`
-	RunMemory  int64     `form:"run_memory" json:"run_memory"`
-	CodeLength int       `form:"code_length" json:"code_length"`
+	RunMemory  int64     `json:"run_memory" form:"run_memory"`
+	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
-	Shared     uint8     `form:"shared" json:"shared"`
+	Shared     uint8     `json:"shared" form:"shared"`
 }
 
 func PSerializeSubmissionFilter(_page int, _pageSize int, _memOrder *bool, _timeOrder *bool, _idOrder *bool, _byUser uint, _onProblem uint, _withLanguage uint8, _hasStatus int64) *SubmissionFilter {

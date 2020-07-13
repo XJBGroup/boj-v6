@@ -8,7 +8,7 @@ import (
 type ListAnnouncementsRequest = gorm_crud_dao.Filter
 
 type ListAnnouncementsReply struct {
-	Code int                         `json:"code" form:"code"`
+	Code int                         `form:"code" json:"code"`
 	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
@@ -21,7 +21,7 @@ type CountAnnouncementReply struct {
 
 type PostAnnouncementRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PostAnnouncementReply struct {

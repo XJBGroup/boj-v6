@@ -16,12 +16,12 @@ type CountCommentsRequest = gorm_crud_dao.Filter
 
 type CountCommentReply struct {
 	Code int   `json:"code" form:"code"`
-	Data []int `form:"data" json:"data"`
+	Data []int `json:"data" form:"data"`
 }
 
 type PostCommentRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 type PostCommentReply struct {
@@ -30,7 +30,7 @@ type PostCommentReply struct {
 }
 
 type GetCommentReply struct {
-	Code    int              `json:"code" form:"code"`
+	Code    int              `form:"code" json:"code"`
 	Comment *comment.Comment `json:"comment" form:"comment"`
 }
 
