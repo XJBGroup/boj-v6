@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unit/memory"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unit/time"
 	"github.com/Myriad-Dreamin/boj-v6/types"
-	"github.com/Myriad-Dreamin/boj-v6/unit/memory"
-	"github.com/Myriad-Dreamin/boj-v6/unit/time"
 	"strconv"
 	"strings"
 )

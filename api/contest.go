@@ -18,7 +18,7 @@ type CountContestsRequest = gorm_crud_dao.Filter
 
 type CountContestReply struct {
 	Code int   `json:"code" form:"code"`
-	Data []int `form:"data" json:"data"`
+	Data []int `json:"data" form:"data"`
 }
 
 type PostContestRequest struct {
@@ -26,7 +26,7 @@ type PostContestRequest struct {
 
 type PostContestReply struct {
 	Code    int              `json:"code" form:"code"`
-	Contest *contest.Contest `json:"contest" form:"contest"`
+	Contest *contest.Contest `form:"contest" json:"contest"`
 }
 
 type ListContestProblemsRequest = gorm_crud_dao.Filter
@@ -45,8 +45,8 @@ type CountContestProblemReply struct {
 
 type PostContestProblemRequest struct {
 	Title       string                       `json:"title" form:"title" binding:"required"`
-	Description string                       `form:"description" json:"description"`
-	Config      *problemconfig.ProblemConfig `form:"config" json:"config"`
+	Description string                       `json:"description" form:"description"`
+	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
 
 type PostContestProblemReply struct {
@@ -56,7 +56,7 @@ type PostContestProblemReply struct {
 
 type ChangeContestDescriptionRefRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	NewName string `binding:"required" json:"new_name" form:"new_name"`
+	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostContestDescRequest struct {
@@ -65,17 +65,17 @@ type PostContestDescRequest struct {
 }
 
 type GetContestDescRequest struct {
-	Name string `json:"name" form:"name"`
+	Name string `form:"name" json:"name"`
 }
 
 type GetContestDescReply struct {
-	Code int                `form:"code" json:"code"`
+	Code int                `json:"code" form:"code"`
 	Data ContestProblemDesc `json:"data" form:"data"`
 }
 
 type ContestProblemDesc struct {
-	Name    string `json:"name" form:"name"`
-	Content string `form:"content" json:"content"`
+	Name    string `form:"name" json:"name"`
+	Content string `json:"content" form:"content"`
 }
 
 type PutContestDescRequest struct {
@@ -85,7 +85,7 @@ type PutContestDescRequest struct {
 
 type GetContestProblemReply struct {
 	Code    int              `json:"code" form:"code"`
-	Problem *problem.Problem `json:"problem" form:"problem"`
+	Problem *problem.Problem `form:"problem" json:"problem"`
 }
 
 type PutContestProblemRequest struct {

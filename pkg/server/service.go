@@ -20,20 +20,20 @@ type serviceResult struct {
 
 func (srv *Server) PrepareService() bool {
 	for _, serviceResult := range []serviceResult{
+		{"authService",
+			functional.Decay(auth.NewService(srv.Module))},
 		{"announcementService",
 			functional.Decay(announcement.NewService(srv.Module))},
-		{"userService",
-			functional.Decay(user.NewService(srv.Module))},
 		{"commentService",
 			functional.Decay(comment.NewService(srv.Module))},
 		{"submissionService",
 			functional.Decay(submission.NewService(srv.Module))},
+		{"userService",
+			functional.Decay(user.NewService(srv.Module))},
 		{"problemService",
 			functional.Decay(problem.NewService(srv.Module))},
 		{"contestService",
 			functional.Decay(contest.NewService(srv.Module))},
-		{"authService",
-			functional.Decay(auth.NewService(srv.Module))},
 		{"groupService",
 			functional.Decay(group.NewService(srv.Module))},
 	} {

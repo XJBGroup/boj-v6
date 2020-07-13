@@ -4,9 +4,9 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
-	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"
@@ -42,13 +42,13 @@ func (svc *Service) UserServiceSignatureXXX() interface{} {
 }
 
 func (svc *Service) ListUsers(c controller.MContext) {
-	page, pageSize, ok := ginhelper.RosolvePageVariable(c)
+	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
 	}
 
 	users, err := svc.db.Find(page, pageSize)
-	if ginhelper.MaybeSelectError(c, users, err) {
+	if snippet.MaybeSelectError(c, users, err) {
 		return
 	}
 
@@ -59,7 +59,7 @@ func (svc *Service) ListUsers(c controller.MContext) {
 
 func (svc *Service) CountUser(c controller.MContext) {
 	count, err := svc.db.Count()
-	if ginhelper.MaybeCountError(c, err) {
+	if snippet.MaybeCountError(c, err) {
 		return
 	}
 
@@ -71,7 +71,7 @@ func (svc *Service) CountUser(c controller.MContext) {
 
 func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	var req = new(api.RegisterRequest)
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return
 	}
 
@@ -84,7 +84,7 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	// check default value
 	aff, err := svc.db.Create(usr)
 	if err != nil {
-		if ginhelper.CheckInsertError(c, err) {
+		if snippet.CheckInsertError(c, err) {
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
@@ -126,7 +126,7 @@ func (svc *Service) RegisterAdmin(c controller.MContext) {
 
 func (svc *Service) LoginUser(c controller.MContext) {
 	var req = new(api.LoginUserRequest)
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return
 	}
 
@@ -146,12 +146,12 @@ func (svc *Service) LoginUser(c controller.MContext) {
 		})
 		return
 	}
-	if ginhelper.MaybeSelectError(c, usr, err) {
+	if snippet.MaybeSelectError(c, usr, err) {
 		return
 	}
 
 	ok, err := svc.db.AuthenticatePassword(usr, req.Password)
-	if !ginhelper.AuthenticatePassword(c, ok, err) {
+	if !snippet.AuthenticatePassword(c, ok, err) {
 		return
 	}
 
@@ -201,7 +201,7 @@ func (svc *Service) RefreshToken(c controller.MContext) {
 
 func (svc *Service) BindEmail(c controller.MContext) {
 	var req = new(api.BindEmailRequest)
-	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -219,7 +219,7 @@ func (svc *Service) BindEmail(c controller.MContext) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	c.JSON(http.StatusOK, &snippet.ResponseOK)
 }
 
 func (svc *Service) InspectUser(c controller.MContext) {
@@ -228,12 +228,12 @@ func (svc *Service) InspectUser(c controller.MContext) {
 }
 
 func (svc *Service) GetUser(c controller.MContext) {
-	id, ok := ginhelper.ParseUint(c, svc.key)
+	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 	obj, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectError(c, obj, err) {
+	if snippet.MaybeSelectError(c, obj, err) {
 		return
 	}
 
@@ -242,33 +242,33 @@ func (svc *Service) GetUser(c controller.MContext) {
 
 func (svc *Service) PutUser(c controller.MContext) {
 	var req = new(api.PutUserRequest)
-	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
 
 	obj, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectError(c, obj, err) {
+	if snippet.MaybeSelectError(c, obj, err) {
 		return
 	}
 
 	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
-	if ginhelper.UpdateFields(c, err) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 
 func (svc *Service) Delete(c controller.MContext) {
 	obj := new(user.User)
 	var ok bool
-	obj.ID, ok = ginhelper.ParseUint(c, svc.key)
+	obj.ID, ok = snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 
 	a, e := svc.db.Delete(obj)
-	if ginhelper.DeleteObj(c, a, e) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.DeleteObj(c, a, e) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 

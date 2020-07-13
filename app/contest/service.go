@@ -14,6 +14,50 @@ type Service struct {
 	key      string
 }
 
+func (s Service) ChangeContestDescriptionRef(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) PostContestDesc(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) GetContestDesc(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) PutContestDesc(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) DeleteContestDesc(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) GetContestProblem(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) PutContestProblem(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) DeleteContestProblem(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) ListContestProblems(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) CountContestProblem(c controller.MContext) {
+	panic("implement me")
+}
+
+func (s Service) PostContestProblem(c controller.MContext) {
+	panic("implement me")
+}
+
 func (s Service) ContestServiceSignatureXXX() interface{} {
 	panic("implement me")
 }

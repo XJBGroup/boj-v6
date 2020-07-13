@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
-	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -35,13 +35,13 @@ func (svc *Service) AnnouncementServiceSignatureXXX() interface{} {
 }
 
 func (svc *Service) ListAnnouncements(c controller.MContext) {
-	page, pageSize, ok := ginhelper.RosolvePageVariable(c)
+	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
 	}
 
 	ancs, err := svc.db.Find(page, pageSize)
-	if ginhelper.MaybeSelectError(c, ancs, err) {
+	if snippet.MaybeSelectError(c, ancs, err) {
 		return
 	}
 
@@ -51,7 +51,7 @@ func (svc *Service) ListAnnouncements(c controller.MContext) {
 
 func (svc *Service) CountAnnouncement(c controller.MContext) {
 	count, err := svc.db.Count()
-	if ginhelper.MaybeCountError(c, err) {
+	if snippet.MaybeCountError(c, err) {
 		return
 	}
 
@@ -70,7 +70,7 @@ and, the operating user must be in the group of admin.
 */
 func (svc *Service) PostAnnouncement(c controller.MContext) {
 	var req = new(api.PostAnnouncementRequest)
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return
 	}
 
@@ -78,12 +78,12 @@ func (svc *Service) PostAnnouncement(c controller.MContext) {
 	obj.Title = req.Title
 	obj.Content = req.Content
 
-	cc := ginhelper.GetCustomFields(c)
+	cc := snippet.GetCustomFields(c)
 	obj.Author = cc.UID
 	obj.LastUpdateUser = cc.UID
 
 	a, e := svc.db.Create(obj)
-	if ginhelper.CreateObj(c, a, e) {
+	if snippet.CreateObj(c, a, e) {
 		c.JSON(http.StatusOK, &api.PostAnnouncementReply{
 			Code:         types.CodeOK,
 			Announcement: obj,
@@ -96,22 +96,22 @@ GetAnnouncement v1/announcement/:aid GET
 requiring nothing, so anyone is ok.
 */
 func (svc *Service) GetAnnouncement(c controller.MContext) {
-	id, ok := ginhelper.ParseUint(c, svc.key)
+	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 	obj, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
+	if snippet.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
 		return
 	}
 
 	//author, err := svc.userDB.ID(obj.Author)
-	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "author") {
+	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "author") {
 	//	return
 	//}
 	//
 	//luu, err := svc.userDB.ID(obj.LastUpdateUser)
-	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "last update user") {
+	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "last update user") {
 	//	return
 	//}
 
@@ -120,22 +120,22 @@ func (svc *Service) GetAnnouncement(c controller.MContext) {
 
 func (svc *Service) PutAnnouncement(c controller.MContext) {
 	var req = new(api.PutAnnouncementRequest)
-	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
 
 	obj, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectError(c, obj, err) {
+	if snippet.MaybeSelectError(c, obj, err) {
 		return
 	}
 
-	cc := ginhelper.GetCustomFields(c)
+	cc := snippet.GetCustomFields(c)
 	obj.LastUpdateUser = cc.UID
 
 	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
-	if ginhelper.UpdateFields(c, err) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 
@@ -146,14 +146,14 @@ requiring the aiming announcement's write privilege
 func (svc *Service) Delete(c controller.MContext) {
 	obj := new(announcement.Announcement)
 	var ok bool
-	obj.ID, ok = ginhelper.ParseUint(c, svc.key)
+	obj.ID, ok = snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 
 	a, e := svc.db.Delete(obj)
-	if ginhelper.DeleteObj(c, a, e) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.DeleteObj(c, a, e) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 

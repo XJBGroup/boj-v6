@@ -4,9 +4,9 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
-	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	problemconfig "github.com/Myriad-Dreamin/boj-v6/types/problem-config"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -41,13 +41,13 @@ func (svc Service) ProblemServiceSignatureXXX() interface{} {
 }
 
 func (svc Service) ListProblems(c controller.MContext) {
-	page, pageSize, ok := ginhelper.RosolvePageVariable(c)
+	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
 	}
 
 	problems, err := svc.db.Find(page, pageSize)
-	if ginhelper.MaybeSelectError(c, problems, err) {
+	if snippet.MaybeSelectError(c, problems, err) {
 		return
 	}
 
@@ -56,7 +56,7 @@ func (svc Service) ListProblems(c controller.MContext) {
 
 func (svc Service) CountProblem(c controller.MContext) {
 	cnt, err := svc.db.Count()
-	if ginhelper.MaybeSelectError(c, &cnt, err) {
+	if snippet.MaybeSelectError(c, &cnt, err) {
 		return
 	}
 
@@ -69,7 +69,7 @@ func (svc Service) CountProblem(c controller.MContext) {
 func (svc Service) PostProblem(c controller.MContext) {
 	var req = new(api.PostProblemRequest)
 	req.Config = problemconfig.DefaultProblemConfig()
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return
 	}
 
@@ -77,11 +77,11 @@ func (svc Service) PostProblem(c controller.MContext) {
 	p.Title = req.Title
 	p.DescriptionRef = "default"
 
-	cc := ginhelper.GetCustomFields(c)
+	cc := snippet.GetCustomFields(c)
 	p.AuthorID = cc.UID
 
 	aff, err := svc.db.Create(p)
-	if !ginhelper.CreateObjWithTip(c, aff, err, "problem") {
+	if !snippet.CreateObjWithTip(c, aff, err, "problem") {
 		return
 	}
 
@@ -89,12 +89,12 @@ func (svc Service) PostProblem(c controller.MContext) {
 	//var problemDesc = model.NewProblemDesc(problem.ID, "default", []byte(req.Description))
 	//
 	//
-	//if !ginhelper.CreateObjWithTip(c, problemDesc) {
+	//if !snippet.CreateObjWithTip(c, problemDesc) {
 	//	return
 	//}
 
 	//if err := problemDesc.Save(); err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, ginhelper.ErrorSerializer{
+	//	c.AbortWithStatusJSON(http.StatusInternalServerError, snippet.ErrorSerializer{
 	//		Code:  types.CodeInsertError,
 	//		Error: err.Error(),
 	//	})
@@ -135,29 +135,29 @@ func (svc Service) PostProblem(c controller.MContext) {
 }
 
 func (svc Service) GetProblem(c controller.MContext) {
-	id, ok := ginhelper.ParseUint(c, svc.key)
+	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 	p, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectError(c, p, err) {
+	if snippet.MaybeSelectError(c, p, err) {
 		return
 	}
 
 	// todo: get problem desc
 	//user, err := srv.userDB.ID(problem.AuthorID)
-	//if ginhelper.MaybeSelectError(c, user, err) {
+	//if snippet.MaybeSelectError(c, user, err) {
 	//	return
 	//}
 	//problem.Author = *user
 
 	//problemDesc, err := srv.problemDescDB.QueryTemplate(id, problem.Description)
-	//if ginhelper.MaybeSelectError(c, problemDesc, err) {
+	//if snippet.MaybeSelectError(c, problemDesc, err) {
 	//	return
 	//}
 	//err = problemDesc.Load()
 	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, ginhelper.ErrorSerializer{
+	//	c.AbortWithStatusJSON(http.StatusInternalServerError, snippet.ErrorSerializer{
 	//		Code:  types.CodeSelectError,
 	//		Error: err.Error(),
 	//	})
@@ -169,33 +169,33 @@ func (svc Service) GetProblem(c controller.MContext) {
 
 func (svc Service) PutProblem(c controller.MContext) {
 	var req = new(api.PutProblemRequest)
-	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
 
 	obj, err := svc.db.ID(id)
-	if ginhelper.MaybeSelectError(c, obj, err) {
+	if snippet.MaybeSelectError(c, obj, err) {
 		return
 	}
 
 	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
-	if ginhelper.UpdateFields(c, err) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 
 func (svc Service) DeleteProblem(c controller.MContext) {
 	obj := new(problem.Problem)
 	var ok bool
-	obj.ID, ok = ginhelper.ParseUint(c, svc.key)
+	obj.ID, ok = snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 
 	aff, err := svc.db.Delete(obj)
-	if ginhelper.DeleteObj(c, aff, err) {
-		c.JSON(http.StatusOK, ginhelper.ResponseOK)
+	if snippet.DeleteObj(c, aff, err) {
+		c.JSON(http.StatusOK, snippet.ResponseOK)
 	}
 
 	// todo: delete problem desc

@@ -1,4 +1,4 @@
-package ginhelper
+package snippet
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"

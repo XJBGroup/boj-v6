@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
-	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -49,7 +49,7 @@ const (
 
 func (svc Service) ResolveFilter(c controller.MContext) *submission.Filter {
 	var req = new(api.SubmissionFilter)
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return nil
 	}
 	var f submission.Filter
@@ -119,7 +119,7 @@ func (svc Service) ListSubmissions(c controller.MContext) {
 	}
 
 	ss, err := svc.db.Filter(f)
-	if ginhelper.MaybeSelectError(c, ss, err) {
+	if snippet.MaybeSelectError(c, ss, err) {
 		return
 	}
 
@@ -136,7 +136,7 @@ func (svc Service) CountSubmissions(c controller.MContext) {
 	}
 
 	cnt, err := svc.db.FilterCount(f)
-	if ginhelper.MaybeSelectError(c, &cnt, err) {
+	if snippet.MaybeSelectError(c, &cnt, err) {
 		return
 	}
 

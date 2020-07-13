@@ -20,7 +20,7 @@ type CountCommentReply struct {
 }
 
 type PostCommentRequest struct {
-	Title   string `json:"title" form:"title"`
+	Title   string `form:"title" json:"title"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -30,13 +30,13 @@ type PostCommentReply struct {
 }
 
 type GetCommentReply struct {
-	Code    int              `form:"code" json:"code"`
+	Code    int              `json:"code" form:"code"`
 	Comment *comment.Comment `json:"comment" form:"comment"`
 }
 
 type PutCommentRequest struct {
-	Title   string `form:"title" json:"title"`
-	Content string `json:"content" form:"content"`
+	Title   string `json:"title" form:"title"`
+	Content string `form:"content" json:"content"`
 }
 
 func PSerializeListCommentsReply(_code int, _data []comment.Comment) *ListCommentsReply {

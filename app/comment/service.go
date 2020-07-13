@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
-	ginhelper "github.com/Myriad-Dreamin/boj-v6/lib/gin-helper"
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
@@ -51,7 +51,7 @@ func NewService(m module.Module) (*Service, error) {
 
 func (srv *Service) Post(c controller.MContext) {
 	var req = new(api.PostCommentRequest)
-	if !ginhelper.BindRequest(c, req) {
+	if !snippet.BindRequest(c, req) {
 		return
 	}
 
@@ -59,12 +59,12 @@ func (srv *Service) Post(c controller.MContext) {
 	//obj.Title = req.Title
 	//obj.Content = req.Content
 	//
-	//cc := ginhelper.GetCustomFields(c)
+	//cc := snippet.GetCustomFields(c)
 	//obj.Author = cc.UID
 	//obj.LastUpdateUser = cc.UID
 	//
 	//a, e := srv.db.Create(obj)
-	//if ginhelper.CreateObj(c, a, e) {
+	//if snippet.CreateObj(c, a, e) {
 	//	c.JSON(http.StatusOK, &api.AnnouncementPostReply{
 	//		Code:         types.CodeOK,
 	//		Announcement: obj,
@@ -111,22 +111,22 @@ Internal Error:
 attached to the segment of `error`
 */
 func (srv *Service) Get(c controller.MContext) {
-	//id, ok := ginhelper.ParseUint(c, "anid")
+	//id, ok := snippet.ParseUint(c, "anid")
 	//if !ok {
 	//	return
 	//}
 	//obj, err := srv.db.ID(id)
-	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
+	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
 	//	return
 	//}
 	//
 	//author, err := srv.commentDB.ID(obj.Author)
-	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "author") {
+	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "author") {
 	//	return
 	//}
 	//
 	//luu, err := srv.commentDB.ID(obj.LastUpdateUser)
-	//if ginhelper.MaybeSelectErrorWithTip(c, obj, err, "last update comment") {
+	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "last update comment") {
 	//	return
 	//}
 	//
@@ -135,22 +135,22 @@ func (srv *Service) Get(c controller.MContext) {
 
 func (srv *Service) Put(c controller.MContext) {
 	//var req = new(api.AnnouncementPutRequest)
-	//id, ok := ginhelper.ParseUintAndBind(c, srv.key, req)
+	//id, ok := snippet.ParseUintAndBind(c, srv.key, req)
 	//if !ok {
 	//	return
 	//}
 	//
 	//obj, err := srv.db.ID(id)
-	//if ginhelper.MaybeSelectError(c, obj, err) {
+	//if snippet.MaybeSelectError(c, obj, err) {
 	//	return
 	//}
 	//
-	//cc := ginhelper.GetCustomFields(c)
+	//cc := snippet.GetCustomFields(c)
 	//obj.LastUpdateUser = cc.UID
 	//
 	//_, err = srv.db.UpdateFields(obj, srv.FillPutFields(obj, req))
-	//if ginhelper.UpdateFields(c, err) {
-	//	c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	//if snippet.UpdateFields(c, err) {
+	//	c.JSON(http.StatusOK, &snippet.ResponseOK)
 	//}
 }
 
@@ -180,14 +180,14 @@ attached to the segment of `error`
 func (srv *Service) Delete(c controller.MContext) {
 	obj := new(comment.Comment)
 	var ok bool
-	obj.ID, ok = ginhelper.ParseUint(c, srv.key)
+	obj.ID, ok = snippet.ParseUint(c, srv.key)
 	if !ok {
 		return
 	}
 
 	a, e := srv.db.Delete(obj)
-	if ginhelper.DeleteObj(c, a, e) {
-		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	if snippet.DeleteObj(c, a, e) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 

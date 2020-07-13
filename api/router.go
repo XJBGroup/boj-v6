@@ -998,8 +998,8 @@ func NewUserServiceRefreshTokenRouter(traits GenerateRouterTraits, h H) (r *User
 
 type UserServiceIdGroupRouter struct {
 	H
-	Inspect *UserServiceIdGroupInspectRouter
 	Email   *UserServiceIdGroupEmailRouter
+	Inspect *UserServiceIdGroupInspectRouter
 
 	GetUser *LeafRouter
 	PutUser *LeafRouter
@@ -1015,32 +1015,12 @@ func NewUserServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *UserServi
 		},
 	}
 
-	r.Inspect = NewUserServiceIdGroupInspectRouter(traits, r.H)
 	r.Email = NewUserServiceIdGroupEmailRouter(traits, r.H)
+	r.Inspect = NewUserServiceIdGroupInspectRouter(traits, r.H)
 
 	r.GetUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).GetUser)
 	r.PutUser = r.GetRouter().PUT("", traits.GetServiceInstance("UserService").(UserService).PutUser)
 	r.Delete = r.GetRouter().DELETE("", traits.GetServiceInstance("UserService").(UserService).Delete)
-
-	return
-}
-
-type UserServiceIdGroupInspectRouter struct {
-	H
-
-	InspectUser *LeafRouter
-}
-
-func NewUserServiceIdGroupInspectRouter(traits GenerateRouterTraits, h H) (r *UserServiceIdGroupInspectRouter) {
-	r = &UserServiceIdGroupInspectRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/inspect"),
-			AuthRouter: h.GetAuthRouter().Group("/inspect"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.InspectUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).InspectUser)
 
 	return
 }
@@ -1061,6 +1041,26 @@ func NewUserServiceIdGroupEmailRouter(traits GenerateRouterTraits, h H) (r *User
 	}
 
 	r.BindEmail = r.GetRouter().PUT("", traits.GetServiceInstance("UserService").(UserService).BindEmail)
+
+	return
+}
+
+type UserServiceIdGroupInspectRouter struct {
+	H
+
+	InspectUser *LeafRouter
+}
+
+func NewUserServiceIdGroupInspectRouter(traits GenerateRouterTraits, h H) (r *UserServiceIdGroupInspectRouter) {
+	r = &UserServiceIdGroupInspectRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/inspect"),
+			AuthRouter: h.GetAuthRouter().Group("/inspect"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.InspectUser = r.GetRouter().GET("", traits.GetServiceInstance("UserService").(UserService).InspectUser)
 
 	return
 }

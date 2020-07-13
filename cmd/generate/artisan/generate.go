@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/Myriad-Dreamin/artisan"
-	"github.com/Myriad-Dreamin/blog-backend-v2/types"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 )
 
-var codeField = artisan.Param("code", new(types.CodeRawType))
+var codeField = artisan.Param("code", new(types.ServiceCode))
 var required = artisan.Tag("binding", "required")
 
 type Meta struct {
