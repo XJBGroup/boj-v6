@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/contest"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/group"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
@@ -17,6 +20,9 @@ type DB struct {
 	userDB         user.DB
 	commentDB      comment.DB
 	submissionDB   submission.DB
+	problemDB      problem.DB
+	contestDB      contest.DB
+	groupDB        group.DB
 	enforcer       *Enforcer
 }
 
@@ -34,6 +40,18 @@ func (s *DB) AnnouncementDB() announcement.DB {
 
 func (s *DB) SubmissionDB() submission.DB {
 	return s.submissionDB
+}
+
+func (s *DB) ProblemDB() problem.DB {
+	return s.problemDB
+}
+
+func (s *DB) ContestDB() contest.DB {
+	return s.contestDB
+}
+
+func (s *DB) GroupDB() group.DB {
+	return s.groupDB
 }
 
 func (s *DB) UserDB() user.DB {
@@ -63,6 +81,12 @@ func (s *DB) Register(name string, database interface{}) {
 		s.commentDB = ss
 	case submission.DB:
 		s.submissionDB = ss
+	case problem.DB:
+		s.problemDB = ss
+	case contest.DB:
+		s.contestDB = ss
+	case group.DB:
+		s.groupDB = ss
 	case *Enforcer:
 		s.enforcer = ss
 	default:

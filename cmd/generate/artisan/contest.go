@@ -64,7 +64,11 @@ func DescribeContestService() artisan.ProposingService {
 				)).
 			Method(artisan.DELETE, "Delete"),
 	}
+
+	svc.IdGroup = DescribeProblemCategory(svc.IdGroup, "Contest")
+
 	svc.Name("ContestService").
-		UseModel(artisan.Model(artisan.Name("contest"), &contestModel))
+		UseModel(artisan.Model(artisan.Name("contest"), &contestModel),
+			artisan.Model(artisan.Name("problem"), &problemModel))
 	return svc
 }

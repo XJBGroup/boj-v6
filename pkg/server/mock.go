@@ -122,7 +122,7 @@ func Mock(options ...Option) (srv *Mocker) {
 		go plg.Work(ctx)
 	}
 
-	if err := srv.databaseModule.RawDB.Ping(); err != nil {
+	if err := srv.DatabaseModule.RawDB.Ping(); err != nil {
 		srv.Logger.Debug("database died", "error", err)
 		srv = nil
 		return

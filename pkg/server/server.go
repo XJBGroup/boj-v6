@@ -40,7 +40,7 @@ type Server struct {
 	corsMW       gin.HandlerFunc
 
 	Module         module.Module
-	databaseModule *database.Module
+	DatabaseModule *database.Module
 
 	ServiceProvider *provider.Service
 	ModelProvider   *provider.DB
@@ -184,7 +184,7 @@ func (srv *Server) Serve(port string) {
 		go plg.Work(ctx)
 	}
 
-	if err := srv.databaseModule.GetRawSQLInstance().Ping(); err != nil {
+	if err := srv.DatabaseModule.GetRawSQLInstance().Ping(); err != nil {
 		srv.Logger.Debug("database died", "error", err)
 		return
 	}
@@ -223,7 +223,7 @@ func (srv *Server) ServeTLS(port, crtFile, privateKeyFile string) {
 		go plg.Work(ctx)
 	}
 
-	if err := srv.databaseModule.GetRawSQLInstance().Ping(); err != nil {
+	if err := srv.DatabaseModule.GetRawSQLInstance().Ping(); err != nil {
 		srv.Logger.Debug("database died", "error", err)
 		return
 	}

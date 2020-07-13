@@ -1,7 +1,6 @@
 package ginhelper
 
 import (
-	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
@@ -294,9 +293,21 @@ func CreateObj(c controller.MContext, affected int64, err error) bool {
 	return true
 }
 
-func CreateObjWithTip(c controller.MContext, createObj errorc.Creatable) bool {
-	if code, errs := errorc.CreateObj(createObj); code != types.CodeOK {
-		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{Code: code, Error: fmt.Sprintf("create %T failed: %v", createObj, errs)})
+func CreateObjWithTip(c controller.MContext, affected int64, err error, tip string) bool {
+	if err != nil {
+		if CheckInsertError(c, err) {
+			return false
+		}
+		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+			Code:  types.CodeInsertError,
+			Error: "create " + tip + " failed: " + err.Error(),
+		})
+		return false
+	} else if affected == 0 {
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeInsertError,
+			Error: "create " + tip + " has no effect",
+		})
 		return false
 	}
 	return true

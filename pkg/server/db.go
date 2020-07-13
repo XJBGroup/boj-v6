@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/app/announcement"
 	"github.com/Myriad-Dreamin/boj-v6/app/comment"
+	"github.com/Myriad-Dreamin/boj-v6/app/contest"
+	"github.com/Myriad-Dreamin/boj-v6/app/group"
+	"github.com/Myriad-Dreamin/boj-v6/app/problem"
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
@@ -23,6 +26,9 @@ func (srv *Server) registerDatabaseService() bool {
 		{"userDB", functional.Decay(user.NewDB(srv.Module))},
 		{"commentDB", functional.Decay(comment.NewDB(srv.Module))},
 		{"submissionDB", functional.Decay(submission.NewDB(srv.Module))},
+		{"problemDB", functional.Decay(problem.NewDB(srv.Module))},
+		{"contestDB", functional.Decay(contest.NewDB(srv.Module))},
+		{"groupDB", functional.Decay(group.NewDB(srv.Module))},
 	} {
 		if dbResult.Err != nil {
 			srv.Logger.Debug(fmt.Sprintf("init %T DB error", dbResult.First), "error", dbResult.Err)
@@ -47,7 +53,7 @@ func (srv *Server) PrepareDatabase() bool {
 	srv.Cfg.DatabaseConfig.Debug(srv.Logger)
 
 	var m = database.NewModule()
-	srv.databaseModule = &m
+	srv.DatabaseModule = &m
 
 	if !m.Install(srv.Module) {
 		return false
@@ -90,7 +96,7 @@ func (srv *Server) MockDatabase() bool {
 	srv.Cfg.DatabaseConfig.Debug(srv.Logger)
 
 	var m = database.NewModule()
-	srv.databaseModule = &m
+	srv.DatabaseModule = &m
 
 	if !m.InstallMock(srv.Module) {
 		return false
