@@ -30,12 +30,12 @@ type PostAnnouncementReply struct {
 }
 
 type GetAnnouncementReply struct {
-	Code         int                        `form:"code" json:"code"`
+	Code         int                        `json:"code" form:"code"`
 	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
 }
 
 type PutAnnouncementRequest struct {
-	Title   string `form:"title" json:"title"`
+	Title   string `json:"title" form:"title"`
 	Content string `json:"content" form:"content"`
 }
 

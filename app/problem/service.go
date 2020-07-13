@@ -32,7 +32,7 @@ func NewService(m module.Module) (*Service, error) {
 	s.logger = m.Require(config.ModulePath.Global.Logger).(external.Logger)
 	s.cfg = m.Require(config.ModulePath.Global.Configuration).(*config.ServerConfig)
 
-	s.key = "id"
+	s.key = "pid"
 	return s, nil
 }
 
@@ -75,10 +75,10 @@ func (svc Service) PostProblem(c controller.MContext) {
 
 	var p = new(problem.Problem)
 	p.Title = req.Title
+	p.DescriptionRef = "default"
 
 	cc := ginhelper.GetCustomFields(c)
-	p.AuthorID = uint(cc.UID)
-	p.Description = "default"
+	p.AuthorID = cc.UID
 
 	aff, err := svc.db.Create(p)
 	if !ginhelper.CreateObjWithTip(c, aff, err, "problem") {
@@ -135,33 +135,105 @@ func (svc Service) PostProblem(c controller.MContext) {
 }
 
 func (svc Service) GetProblem(c controller.MContext) {
-	panic("implement me")
+	id, ok := ginhelper.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+	p, err := svc.db.ID(id)
+	if ginhelper.MaybeSelectError(c, p, err) {
+		return
+	}
+
+	// todo: get problem desc
+	//user, err := srv.userDB.ID(problem.AuthorID)
+	//if ginhelper.MaybeSelectError(c, user, err) {
+	//	return
+	//}
+	//problem.Author = *user
+
+	//problemDesc, err := srv.problemDescDB.QueryTemplate(id, problem.Description)
+	//if ginhelper.MaybeSelectError(c, problemDesc, err) {
+	//	return
+	//}
+	//err = problemDesc.Load()
+	//if err != nil {
+	//	c.AbortWithStatusJSON(http.StatusInternalServerError, ginhelper.ErrorSerializer{
+	//		Code:  types.CodeSelectError,
+	//		Error: err.Error(),
+	//	})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, api.SerializeGetProblemReply(types.CodeOK, p)) //ProblemToGetReply(problem, problemDesc))
 }
 
 func (svc Service) PutProblem(c controller.MContext) {
-	panic("implement me")
-}
+	var req = new(api.PutProblemRequest)
+	id, ok := ginhelper.ParseUintAndBind(c, svc.key, req)
+	if !ok {
+		return
+	}
 
-func (svc Service) ChangeTemplateName(c controller.MContext) {
-	panic("implement me")
-}
+	obj, err := svc.db.ID(id)
+	if ginhelper.MaybeSelectError(c, obj, err) {
+		return
+	}
 
-func (svc Service) PostTemplate(c controller.MContext) {
-	panic("implement me")
-}
-
-func (svc Service) GetTemplate(c controller.MContext) {
-	panic("implement me")
-}
-
-func (svc Service) PutTemplate(c controller.MContext) {
-	panic("implement me")
-}
-
-func (svc Service) DeleteTemplate(c controller.MContext) {
-	panic("implement me")
+	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
+	if ginhelper.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &ginhelper.ResponseOK)
+	}
 }
 
 func (svc Service) DeleteProblem(c controller.MContext) {
-	panic("implement me")
+	obj := new(problem.Problem)
+	var ok bool
+	obj.ID, ok = ginhelper.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+
+	aff, err := svc.db.Delete(obj)
+	if ginhelper.DeleteObj(c, aff, err) {
+		c.JSON(http.StatusOK, ginhelper.ResponseOK)
+	}
+
+	// todo: delete problem desc
+}
+
+func (svc *Service) FillPutFields(problem *problem.Problem, req *api.PutProblemRequest) (fields []string) {
+	if len(req.Title) != 0 {
+		problem.Title = req.Title
+		fields = append(fields, "title")
+	}
+	if len(req.Description) != 0 {
+		problem.Description = req.Description
+		fields = append(fields, "description")
+	}
+	if len(req.DescriptionRef) != 0 {
+		problem.DescriptionRef = req.DescriptionRef
+		fields = append(fields, "desc_ref_name")
+	}
+
+	//if req.TimeLimit != 0 {
+	//	problem.TimeLimit = req.TimeLimit
+	//	fields = append(fields, "time-limit")
+	//}
+	//
+	//if req.MemoryLimit != 0 {
+	//	problem.MemoryLimit = req.MemoryLimit
+	//	fields = append(fields, "memory-limit")
+	//}
+	//
+	//if req.CodeLengthLimit != 0 {
+	//	problem.CodeLengthLimit = req.CodeLengthLimit
+	//	fields = append(fields, "code_length-limit")
+	//}
+	//
+	//if req.UpdateSpj {
+	//	problem.IsSpj = req.IsSpj
+	//	fields = append(fields, "is-spj")
+	//}
+
+	return
 }

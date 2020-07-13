@@ -61,7 +61,7 @@ func getPostProblemCate(prefix string) artisan.Category {
 
 func getProblemIDCate(prefix string) artisan.Category {
 
-	var problemTemplateObject = artisan.Object(prefix+"ProblemTemplate",
+	var problemDescObject = artisan.Object(prefix+"ProblemDesc",
 		artisan.Param("name", artisan.String),
 		artisan.Param("content", artisan.String),
 	)
@@ -77,43 +77,43 @@ func getProblemIDCate(prefix string) artisan.Category {
 			)).
 		Method(artisan.PUT, "Put"+prefix+"Problem",
 			artisan.Request(
-			//artisan.SPsC(&problemModel.Title, &problemModel.Content),
+				artisan.SPsC(&problemModel.Title, &problemModel.Description, &problemModel.DescriptionRef),
 			)).
 		Method(artisan.DELETE, "Delete"+prefix+"Problem").
-		SubCate("/template-list", artisan.Ink().WithName("Template").
-			Method(artisan.GET, "List"+prefix+"ProblemTemplates",
+		SubCate("/template-list", artisan.Ink().WithName("Desc").
+			Method(artisan.GET, "List"+prefix+"ProblemDescs",
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", problemTemplateObject))),
+					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
 			),
 		).
-		SubCate("/template", artisan.Ink().WithName("Template").
-			Method(artisan.POST, "Post"+prefix+"Template",
+		SubCate("/template", artisan.Ink().WithName("Desc").
+			Method(artisan.POST, "Post"+prefix+"Desc",
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			Method(artisan.GET, "Get"+prefix+"Template",
+			Method(artisan.GET, "Get"+prefix+"Desc",
 				artisan.Request(
 					artisan.Param("name", artisan.String),
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("data", problemTemplateObject),
+					artisan.Param("data", problemDescObject),
 				)).
-			Method(artisan.PUT, "Put"+prefix+"Template",
+			Method(artisan.PUT, "Put"+prefix+"Desc",
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			SubCate("/template", artisan.Ink().WithName("Template").
-				Method(artisan.POST, "Change"+prefix+"TemplateName",
+			SubCate("/template", artisan.Ink().WithName("Desc").
+				Method(artisan.POST, "Change"+prefix+"DescriptionRef",
 					artisan.Request(
 						artisan.Param("name", artisan.String, required),
 						artisan.Param("new_name", artisan.String, required),
 					)),
 			).
-			Method(artisan.DELETE, "Delete"+prefix+"Template"),
+			Method(artisan.DELETE, "Delete"+prefix+"Desc"),
 		)
 }
 

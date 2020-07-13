@@ -6,15 +6,15 @@ import (
 )
 
 type SubmissionFilter struct {
-	Page         int   `form:"page" json:"page"`
+	Page         int   `json:"page" form:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
-	MemOrder     *bool `json:"mem_order" form:"mem_order"`
+	MemOrder     *bool `form:"mem_order" json:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
-	IdOrder      *bool `form:"id_order" json:"id_order"`
+	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
 	OnProblem    uint  `json:"on_problem" form:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
-	HasStatus    int64 `form:"has_status" json:"has_status"`
+	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
 
 type ListSubmissionsReply struct {
@@ -25,7 +25,7 @@ type ListSubmissionsReply struct {
 type ListSubmissionReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
-	ProblemId  uint      `form:"problem_id" json:"problem_id"`
+	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
@@ -49,27 +49,27 @@ type PostSubmissionRequest struct {
 }
 
 type PostSubmissionReply struct {
-	Code int  `form:"code" json:"code"`
+	Code int  `json:"code" form:"code"`
 	Id   uint `json:"id" form:"id"`
 }
 
 type GetSubmissionReply struct {
 	Code       int                     `json:"code" form:"code"`
-	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
+	Submission GetSubmissionInnerReply `form:"submission" json:"submission"`
 }
 
 type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
-	UserId     uint      `json:"user_id" form:"user_id"`
+	UserId     uint      `form:"user_id" json:"user_id"`
 	Score      int64     `json:"score" form:"score"`
-	Status     int64     `form:"status" json:"status"`
-	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `json:"run_memory" form:"run_memory"`
-	CodeLength int       `json:"code_length" form:"code_length"`
+	Status     int64     `json:"status" form:"status"`
+	RunTime    int64     `form:"run_time" json:"run_time"`
+	RunMemory  int64     `form:"run_memory" json:"run_memory"`
+	CodeLength int       `form:"code_length" json:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
-	Shared     uint8     `json:"shared" form:"shared"`
+	Shared     uint8     `form:"shared" json:"shared"`
 }
 
 func PSerializeSubmissionFilter(_page int, _pageSize int, _memOrder *bool, _timeOrder *bool, _idOrder *bool, _byUser uint, _onProblem uint, _withLanguage uint8, _hasStatus int64) *SubmissionFilter {

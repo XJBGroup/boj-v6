@@ -16,7 +16,7 @@ type CountGroupsRequest = gorm_crud_dao.Filter
 
 type CountGroupReply struct {
 	Code int   `json:"code" form:"code"`
-	Data []int `form:"data" json:"data"`
+	Data []int `json:"data" form:"data"`
 }
 
 type PostGroupRequest struct {
@@ -24,12 +24,12 @@ type PostGroupRequest struct {
 
 type PostGroupReply struct {
 	Code  int          `json:"code" form:"code"`
-	Group *group.Group `form:"group" json:"group"`
+	Group *group.Group `json:"group" form:"group"`
 }
 
 type GetGroupReply struct {
 	Code  int          `json:"code" form:"code"`
-	Group *group.Group `form:"group" json:"group"`
+	Group *group.Group `json:"group" form:"group"`
 }
 
 type PutGroupRequest struct {

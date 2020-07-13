@@ -14,6 +14,7 @@ type Problem struct {
 	MemoryLimit     int64      `dorm:"memory_limit" gorm:"column:memory_limit;default:65536;not null" json:"memory-limit"`
 	CodeLengthLimit int64      `dorm:"code_length_limit" gorm:"column:code_length_limit;default:65536;not null" json:"code_length-limit"`
 	Description     string     `dorm:"description" gorm:"column:description;type:varchar(200);not null" json:"description"`
+	DescriptionRef  string     `dorm:"desc_ref_name" gorm:"column:desc_ref_name;type:varchar(100);not null" json:"tmpl_name"`
 	//Author          User         `gorm:"ForeignKey:AuthorID;AssociationForeignKey:ID;preload:false" json:"author"` // one to many created_announcements
 	AuthorID uint `dorm:"author_id" gorm:"column:author_id;not null" json:"author_id"` // author_id
 	IsSpj    bool `dorm:"is_spj" gorm:"column:is_spj;default:false;not null" json:"is-spj"`
