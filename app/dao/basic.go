@@ -48,6 +48,15 @@ func (db GORMDBImpl) QueryOne(tmpl string, arg1 interface{}, obj interface{}) (e
 	return
 }
 
+func (db GORMDBImpl) HasOne(tmpl string, arg1 interface{}, obj interface{}) (exists bool, err error) {
+	rdb := db.db.Where(tmpl, arg1).First(obj)
+	err = rdb.Error
+	if err == nil {
+		exists = !rdb.RecordNotFound()
+	}
+	return
+}
+
 func (db GORMDBImpl) Create(obj interface{}) (int64, error) {
 	rdb := db.db.Create(obj)
 	return rdb.RowsAffected, rdb.Error

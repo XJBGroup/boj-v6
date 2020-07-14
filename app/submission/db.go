@@ -34,3 +34,7 @@ func (db *DBImpl) Filter(f *submission.Filter) (submissions []submission.Submiss
 func (db *DBImpl) FilterCount(f *submission.Filter) (cnt int64, _ error) {
 	return cnt, db.ApplyFilter(f).Count(&cnt).Error
 }
+
+func (db *DBImpl) HasHash(hash string) (exists bool, err error) {
+	return db.HasOne("hash = ?", hash, &db.idleObject)
+}

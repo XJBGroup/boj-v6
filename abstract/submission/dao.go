@@ -11,6 +11,8 @@ type DB interface {
 	Count() (int64, error)
 
 	ID(id uint) (*Submission, error)
+
+	HasHash(hash string) (exists bool, err error)
 }
 
 type Filter struct {
