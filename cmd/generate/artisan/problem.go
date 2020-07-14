@@ -80,20 +80,20 @@ func getProblemIDCate(prefix string) artisan.Category {
 				artisan.SPsC(&problemModel.Title, &problemModel.Description, &problemModel.DescriptionRef),
 			)).
 		Method(artisan.DELETE, "Delete"+prefix+"Problem").
-		SubCate("/template-list", artisan.Ink().WithName("Desc").
+		SubCate("/desc-list", artisan.Ink().WithName("ProblemDesc").
 			Method(artisan.GET, "List"+prefix+"ProblemDescs",
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
 			),
 		).
-		SubCate("/template", artisan.Ink().WithName("Desc").
-			Method(artisan.POST, "Post"+prefix+"Desc",
+		SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
+			Method(artisan.POST, "Post"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			Method(artisan.GET, "Get"+prefix+"Desc",
+			Method(artisan.GET, "Get"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String),
 				),
@@ -101,19 +101,19 @@ func getProblemIDCate(prefix string) artisan.Category {
 					codeField,
 					artisan.Param("data", problemDescObject),
 				)).
-			Method(artisan.PUT, "Put"+prefix+"Desc",
+			Method(artisan.PUT, "Put"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			SubCate("/template", artisan.Ink().WithName("Desc").
-				Method(artisan.POST, "Change"+prefix+"DescriptionRef",
+			SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
+				Method(artisan.POST, "Change"+prefix+"ProblemDescriptionRef",
 					artisan.Request(
 						artisan.Param("name", artisan.String, required),
 						artisan.Param("new_name", artisan.String, required),
 					)),
 			).
-			Method(artisan.DELETE, "Delete"+prefix+"Desc"),
+			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc"),
 		)
 }
 

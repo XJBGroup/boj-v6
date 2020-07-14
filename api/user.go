@@ -9,18 +9,18 @@ import (
 type ListUsersRequest = gorm_crud_dao.Filter
 
 type ListUsersReply struct {
-	Code int             `form:"code" json:"code"`
-	Data []ListUserReply `form:"data" json:"data"`
+	Code int             `json:"code" form:"code"`
+	Data []ListUserReply `json:"data" form:"data"`
 }
 
 type ListUserReply struct {
 	Id                  uint      `json:"id" form:"id"`
-	Gender              uint8     `form:"gender" json:"gender"`
+	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
-	UserName            string    `form:"user_name" json:"user_name"`
+	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
-	Motto               string    `form:"motto" json:"motto"`
+	Motto               string    `json:"motto" form:"motto"`
 	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
@@ -28,14 +28,14 @@ type ListUserReply struct {
 type CountUsersRequest = gorm_crud_dao.Filter
 
 type CountUserReply struct {
-	Code int   `form:"code" json:"code"`
-	Data []int `form:"data" json:"data"`
+	Code int   `json:"code" form:"code"`
+	Data []int `json:"data" form:"data"`
 }
 
 type RegisterRequest struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
-	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
+	NickName string `binding:"required" json:"nick_name" form:"nick_name"`
 	Gender   uint8  `json:"gender" form:"gender"`
 }
 
@@ -46,17 +46,17 @@ type RegisterReply struct {
 
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
-	UserName string `json:"user_name" form:"user_name"`
-	Email    string `form:"email" json:"email"`
-	Password string `json:"password" form:"password" binding:"required"`
+	UserName string `form:"user_name" json:"user_name"`
+	Email    string `json:"email" form:"email"`
+	Password string `binding:"required" json:"password" form:"password"`
 }
 
 type LoginUserReply struct {
-	Code         int        `json:"code" form:"code"`
+	Code         int        `form:"code" json:"code"`
 	User         *user.User `json:"user" form:"user"`
-	RefreshToken string     `form:"refresh_token" json:"refresh_token"`
+	RefreshToken string     `json:"refresh_token" form:"refresh_token"`
 	Token        string     `json:"token" form:"token"`
-	Identities   []string   `json:"identities" form:"identities"`
+	Identities   []string   `form:"identities" json:"identities"`
 }
 
 type RefreshTokenReply struct {
@@ -66,15 +66,15 @@ type RefreshTokenReply struct {
 
 type InspectUserReply struct {
 	Code int        `json:"code" form:"code"`
-	User *user.User `json:"user" form:"user"`
+	User *user.User `form:"user" json:"user"`
 }
 
 type BindEmailRequest struct {
-	Email string `json:"email" form:"email" binding:"email"`
+	Email string `binding:"email" json:"email" form:"email"`
 }
 
 type GetUserReply struct {
-	Code int        `form:"code" json:"code"`
+	Code int        `json:"code" form:"code"`
 	User *user.User `json:"user" form:"user"`
 }
 

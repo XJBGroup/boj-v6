@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/group"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
@@ -18,6 +19,7 @@ type GroupCategories struct {
 func DescribeGroupService() artisan.ProposingService {
 	var groupModel = new(group.Group)
 	var _groupModel = new(group.Group)
+	var valueUserModel user.User
 
 	svc := &GroupCategories{
 		List: artisan.Ink().
@@ -35,18 +37,22 @@ func DescribeGroupService() artisan.ProposingService {
 				artisan.QT("CountGroupsRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", new(int))),
+					artisan.Param("data", artisan.Int64),
 				),
 			),
 		Post: artisan.Ink().
 			Path("group").
 			Method(artisan.POST, "PostGroup", artisan.AuthMeta("~"),
 				artisan.Request(
-				//artisan.SPsC(&groupModel.Title, &groupModel.Content),
+					artisan.SnakeParam(&groupModel.Name, required),
+					artisan.SnakeParam(&groupModel.Description, required),
+
+					// todo: add owner name convenience
+					artisan.SnakeParam(&groupModel.OwnerID, required),
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("group", &groupModel),
+					artisan.Param("data", &groupModel.ID),
 				),
 			),
 		IdGroup: artisan.Ink().
@@ -60,11 +66,46 @@ func DescribeGroupService() artisan.ProposingService {
 				)).
 			Method(artisan.PUT, "PutGroup",
 				artisan.Request(
-				//artisan.SPsC(&groupModel.Title, &groupModel.Content),
+					artisan.SnakeParam(&groupModel.Name),
+					artisan.SnakeParam(&groupModel.Description),
 				)).
-			Method(artisan.DELETE, "Delete"),
+			Method(artisan.DELETE, "DeleteGroup").
+			SubCate("/owner", artisan.Ink().WithName("Owner").
+				Method(artisan.PUT, "PutGroupOwner",
+					artisan.Request(
+						artisan.SnakeParam(&groupModel.OwnerID, required)),
+				),
+			).
+			SubCate("/user-list", artisan.Ink().WithName("UserList").
+				Method(artisan.GET, "GetGroupMembers",
+					artisan.QT("GroupUserListRequest", mytraits.Filter{}),
+					artisan.Reply(
+						codeField,
+						artisan.ArrayParam(artisan.Param("data",
+							artisan.Object("ListGroupUserReply", artisan.SPsC(
+								&valueUserModel.ID,
+								&valueUserModel.Gender,
+								&valueUserModel.LastLogin,
+								&valueUserModel.UserName,
+								&valueUserModel.NickName,
+								&valueUserModel.Email,
+								&valueUserModel.Motto,
+								&valueUserModel.SolvedProblemsCount,
+								&valueUserModel.TriedProblemsCount,
+							)))),
+					),
+				),
+			).
+			SubCate("user/:id", artisan.Ink().WithName("User").Meta(&Meta{artisan.RouterMeta{
+				RuntimeRouterMeta: "user:id",
+			}}).Method(artisan.POST, "PostGroupMember",
+				artisan.Request(),
+				artisan.Reply(
+					codeField),
+			)),
 	}
 	svc.Name("GroupService").
-		UseModel(artisan.Model(artisan.Name("group"), &groupModel))
+		UseModel(artisan.Model(artisan.Name("group"), &groupModel),
+			artisan.Model(artisan.Name("valueUser"), &valueUserModel))
 	return svc
 }

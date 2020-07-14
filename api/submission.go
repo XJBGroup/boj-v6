@@ -9,11 +9,11 @@ type SubmissionFilter struct {
 	Page         int   `form:"page" json:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
-	TimeOrder    *bool `form:"time_order" json:"time_order"`
+	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
-	OnProblem    uint  `json:"on_problem" form:"on_problem"`
-	WithLanguage uint8 `json:"with_language" form:"with_language"`
+	OnProblem    uint  `form:"on_problem" json:"on_problem"`
+	WithLanguage uint8 `form:"with_language" json:"with_language"`
 	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
 
@@ -30,7 +30,7 @@ type ListSubmissionReply struct {
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `form:"run_memory" json:"run_memory"`
+	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
@@ -38,7 +38,7 @@ type ListSubmissionReply struct {
 
 type CountSubmissionsReply struct {
 	Code int   `json:"code" form:"code"`
-	Data int64 `json:"data" form:"data"`
+	Data int64 `form:"data" json:"data"`
 }
 
 type PostSubmissionRequest struct {
@@ -50,7 +50,7 @@ type PostSubmissionRequest struct {
 
 type PostSubmissionReply struct {
 	Code int  `json:"code" form:"code"`
-	Id   uint `form:"id" json:"id"`
+	Id   uint `json:"id" form:"id"`
 }
 
 type GetSubmissionReply struct {
@@ -62,9 +62,9 @@ type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
-	UserId     uint      `form:"user_id" json:"user_id"`
+	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
-	Status     int64     `json:"status" form:"status"`
+	Status     int64     `form:"status" json:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`

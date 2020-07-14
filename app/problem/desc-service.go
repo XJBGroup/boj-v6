@@ -2,22 +2,22 @@ package problem
 
 import "github.com/Myriad-Dreamin/minimum-lib/controller"
 
-func (svc Service) ChangeDescriptionRef(c controller.MContext) {
+func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	panic("implement me")
 }
 
-func (svc Service) PostDesc(c controller.MContext) {
+func (svc Service) PostProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (svc Service) GetDesc(c controller.MContext) {
+func (svc Service) GetProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (svc Service) PutDesc(c controller.MContext) {
+func (svc Service) PutProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (svc Service) DeleteDesc(c controller.MContext) {
+func (svc Service) DeleteProblemDesc(c controller.MContext) {
 	panic("implement me")
 }

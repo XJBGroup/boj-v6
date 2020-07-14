@@ -1,31 +1,31 @@
 package api
 
 type AddPolicyRequest struct {
-	Subject string `form:"subject" binding:"required" json:"subject"`
-	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `binding:"required" json:"action" form:"action"`
-}
-
-type AddPolicyReply struct {
-	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
-}
-
-type RemovePolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
 	Action  string `json:"action" form:"action" binding:"required"`
 }
 
+type AddPolicyReply struct {
+	Code int  `json:"code" form:"code"`
+	Data bool `form:"data" json:"data"`
+}
+
+type RemovePolicyRequest struct {
+	Subject string `json:"subject" form:"subject" binding:"required"`
+	Object  string `binding:"required" json:"object" form:"object"`
+	Action  string `json:"action" form:"action" binding:"required"`
+}
+
 type RemovePolicyReply struct {
 	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
+	Data bool `form:"data" json:"data"`
 }
 
 type HasPolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `form:"action" binding:"required" json:"action"`
+	Action  string `json:"action" form:"action" binding:"required"`
 }
 
 type HasPolicyReply struct {
@@ -35,22 +35,22 @@ type HasPolicyReply struct {
 
 type AddGroupingPolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
-	Group   string `binding:"required" json:"group" form:"group"`
+	Group   string `json:"group" form:"group" binding:"required"`
 }
 
 type AddGroupingPolicyReply struct {
-	Code int  `form:"code" json:"code"`
+	Code int  `json:"code" form:"code"`
 	Data bool `json:"data" form:"data"`
 }
 
 type RemoveGroupingPolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
-	Group   string `json:"group" form:"group" binding:"required"`
+	Group   string `binding:"required" json:"group" form:"group"`
 }
 
 type RemoveGroupingPolicyReply struct {
-	Code int  `form:"code" json:"code"`
-	Data bool `form:"data" json:"data"`
+	Code int  `json:"code" form:"code"`
+	Data bool `json:"data" form:"data"`
 }
 
 type HasGroupingPolicyRequest struct {

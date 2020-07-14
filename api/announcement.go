@@ -9,14 +9,14 @@ type ListAnnouncementsRequest = gorm_crud_dao.Filter
 
 type ListAnnouncementsReply struct {
 	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `form:"data" json:"data"`
+	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
 type CountAnnouncementsRequest = gorm_crud_dao.Filter
 
 type CountAnnouncementReply struct {
-	Code int   `json:"code" form:"code"`
-	Data int64 `form:"data" json:"data"`
+	Code int   `form:"code" json:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type PostAnnouncementRequest struct {
@@ -30,13 +30,13 @@ type PostAnnouncementReply struct {
 }
 
 type GetAnnouncementReply struct {
-	Code         int                        `json:"code" form:"code"`
-	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
+	Code         int                        `form:"code" json:"code"`
+	Announcement *announcement.Announcement `form:"announcement" json:"announcement"`
 }
 
 type PutAnnouncementRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 func PSerializeListAnnouncementsReply(_code int, _data []announcement.Announcement) *ListAnnouncementsReply {
