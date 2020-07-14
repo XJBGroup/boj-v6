@@ -9,19 +9,19 @@ type ListAnnouncementsRequest = gorm_crud_dao.Filter
 
 type ListAnnouncementsReply struct {
 	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `json:"data" form:"data"`
+	Data []announcement.Announcement `form:"data" json:"data"`
 }
 
 type CountAnnouncementsRequest = gorm_crud_dao.Filter
 
 type CountAnnouncementReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
 type PostAnnouncementRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PostAnnouncementReply struct {
@@ -30,8 +30,8 @@ type PostAnnouncementReply struct {
 }
 
 type GetAnnouncementReply struct {
-	Code         int                        `form:"code" json:"code"`
-	Announcement *announcement.Announcement `form:"announcement" json:"announcement"`
+	Code         int                        `json:"code" form:"code"`
+	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
 }
 
 type PutAnnouncementRequest struct {

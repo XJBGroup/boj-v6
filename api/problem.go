@@ -21,19 +21,19 @@ type CountProblemReply struct {
 }
 
 type PostProblemRequest struct {
-	Title       string                       `json:"title" form:"title" binding:"required"`
+	Title       string                       `binding:"required" json:"title" form:"title"`
 	Description string                       `json:"description" form:"description"`
 	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
 
 type PostProblemReply struct {
 	Code int  `json:"code" form:"code"`
-	Id   uint `json:"id" form:"id"`
+	Id   uint `form:"id" json:"id"`
 }
 
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
-	NewName string `json:"new_name" form:"new_name" binding:"required"`
+	Name    string `binding:"required" json:"name" form:"name"`
+	NewName string `binding:"required" json:"new_name" form:"new_name"`
 }
 
 type PostProblemDescRequest struct {
@@ -56,8 +56,8 @@ type ProblemDesc struct {
 }
 
 type PutProblemDescRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
-	Content string `form:"content" json:"content"`
+	Name    string `json:"name" form:"name" binding:"required"`
+	Content string `json:"content" form:"content"`
 }
 
 type GetProblemReply struct {
@@ -67,7 +67,7 @@ type GetProblemReply struct {
 
 type PutProblemRequest struct {
 	Title          string `json:"title" form:"title"`
-	Description    string `json:"description" form:"description"`
+	Description    string `form:"description" json:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 

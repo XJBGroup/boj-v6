@@ -2,46 +2,46 @@ package contest
 
 import "github.com/Myriad-Dreamin/minimum-lib/controller"
 
-func (s Service) ChangeContestProblemDescriptionRef(c controller.MContext) {
+func (svc Service) ChangeContestProblemDescriptionRef(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) PostContestProblemDesc(c controller.MContext) {
+func (svc Service) PostContestProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) GetContestProblemDesc(c controller.MContext) {
+func (svc Service) GetContestProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) PutContestProblemDesc(c controller.MContext) {
+func (svc Service) PutContestProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) DeleteContestProblemDesc(c controller.MContext) {
+func (svc Service) DeleteContestProblemDesc(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) GetContestProblem(c controller.MContext) {
+func (svc Service) GetContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) PutContestProblem(c controller.MContext) {
+func (svc Service) PutContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) DeleteContestProblem(c controller.MContext) {
+func (svc Service) DeleteContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) ListContestProblems(c controller.MContext) {
+func (svc Service) ListContestProblems(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) CountContestProblem(c controller.MContext) {
+func (svc Service) CountContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 
-func (s Service) PostContestProblem(c controller.MContext) {
+func (svc Service) PostContestProblem(c controller.MContext) {
 	panic("implement me")
 }

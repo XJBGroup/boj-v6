@@ -5,6 +5,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/types/problem-config"
 	"github.com/Myriad-Dreamin/go-model-traits/gorm-crud-dao"
+	"time"
 )
 
 type ListContestsRequest = gorm_crud_dao.Filter
@@ -22,6 +23,11 @@ type CountContestReply struct {
 }
 
 type PostContestRequest struct {
+	Title               string        `json:"title" form:"title" binding:"required"`
+	Description         string        `json:"description" form:"description" binding:"required"`
+	StartAt             *time.Time    `json:"start_at" form:"start_at" binding:"required"`
+	EndDuration         time.Duration `json:"end_duration" form:"end_duration" binding:"required"`
+	BoardFrozenDuration time.Duration `json:"board_frozen_duration" form:"board_frozen_duration" binding:"required"`
 }
 
 type PostContestReply struct {
@@ -29,29 +35,43 @@ type PostContestReply struct {
 	Contest *contest.Contest `json:"contest" form:"contest"`
 }
 
+type ListContestProblemsRequest = gorm_crud_dao.Filter
+
+type ListContestProblemsReply struct {
+	Code int               `json:"code" form:"code"`
+	Data []problem.Problem `json:"data" form:"data"`
+}
+
+type CountContestProblemsRequest = gorm_crud_dao.Filter
+
+type CountContestProblemReply struct {
+	Code int   `json:"code" form:"code"`
+	Data []int `json:"data" form:"data"`
+}
+
 type PostContestProblemRequest struct {
 	Title       string                       `json:"title" form:"title" binding:"required"`
 	Description string                       `json:"description" form:"description"`
-	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
+	Config      *problemconfig.ProblemConfig `form:"config" json:"config"`
 }
 
 type PostContestProblemReply struct {
-	Code int  `json:"code" form:"code"`
-	Id   uint `json:"id" form:"id"`
+	Code int  `form:"code" json:"code"`
+	Id   uint `form:"id" json:"id"`
 }
 
 type ChangeContestProblemDescriptionRefRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
-	NewName string `form:"new_name" binding:"required" json:"new_name"`
+	Name    string `json:"name" form:"name" binding:"required"`
+	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostContestProblemDescRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
+	Name    string `binding:"required" json:"name" form:"name"`
 	Content string `json:"content" form:"content"`
 }
 
 type GetContestProblemDescRequest struct {
-	Name string `json:"name" form:"name"`
+	Name string `form:"name" json:"name"`
 }
 
 type GetContestProblemDescReply struct {
@@ -77,29 +97,22 @@ type GetContestProblemReply struct {
 type PutContestProblemRequest struct {
 	Title          string `json:"title" form:"title"`
 	Description    string `json:"description" form:"description"`
-	DescriptionRef string `json:"description_ref" form:"description_ref"`
-}
-
-type ListContestProblemsRequest = gorm_crud_dao.Filter
-
-type ListContestProblemsReply struct {
-	Code int               `json:"code" form:"code"`
-	Data []problem.Problem `json:"data" form:"data"`
-}
-
-type CountContestProblemsRequest = gorm_crud_dao.Filter
-
-type CountContestProblemReply struct {
-	Code int   `json:"code" form:"code"`
-	Data []int `json:"data" form:"data"`
+	DescriptionRef string `form:"description_ref" json:"description_ref"`
 }
 
 type GetContestReply struct {
 	Code    int              `json:"code" form:"code"`
-	Contest *contest.Contest `json:"contest" form:"contest"`
+	Contest *contest.Contest `form:"contest" json:"contest"`
 }
 
 type PutContestRequest struct {
+	Title               string        `json:"title" form:"title"`
+	Description         string        `json:"description" form:"description"`
+	StartAt             *time.Time    `form:"start_at" json:"start_at"`
+	EndDuration         time.Duration `json:"end_duration" form:"end_duration"`
+	BoardFrozenDuration time.Duration `form:"board_frozen_duration" json:"board_frozen_duration"`
+	ConfigPath          string        `json:"config_path" form:"config_path"`
+	RolePath            string        `json:"role_path" form:"role_path"`
 }
 
 func PSerializeListContestsReply(_code int, _data []contest.Contest) *ListContestsReply {
@@ -156,19 +169,40 @@ func PackSerializeCountContestReply(_code []int, _data [][]int) (pack []CountCon
 	}
 	return
 }
-func PSerializePostContestRequest() *PostContestRequest {
+func PSerializePostContestRequest(contest *contest.Contest) *PostContestRequest {
 
-	return &PostContestRequest{}
+	return &PostContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+	}
 }
-func SerializePostContestRequest() PostContestRequest {
+func SerializePostContestRequest(contest *contest.Contest) PostContestRequest {
 
-	return PostContestRequest{}
+	return PostContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+	}
 }
-func _packSerializePostContestRequest() PostContestRequest {
+func _packSerializePostContestRequest(contest *contest.Contest) PostContestRequest {
 
-	return PostContestRequest{}
+	return PostContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+	}
 }
-func PackSerializePostContestRequest() (pack []PostContestRequest) {
+func PackSerializePostContestRequest(contest []*contest.Contest) (pack []PostContestRequest) {
+	for i := range contest {
+		pack = append(pack, _packSerializePostContestRequest(contest[i]))
+	}
 	return
 }
 func PSerializePostContestReply(_code int, _contest *contest.Contest) *PostContestReply {
@@ -195,6 +229,60 @@ func _packSerializePostContestReply(_code int, _contest *contest.Contest) PostCo
 func PackSerializePostContestReply(_code []int, _contest []*contest.Contest) (pack []PostContestReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializePostContestReply(_code[i], _contest[i]))
+	}
+	return
+}
+func PSerializeListContestProblemsReply(_code int, _data []problem.Problem) *ListContestProblemsReply {
+
+	return &ListContestProblemsReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeListContestProblemsReply(_code int, _data []problem.Problem) ListContestProblemsReply {
+
+	return ListContestProblemsReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeListContestProblemsReply(_code int, _data []problem.Problem) ListContestProblemsReply {
+
+	return ListContestProblemsReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeListContestProblemsReply(_code []int, _data [][]problem.Problem) (pack []ListContestProblemsReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeListContestProblemsReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeCountContestProblemReply(_code int, _data []int) *CountContestProblemReply {
+
+	return &CountContestProblemReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeCountContestProblemReply(_code int, _data []int) CountContestProblemReply {
+
+	return CountContestProblemReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeCountContestProblemReply(_code int, _data []int) CountContestProblemReply {
+
+	return CountContestProblemReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeCountContestProblemReply(_code []int, _data [][]int) (pack []CountContestProblemReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeCountContestProblemReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -471,60 +559,6 @@ func PackSerializePutContestProblemRequest(problem []*problem.Problem) (pack []P
 	}
 	return
 }
-func PSerializeListContestProblemsReply(_code int, _data []problem.Problem) *ListContestProblemsReply {
-
-	return &ListContestProblemsReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeListContestProblemsReply(_code int, _data []problem.Problem) ListContestProblemsReply {
-
-	return ListContestProblemsReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeListContestProblemsReply(_code int, _data []problem.Problem) ListContestProblemsReply {
-
-	return ListContestProblemsReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeListContestProblemsReply(_code []int, _data [][]problem.Problem) (pack []ListContestProblemsReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeListContestProblemsReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeCountContestProblemReply(_code int, _data []int) *CountContestProblemReply {
-
-	return &CountContestProblemReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeCountContestProblemReply(_code int, _data []int) CountContestProblemReply {
-
-	return CountContestProblemReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeCountContestProblemReply(_code int, _data []int) CountContestProblemReply {
-
-	return CountContestProblemReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeCountContestProblemReply(_code []int, _data [][]int) (pack []CountContestProblemReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeCountContestProblemReply(_code[i], _data[i]))
-	}
-	return
-}
 func PSerializeGetContestReply(_code int, _contest *contest.Contest) *GetContestReply {
 
 	return &GetContestReply{
@@ -552,18 +586,45 @@ func PackSerializeGetContestReply(_code []int, _contest []*contest.Contest) (pac
 	}
 	return
 }
-func PSerializePutContestRequest() *PutContestRequest {
+func PSerializePutContestRequest(contest *contest.Contest) *PutContestRequest {
 
-	return &PutContestRequest{}
+	return &PutContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+		ConfigPath:          contest.ConfigPath,
+		RolePath:            contest.RolePath,
+	}
 }
-func SerializePutContestRequest() PutContestRequest {
+func SerializePutContestRequest(contest *contest.Contest) PutContestRequest {
 
-	return PutContestRequest{}
+	return PutContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+		ConfigPath:          contest.ConfigPath,
+		RolePath:            contest.RolePath,
+	}
 }
-func _packSerializePutContestRequest() PutContestRequest {
+func _packSerializePutContestRequest(contest *contest.Contest) PutContestRequest {
 
-	return PutContestRequest{}
+	return PutContestRequest{
+		Title:               contest.Title,
+		Description:         contest.Description,
+		StartAt:             contest.StartAt,
+		EndDuration:         contest.EndDuration,
+		BoardFrozenDuration: contest.BoardFrozenDuration,
+		ConfigPath:          contest.ConfigPath,
+		RolePath:            contest.RolePath,
+	}
 }
-func PackSerializePutContestRequest() (pack []PutContestRequest) {
+func PackSerializePutContestRequest(contest []*contest.Contest) (pack []PutContestRequest) {
+	for i := range contest {
+		pack = append(pack, _packSerializePutContestRequest(contest[i]))
+	}
 	return
 }

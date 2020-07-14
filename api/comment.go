@@ -7,7 +7,7 @@ import (
 type ListCommentsRequest = comment.Filter
 
 type ListCommentsReply struct {
-	Code int               `form:"code" json:"code"`
+	Code int               `json:"code" form:"code"`
 	Data []comment.Comment `json:"data" form:"data"`
 }
 
@@ -34,7 +34,7 @@ type GetCommentReply struct {
 }
 
 type PutCommentRequest struct {
-	Title   string `form:"title" json:"title"`
+	Title   string `json:"title" form:"title"`
 	Content string `json:"content" form:"content"`
 }
 

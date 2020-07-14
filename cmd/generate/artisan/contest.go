@@ -42,7 +42,11 @@ func DescribeContestService() artisan.ProposingService {
 			Path("contest").
 			Method(artisan.POST, "PostContest", artisan.AuthMeta("~"),
 				artisan.Request(
-				//artisan.SPsC(&contestModel.Title, &contestModel.Content),
+					artisan.SnakeParam(&contestModel.Title, required),
+					artisan.SnakeParam(&contestModel.Description, required),
+					artisan.SnakeParam(&contestModel.StartAt, required),
+					artisan.SnakeParam(&contestModel.EndDuration, required),
+					artisan.SnakeParam(&contestModel.BoardFrozenDuration, required),
 				),
 				artisan.Reply(
 					codeField,
@@ -60,8 +64,15 @@ func DescribeContestService() artisan.ProposingService {
 				)).
 			Method(artisan.PUT, "PutContest",
 				artisan.Request(
-				//artisan.SPsC(&contestModel.Title, &contestModel.Content),
-				)).
+					artisan.SnakeParam(&contestModel.Title),
+					artisan.SnakeParam(&contestModel.Description),
+					artisan.SnakeParam(&contestModel.StartAt),
+					artisan.SnakeParam(&contestModel.EndDuration),
+					artisan.SnakeParam(&contestModel.BoardFrozenDuration),
+					artisan.SnakeParam(&contestModel.ConfigPath),
+					artisan.SnakeParam(&contestModel.RolePath),
+				),
+			).
 			Method(artisan.DELETE, "Delete"),
 	}
 
