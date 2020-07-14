@@ -47,6 +47,7 @@ func main() {
 	objectTemplate("announcement", "app/user/db_generated.go", "app/announcement/db_generated.go")
 	objectTemplate("submission", "app/user/db_generated.go", "app/submission/db_generated.go")
 	objectTemplate("problem", "app/user/db_generated.go", "app/problem/db_generated.go")
+	objectTemplate("comment", "app/user/db_generated.go", "app/comment/db_generated.go")
 	objectTemplate("contest", "app/user/db_generated.go", "app/contest/db_generated.go")
 	objectTemplate("group", "app/user/db_generated.go", "app/group/db_generated.go")
 }

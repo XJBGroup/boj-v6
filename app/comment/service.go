@@ -1,12 +1,12 @@
 package comment
 
 import (
-	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
@@ -19,28 +19,8 @@ type Service struct {
 	key    string
 }
 
-func (srv *Service) CommentServiceSignatureXXX() interface{} {
-	panic("implement me")
-}
-
-func (srv *Service) ListComments(c controller.MContext) {
-	panic("implement me")
-}
-
-func (srv *Service) CountComment(c controller.MContext) {
-	panic("implement me")
-}
-
-func (srv *Service) PostComment(c controller.MContext) {
-	panic("implement me")
-}
-
-func (srv *Service) GetComment(c controller.MContext) {
-	panic("implement me")
-}
-
-func (srv *Service) PutComment(c controller.MContext) {
-	panic("implement me")
+func (svc *Service) CommentServiceSignatureXXX() interface{} {
+	return svc
 }
 
 func NewService(m module.Module) (*Service, error) {
@@ -49,158 +29,128 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (srv *Service) Post(c controller.MContext) {
+func (svc *Service) ListComments(c controller.MContext) {
+	var req = new(api.ListCommentsRequest)
+	if !snippet.BindRequest(c, req) {
+		return
+	}
+
+	ss, err := svc.db.Filter(req)
+	if snippet.MaybeSelectError(c, ss, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.SerializeListCommentsReply(types.CodeOK, ss))
+	// api.PackSerializeListCommentReply(ss)))
+
+	return
+}
+
+func (svc *Service) CountComment(c controller.MContext) {
+	var req = new(api.CountCommentsRequest)
+	if !snippet.BindRequest(c, req) {
+		return
+	}
+
+	count, err := svc.db.FilterCount(req)
+	if snippet.MaybeCountError(c, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.CountCommentReply{
+		Code: types.CodeOK,
+		Data: count,
+	})
+}
+
+func (svc *Service) PostComment(c controller.MContext) {
 	var req = new(api.PostCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
 	}
 
-	//var obj = new(announcement.Announcement)
-	//obj.Title = req.Title
-	//obj.Content = req.Content
-	//
-	//cc := snippet.GetCustomFields(c)
-	//obj.Author = cc.UID
-	//obj.LastUpdateUser = cc.UID
-	//
-	//a, e := srv.db.Create(obj)
-	//if snippet.CreateObj(c, a, e) {
-	//	c.JSON(http.StatusOK, &api.AnnouncementPostReply{
-	//		Code:         types.CodeOK,
-	//		Announcement: obj,
-	//	})
-	//}
+	var obj = new(comment.Comment)
+	obj.Title = req.Title
+	obj.Content = req.Content
+
+	cc := snippet.GetCustomFields(c)
+	obj.AuthorID = cc.UID
+	obj.LastUpdateUserID = cc.UID
+
+	a, e := svc.db.Create(obj)
+	if snippet.CreateObj(c, a, e) {
+		c.JSON(http.StatusOK, api.SerializePostCommentReply(types.CodeOK, obj))
+	}
 }
 
-/**
-GetAnnouncement v1/announcement/:anid GET
-requiring nothing, so anyone is ok.
+func (svc *Service) GetComment(c controller.MContext) {
+	id, ok := snippet.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+	obj, err := svc.db.ID(id)
+	if snippet.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
+		return
+	}
 
-params:
-- `id` uint: the number on placeholder :anid, represent one announcement in
-the database
-
-
-returns:
-- `code` int: the operation results
-	- types.CodeBindError(1): wrong input, description will be
-	attached to the segment of `error`
-	- types.CodeInvalidParameters(3): wrong input, description will be
-	attached to the segment of `error`. this error might be caused by
-	negative id.
-	- types.CodeNotFound(102): select error, description will be
-	attached to the segment of `error`. this error might be caused by
-	the operating contest is not found in database
-- `error` string: options description of bad code
-- `announcement` GetAnnouncementReply: the selected comment
-- `GetAnnouncementReply.id` uint: the announcement's id
-- `GetAnnouncementReply.created_at` time.Time: when the announcement is created
-- `GetAnnouncementReply.updated_at` time.Time: when the announcement data is last updated
-- `GetAnnouncementReply.title` string: the announcement's title
-- `GetAnnouncementReply.content` string: the announcement's content
-- `GetAnnouncementReply.author` Comment: the announcement's author
-- `GetAnnouncementReply.last_update_comment` Comment: the last comment edited this announcement
-- `GetAnnouncementReply.is_sticked` Comment: if the announcement is sticked
-- `Comment.id` uint: the announcement's comment's id
-- `Comment.comment_name` string: the announcement's comment's comment name
-- `Comment.nick_name` string: the announcement's comment's nick name
-- `Comment.email` string: the announcement's comment's email
-
-Internal Error:
-- types.CodeSelectError(101): query error, description will be
-attached to the segment of `error`
-*/
-func (srv *Service) Get(c controller.MContext) {
-	//id, ok := snippet.ParseUint(c, "anid")
-	//if !ok {
-	//	return
-	//}
-	//obj, err := srv.db.ID(id)
-	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "announcement") {
-	//	return
-	//}
-	//
-	//author, err := srv.commentDB.ID(obj.Author)
+	//author, err := svc.commentDB.ID(obj.Author)
 	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "author") {
 	//	return
 	//}
 	//
-	//luu, err := srv.commentDB.ID(obj.LastUpdateUser)
+	//luu, err := svc.commentDB.ID(obj.LastUpdateUser)
 	//if snippet.MaybeSelectErrorWithTip(c, obj, err, "last update comment") {
 	//	return
 	//}
-	//
-	//c.JSON(http.StatusOK, api.AnnouncementToGetReply(obj, author, luu))
+
+	c.JSON(http.StatusOK, api.SerializeGetCommentReply(types.CodeOK, obj)) // api.AnnouncementToGetReply(obj, author, luu))
 }
 
-func (srv *Service) Put(c controller.MContext) {
-	//var req = new(api.AnnouncementPutRequest)
-	//id, ok := snippet.ParseUintAndBind(c, srv.key, req)
-	//if !ok {
-	//	return
-	//}
-	//
-	//obj, err := srv.db.ID(id)
-	//if snippet.MaybeSelectError(c, obj, err) {
-	//	return
-	//}
-	//
-	//cc := snippet.GetCustomFields(c)
-	//obj.LastUpdateUser = cc.UID
-	//
-	//_, err = srv.db.UpdateFields(obj, srv.FillPutFields(obj, req))
-	//if snippet.UpdateFields(c, err) {
-	//	c.JSON(http.StatusOK, &snippet.ResponseOK)
-	//}
-}
-
-/**
-DeleteAnnouncement v1/announcement/:anid DELETE
-requiring the aiming announcement's write privilege
-
-params:
-- `id` uint: the number on placeholder :anid, represent one announcement in
-the database
-
-returns:
-- `code` int: the operation results
-	- types.CodeBindError(1): wrong input, description will be
-	attached to the segment of `error`
-	- types.CodeInvalidParameters(3): wrong input, description will be
-	attached to the segment of `error`. this error might be caused by
-	non positive page number or page size.
-	- types.CodeNotFound(102): query error, nothing was selected
-	- types.CodeDeleteNoEffect(103): delete has no effect
-- `error` string: options description of bad code
-
-Internal Error:
-- types.CodeDeleteError(106): delete error, description will be
-attached to the segment of `error`
-*/
-func (srv *Service) Delete(c controller.MContext) {
+func (svc *Service) Delete(c controller.MContext) {
 	obj := new(comment.Comment)
 	var ok bool
-	obj.ID, ok = snippet.ParseUint(c, srv.key)
+	obj.ID, ok = snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
 	}
 
-	a, e := srv.db.Delete(obj)
+	a, e := svc.db.Delete(obj)
 	if snippet.DeleteObj(c, a, e) {
 		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
 
-func (srv *Service) FillPutFields(obj *announcement.Announcement, req *api.PutUserRequest) (fields []string) {
-	//if len(req.Title) != 0 {
-	//	obj.Title = req.Title
-	//	fields = append(fields, "title")
-	//}
-	//
-	//if len(req.Content) != 0 {
-	//	obj.Content = req.Content
-	//	fields = append(fields, "content")
-	//}
+func (svc *Service) PutComment(c controller.MContext) {
+	var req = new(api.PutCommentRequest)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
+	if !ok {
+		return
+	}
+
+	obj, err := svc.db.ID(id)
+	if snippet.MaybeSelectError(c, obj, err) {
+		return
+	}
+
+	cc := snippet.GetCustomFields(c)
+	obj.LastUpdateUserID = cc.UID
+
+	_, err = svc.db.UpdateFields(obj, svc.FillPutFields(obj, req))
+	if snippet.UpdateFields(c, err) {
+		c.JSON(http.StatusOK, &snippet.ResponseOK)
+	}
+}
+
+func (svc *Service) FillPutFields(obj *comment.Comment, req *api.PutCommentRequest) (fields []string) {
+	if len(req.Title) != 0 {
+		obj.Title = req.Title
+		fields = append(fields, "title")
+	}
+
+	if len(req.Content) != 0 {
+		obj.Content = req.Content
+		fields = append(fields, "content")
+	}
 
 	return
 }

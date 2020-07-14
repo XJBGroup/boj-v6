@@ -15,9 +15,9 @@ type Comment struct {
 	Title         string     `gorm:"column:title;default:'Untitled';not null"`
 	Content       string     `gorm:"column:content;not null"`
 	//Author           User   `gorm:"ForeignKey:AuthorID;AssociationForeignKey:ID"` // one to many created_comments
-	AuthorID int64 `gorm:"column:author_id" json:"author_id;not null"` // author_id
+	AuthorID uint `gorm:"column:author_id" json:"author_id;not null"` // author_id
 	//LastUpdateUser   User   `gorm:"ForeignKey:LastUpdateUserID;AssociationForeignKey:ID"`
-	LastUpdateUserID int64  `gorm:"column:last_update_user_id;not null" json:"last_update_id"` // last_update_user_id
+	LastUpdateUserID uint   `gorm:"column:last_update_user_id;not null" json:"last_update_id"` // last_update_user_id
 	IsSticky         bool   `gorm:"column:is_sticky;default:false;not null"`
 	IP               string `gorm:"ip"`
 }

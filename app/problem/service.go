@@ -56,7 +56,7 @@ func (svc Service) ListProblems(c controller.MContext) {
 
 func (svc Service) CountProblem(c controller.MContext) {
 	cnt, err := svc.db.Count()
-	if snippet.MaybeSelectError(c, &cnt, err) {
+	if snippet.MaybeCountError(c, err) {
 		return
 	}
 

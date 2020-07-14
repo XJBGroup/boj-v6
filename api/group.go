@@ -29,7 +29,7 @@ type PostGroupReply struct {
 
 type GetGroupReply struct {
 	Code  int          `json:"code" form:"code"`
-	Group *group.Group `form:"group" json:"group"`
+	Group *group.Group `json:"group" form:"group"`
 }
 
 type PutGroupRequest struct {

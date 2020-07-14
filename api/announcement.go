@@ -9,14 +9,14 @@ type ListAnnouncementsRequest = gorm_crud_dao.Filter
 
 type ListAnnouncementsReply struct {
 	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `json:"data" form:"data"`
+	Data []announcement.Announcement `form:"data" json:"data"`
 }
 
 type CountAnnouncementsRequest = gorm_crud_dao.Filter
 
 type CountAnnouncementReply struct {
 	Code int   `json:"code" form:"code"`
-	Data []int `form:"data" json:"data"`
+	Data int64 `form:"data" json:"data"`
 }
 
 type PostAnnouncementRequest struct {
@@ -31,12 +31,12 @@ type PostAnnouncementReply struct {
 
 type GetAnnouncementReply struct {
 	Code         int                        `json:"code" form:"code"`
-	Announcement *announcement.Announcement `form:"announcement" json:"announcement"`
+	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
 }
 
 type PutAnnouncementRequest struct {
-	Title   string `form:"title" json:"title"`
-	Content string `json:"content" form:"content"`
+	Title   string `json:"title" form:"title"`
+	Content string `form:"content" json:"content"`
 }
 
 func PSerializeListAnnouncementsReply(_code int, _data []announcement.Announcement) *ListAnnouncementsReply {
@@ -66,28 +66,28 @@ func PackSerializeListAnnouncementsReply(_code []int, _data [][]announcement.Ann
 	}
 	return
 }
-func PSerializeCountAnnouncementReply(_code int, _data []int) *CountAnnouncementReply {
+func PSerializeCountAnnouncementReply(_code int, _data int64) *CountAnnouncementReply {
 
 	return &CountAnnouncementReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeCountAnnouncementReply(_code int, _data []int) CountAnnouncementReply {
+func SerializeCountAnnouncementReply(_code int, _data int64) CountAnnouncementReply {
 
 	return CountAnnouncementReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeCountAnnouncementReply(_code int, _data []int) CountAnnouncementReply {
+func _packSerializeCountAnnouncementReply(_code int, _data int64) CountAnnouncementReply {
 
 	return CountAnnouncementReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeCountAnnouncementReply(_code []int, _data [][]int) (pack []CountAnnouncementReply) {
+func PackSerializeCountAnnouncementReply(_code []int, _data []int64) (pack []CountAnnouncementReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeCountAnnouncementReply(_code[i], _data[i]))
 	}

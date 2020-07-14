@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
-	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
 type CommentCategories struct {
@@ -15,6 +14,15 @@ type CommentCategories struct {
 	IdGroup    artisan.Category
 }
 
+//
+//type Filter struct {
+//	Page         int
+//	PageSize     int
+//	RefType uint8
+//	Ref uint
+//	NoReply bool
+//}
+
 func DescribeCommentService() artisan.ProposingService {
 	var commentModel = new(comment.Comment)
 	var _commentModel = new(comment.Comment)
@@ -23,7 +31,7 @@ func DescribeCommentService() artisan.ProposingService {
 		List: artisan.Ink().
 			Path("comment-list").
 			Method(artisan.GET, "ListComments",
-				artisan.QT("ListCommentsRequest", mytraits.Filter{}),
+				artisan.QT("ListCommentsRequest", comment.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", _commentModel)),
@@ -32,10 +40,10 @@ func DescribeCommentService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("comment-count").
 			Method(artisan.GET, "CountComment",
-				artisan.QT("CountCommentsRequest", mytraits.Filter{}),
+				artisan.QT("CountCommentsRequest", comment.Filter{}),
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", new(int))),
+					artisan.Param("data", artisan.Int64),
 				),
 			),
 		Post: artisan.Ink().
@@ -56,7 +64,7 @@ func DescribeCommentService() artisan.ProposingService {
 			Method(artisan.GET, "GetComment",
 				artisan.Reply(
 					codeField,
-					artisan.Param("comment", &commentModel),
+					artisan.Param("data", &commentModel),
 				)).
 			Method(artisan.PUT, "PutComment",
 				artisan.Request(

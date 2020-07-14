@@ -1,81 +1,28 @@
 package comment
 
 import (
-	"errors"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
-	"github.com/Myriad-Dreamin/boj-v6/config"
-	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/jinzhu/gorm"
 )
 
-func NewDB(m module.Module) (*DBImpl, error) {
-	return &DBImpl{
-		GORMDBImpl{
-			m.Require(config.ModulePath.DBInstance.GormDB).(*gorm.DB)},
-	}, nil
-}
+func (db *DBImpl) ApplyFilter(f *comment.Filter) *gorm.DB {
+	engine := db.Page(f.Page, f.PageSize)
 
-type GORMDBImpl struct {
-	*gorm.DB
-}
-
-var DBErrorNotFound = errors.New("db error not found")
-
-func (db GORMDBImpl) ID(id uint, obj interface{}) (err error) {
-	rdb := db.First(obj, id)
-	err = rdb.Error
-	if err == nil && rdb.RecordNotFound() {
-		return DBErrorNotFound
+	if f.Ref != 0 {
+		engine = engine.Where("ref_t = ? and ref = ?", f.RefType, f.Ref)
 	}
-	return
-}
 
-func (db GORMDBImpl) Create(obj *comment.Comment) (int64, error) {
-	rdb := db.DB.Create(obj)
-	return rdb.RowsAffected, rdb.Error
-}
-
-func (db GORMDBImpl) Update(obj *comment.Comment) (int64, error) {
-	rdb := db.DB.Update(obj)
-	return rdb.RowsAffected, rdb.Error
-}
-
-func (db GORMDBImpl) Delete(obj *comment.Comment) (int64, error) {
-	rdb := db.DB.Delete(obj)
-	return rdb.RowsAffected, rdb.Error
-}
-
-type DBImpl struct {
-	GORMDBImpl
-}
-
-func (db DBImpl) UpdateFields(obj *comment.Comment, fields []string) (int64, error) {
-	rdb := db.Model(obj)
-	for _, field := range fields {
-		rdb = rdb.Select(field)
+	if f.NoReply {
+		engine = engine.Where("rid = 0")
 	}
-	rdb = rdb.Updates(obj)
-	return rdb.RowsAffected, rdb.Error
+
+	return engine
 }
 
-func (db DBImpl) ID(id uint) (ann *comment.Comment, err error) {
-	ann = new(comment.Comment)
-	err = db.GORMDBImpl.ID(id, ann)
-	if err == DBErrorNotFound {
-		ann = nil
-		err = nil
-	}
-	return
+func (db *DBImpl) Filter(f *comment.Filter) (comments []comment.Comment, _ error) {
+	return comments, db.ApplyFilter(f).Find(&comments).Error
 }
 
-func (db DBImpl) Create(obj *comment.Comment) (int64, error) {
-	return db.GORMDBImpl.Create(obj)
-}
-
-func (db DBImpl) Update(obj *comment.Comment) (int64, error) {
-	return db.GORMDBImpl.Update(obj)
-}
-
-func (db DBImpl) Delete(obj *comment.Comment) (int64, error) {
-	return db.GORMDBImpl.Delete(obj)
+func (db *DBImpl) FilterCount(f *comment.Filter) (cnt int64, _ error) {
+	return cnt, db.ApplyFilter(f).Count(&cnt).Error
 }

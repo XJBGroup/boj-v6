@@ -136,7 +136,7 @@ func (svc Service) CountSubmissions(c controller.MContext) {
 	}
 
 	cnt, err := svc.db.FilterCount(f)
-	if snippet.MaybeSelectError(c, &cnt, err) {
+	if snippet.MaybeCountError(c, err) {
 		return
 	}
 

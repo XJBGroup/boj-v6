@@ -11,7 +11,6 @@ import (
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
-	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -55,9 +54,9 @@ func (svc *Service) CountAnnouncement(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code":  types.CodeOK,
-		"count": count,
+	c.JSON(http.StatusOK, api.CountAnnouncementReply{
+		Code: types.CodeOK,
+		Data: count,
 	})
 }
 

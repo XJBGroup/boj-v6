@@ -35,7 +35,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 				artisan.QT("CountAnnouncementsRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", new(int))),
+					artisan.Param("data", artisan.Int64),
 				),
 			),
 		Post: artisan.Ink().
