@@ -295,11 +295,14 @@ func (body emptyBody) Read(p []byte) (n int, err error) {
 
 var _emptyBody = emptyBody{}
 
+type Header map[string]string
+
 func (mocker *Mocker) Method(method, path string, params ...interface{}) mock.ResponseI {
 	var (
 		body        io.Reader = _emptyBody
 		contentType string
 		serveParams []interface{}
+		header      map[string]string
 		r           *http.Request
 	)
 	for i := range params {
@@ -324,6 +327,8 @@ func (mocker *Mocker) Method(method, path string, params ...interface{}) mock.Re
 			r = &p
 		case mock.Comment, mock.AbortRecord:
 			serveParams = append(serveParams, p)
+		case Header:
+			header = p
 		default:
 			buf := bytes.NewBuffer(nil)
 			body = buf
@@ -343,6 +348,11 @@ func (mocker *Mocker) Method(method, path string, params ...interface{}) mock.Re
 		r.Header.Set("Content-Type", contentType)
 		for k, v := range mocker.header {
 			r.Header.Set(k, v)
+		}
+		if header != nil {
+			for k, v := range header {
+				r.Header.Set(k, v)
+			}
 		}
 	}
 	return mocker.mockServe(r, serveParams...)

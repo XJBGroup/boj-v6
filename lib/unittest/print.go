@@ -1,4 +1,4 @@
-package assertion
+package unittest
 
 import (
 	"fmt"
@@ -116,10 +116,6 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 			sugar.HandlerError(w.Write([]byte{'\n'}))
 		}
 		debugPrint(w, usingNode(v.Using), path, level+1)
-		if v.UsingForce != nil {
-			sugar.HandlerError(w.Write([]byte{'\n'}))
-		}
-		debugPrint(w, usingForceNode(v.UsingForce), path, level+1)
 		if v.Meta != nil {
 			sugar.HandlerError(w.Write([]byte{'\n'}))
 		}

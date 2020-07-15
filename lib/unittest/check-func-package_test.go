@@ -1,4 +1,4 @@
-package assertion
+package unittest
 
 import (
 	"reflect"

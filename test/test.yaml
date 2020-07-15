@@ -1,0 +1,43 @@
+version: V1
+selector:
+  - name: json-selector
+    case:
+      header:
+        Content-Type: /^application\/json/ # 正则
+default:
+  # 选择器入参只能是 (string...)
+  #  $(suit[=(method, GET), <(meta.json-selector), my_selector_method(GET)]).encoding: json # 选择器
+  - $(.[!=(method, GET)]).encoding: json # 选择器
+  # 分层赋初值
+  - encoding: query-string
+package: # 包声明
+  - namespace: std
+    path: std-assert
+  - namespace: json
+    path: json-assert
+tests:
+  - name: ~suit
+    using:
+      $: json
+    cases:
+      - name: ~default
+      - name: ~success.default
+        assertion:
+          - - Assert
+            - code # arg1
+            - 0 # arg2
+      - name: ~failed.default
+        assertion:
+          - - AssertNEQ
+            - code # arg1
+            - 0 # arg2
+      - name: ~post-announcement
+        method: POST
+        uri: /v1/announcement
+        cases:
+          - name: ~success<post-announcement, success.suit>
+          - name: ~failed<post-announcement,failed.suit>
+          - name: case1.success
+            data:
+              title: t1
+              content: c1

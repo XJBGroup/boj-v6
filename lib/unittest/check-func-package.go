@@ -1,17 +1,20 @@
-package assertion
+package unittest
 
 import (
 	"fmt"
+	"math"
+	"strconv"
 	"strings"
 )
 
-type CheckFunc = func(Request, ...string) (string, error)
+type CheckFunc = func(*Request, ...string) (bool, error)
 type Package = map[string]CheckFunc
 type LinkedContext interface {
 	Last() LinkedContext
 	Name() string
 	Get(s string) LinkedContext
 	GetFunc(s string) CheckFunc
+	GetFunctions(func(s string, f CheckFunc) error) error
 	SetName(s string)
 	SetLast(LinkedContext)
 	Insert(k string, ctx LinkedContext)
@@ -25,8 +28,8 @@ type linkedContext struct {
 	fns  Package
 }
 
-func newFunctionPackage(fns Package) *linkedContext {
-	return &linkedContext{fns: fns}
+func newFunctionPackage(name string, fns Package) *linkedContext {
+	return &linkedContext{name: name, fns: fns}
 }
 
 func copyLink(l LinkedContext) *copiedLinkedContext {
@@ -53,6 +56,10 @@ func (c copiedLinkedContext) Get(s string) LinkedContext {
 
 func (c copiedLinkedContext) GetFunc(s string) CheckFunc {
 	return c.attached.GetFunc(s)
+}
+
+func (c copiedLinkedContext) GetFunctions(mf func(s string, f CheckFunc) error) error {
+	return c.attached.GetFunctions(mf)
 }
 
 func (c *copiedLinkedContext) SetName(s string) {
@@ -96,11 +103,40 @@ func (c linkedContext) GetFunc(s string) CheckFunc {
 	return c.fns[s]
 }
 
+func (c linkedContext) GetFunctions(mf func(s string, f CheckFunc) error) (err error) {
+	for k, v := range c.fns {
+		err = mf(k, v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (c *linkedContext) SetLast(ctx LinkedContext) {
 	c.last = ctx
 }
 
 func (c *linkedContext) Insert(k string, ctx LinkedContext) {
+	if len(k) == 0 {
+		if c.fns == nil {
+			c.fns = make(map[string]CheckFunc)
+		}
+		err := ctx.GetFunctions(func(k string, f CheckFunc) error {
+			if _, ok := c.fns[k]; ok {
+				// todo conflict
+				// panic("conflict")
+			} else {
+				c.fns[k] = f
+			}
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+
 	if c.next == nil {
 		c.next = make(map[string]LinkedContext)
 	}
@@ -216,11 +252,11 @@ func RepositionCtx(p LinkedContext, pn string) LinkedContext {
 func findCheckFunc(p LinkedContext, k string) CheckFunc {
 	var ls = strings.LastIndexByte(k, '.')
 	if ls == -1 {
-		return p.GetFunc(k)
+		return getFuncRecursive(p, k)
 	}
 	pn, fn := k[:ls], k[ls+1:]
 	if len(pn) == 0 {
-		return p.GetFunc(fn)
+		return getFuncRecursive(p, fn)
 	}
 
 	sp := RepositionCtx(p, pn)
@@ -233,21 +269,99 @@ func findCheckFunc(p LinkedContext, k string) CheckFunc {
 	return nil
 }
 
+func getFuncRecursive(p LinkedContext, k string) (f CheckFunc) {
+	for f == nil {
+		if p == nil {
+			return
+		}
+		f = p.GetFunc(k)
+		p = p.Last()
+	}
+	return
+}
+
+var rg = `"'` + "`"
+
+func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
+	ensureVarLength(s2, 2, &err)
+	if body := ensureJSONBody(req, &err); err == nil {
+		k := body.Get(s2[0])
+		switch v := k.Value().(type) {
+		case float64:
+			wv, err := strconv.ParseFloat(s2[1], 64)
+			if err != nil {
+				return false, err
+			}
+			if math.Abs(v-wv) > 1e-6 {
+				return false, fmt.Errorf("float assertion error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case bool:
+			wv, err := strconv.ParseBool(s2[1])
+			if err != nil {
+				return false, err
+			}
+			if wv != v {
+				return false, fmt.Errorf("boolean assertion error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case string:
+			if s2[1][0] != s2[1][len(s2)-1] || strings.IndexByte(rg, s2[1][0]) == -1 {
+				return false, fmt.Errorf("invalid string literal")
+			}
+			wv := s2[1][1 : len(s2)-1]
+			if err != nil {
+				return false, err
+			}
+			if wv != v {
+				return false, fmt.Errorf("boolean assertion error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case nil:
+			if s2[1] != "nil" {
+				return false, fmt.Errorf("boolean assertion error: want %v, got %v", s2[1], v)
+			}
+			return true, nil
+		default:
+			return false, fmt.Errorf("bad assertion type: %v", k.Type)
+		}
+	}
+	return
+}
+
 var namespaceStd = Package{
-	"Assert": func(req Request, s2 ...string) (s string, err error) {
+	"Assert":   assertJSONEQ,
+	"AssertEQ": assertJSONEQ,
+	"AssertNEQ": func(req *Request, s2 ...string) (s bool, err error) {
 		ensureVarLength(s2, 2, &err)
-		if body := ensureJSONBody(&req, &err); body != nil {
-			fmt.Println("asserting", body[s2[0]], s2[1])
+		if body := ensureJSONBody(req, &err); err == nil {
+			fmt.Println("asserting", body, s2[1])
+		}
+		return
+	},
+	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
+		ensureVarLength(s2, 1, &err)
+		if body := ensureJSONBody(req, &err); err == nil {
+			fmt.Println("asserting", body)
 		}
 		return
 	},
 }
 
 var namespaceJSON = Package{
-	"Assert": func(req Request, s2 ...string) (s string, err error) {
+	"Assert":   assertJSONEQ,
+	"AssertEQ": assertJSONEQ,
+	"AssertNEQ": func(req *Request, s2 ...string) (s bool, err error) {
 		ensureVarLength(s2, 2, &err)
-		if body := ensureJSONBody(&req, &err); body != nil {
-			fmt.Println("asserting", body[s2[0]], s2[1])
+		if body := ensureJSONBody(req, &err); err == nil {
+			fmt.Println("asserting", body, s2[1])
+		}
+		return
+	},
+	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
+		ensureVarLength(s2, 1, &err)
+		if body := ensureJSONBody(req, &err); err == nil {
+			fmt.Println("asserting", body)
 		}
 		return
 	},

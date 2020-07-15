@@ -1,4 +1,4 @@
-package assertion
+package unittest
 
 type BasicSpec struct {
 	Version string                 `yaml:"version"`
@@ -27,12 +27,12 @@ type PackageDef struct {
 }
 
 type TestDef struct {
-	Name       string                 `yaml:"name"`
-	Using      map[string]string      `yaml:"using"`
-	UsingForce map[string]string      `yaml:"using-force"`
-	Inherit    []string               `yaml:"inherit"`
-	Cases      []TestDef              `yaml:"cases"`
-	Assertion  [][]string             `yaml:"assertion"`
-	Assert     []string               `yaml:"assert"`
-	Meta       map[string]interface{} `yaml:"meta,inline"`
+	Name      string                 `yaml:"name"`
+	Abstract  bool                   `yaml:"abstract"`
+	Using     map[string]string      `yaml:"using"`
+	Inherit   []string               `yaml:"inherit"`
+	Cases     []TestDef              `yaml:"cases"`
+	Assertion [][]string             `yaml:"assertion"`
+	Assert    []string               `yaml:"assert"`
+	Meta      map[string]interface{} `yaml:"meta,inline"`
 }
