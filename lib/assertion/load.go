@@ -30,6 +30,7 @@ type caseContext struct {
 	Packages     LinkedContext
 	gd           *GoDynamicTestData
 	testCasePath string
+	mt           map[string]Matcher
 }
 
 func (c *caseContext) findTestCase(p string) *TestCase {
@@ -142,18 +143,168 @@ func generateCaseV1(s *SpecV1) (*GoDynamicTestData, error) {
 		}
 	}
 
-	var selectors = map[string]Matcher{}
-
+	ctx.mt = map[string]Matcher{}
 	for _, selector := range s.Selector {
-		selectors[selector.Name], err = newSelector("", selector.Case)
+		ctx.mt[selector.Name], err = newSelector("", selector.Case)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	//s.Default
+	var inheritFn = func(k string, v interface{}, t *TestCase) {
+		switch k {
+		case "encoding":
+			fallthrough
+		case "http-encoding":
+			for _, t := range ctx.gd.TestCases {
+				if len(v.(string)) != 0 && len(t.Meta.Encoding) == 0 {
+					t.Meta.Encoding = v.(string)
+				}
+			}
+		case "method":
+			fallthrough
+		case "http-method":
+			for _, t := range ctx.gd.TestCases {
+				if len(v.(string)) != 0 && len(t.Meta.Method) == 0 {
+					t.Meta.Method = v.(string)
+				}
+			}
+		}
+	}
+
+	for i := range s.Default {
+		for k, v := range s.Default[i] {
+			switch k {
+			case "encoding", "http-encoding", "method", "http-method":
+				for _, t := range ctx.gd.TestCases {
+					inheritFn(k, v, t)
+				}
+			default:
+				if len(k) != 0 && k[0] == '$' {
+					// todo: selector
+					li := strings.LastIndex(k[1:], ").")
+					if li == -1 {
+						panic("wrong selector dot")
+					}
+					li += 2
+					//k, p = xs[0], xs[1]
+					matcher := newTestCaseMatcher(ctx, k[1:li])
+					k := k[li+1:]
+					for _, t := range ctx.gd.TestCases {
+						if ok, err := matcher.Match(t); ok && err == nil {
+							inheritFn(k, v, t)
+						} else if err != nil {
+							panic(err)
+						}
+					}
+				} else {
+					panic("not found")
+				}
+			}
+		}
+	}
 	//s.Selector
 	return ctx.gd, nil
+}
+
+func newTestCaseMatcher(ctx *caseContext, k string) Matcher {
+	//$(.[!=(method, GET)]).encoding
+	if len(k) < 4 || k[0] != '(' || k[len(k)-1] != ')' || k[len(k)-2] != ']' {
+		panic("selector no paren")
+	}
+	xs := strings.SplitN(k[1:len(k)-2], "[", 2)
+	if len(xs) <= 1 {
+		panic("selector no bracket")
+	}
+	p, ms := strings.TrimSpace(xs[0]), xs[1]
+	var balance, j, li = 0, 0, 0
+	var sms []string
+	for i := 0; i < len(ms); i++ {
+		if ms[i] == '(' {
+			balance = 1
+			for j = i + 1; j < len(ms); j++ {
+				if ms[j] == '(' {
+					balance++
+				} else if ms[j] == ')' {
+					balance--
+				}
+				if (balance) == 0 {
+					break
+				}
+			}
+			if balance != 0 {
+				panic("unbalanced selector")
+			}
+			for ; j < len(ms); j++ {
+				if ms[j] == ',' {
+					break
+				}
+			}
+			sms = append(sms, strings.TrimSpace(ms[li:j]))
+			li = j + 1
+		}
+	}
+	var am AndMatcher
+	am.matchers = append(am.matchers, newPathMatcher(p))
+	for _, sm := range sms {
+		if len(sm) < 2 || sm[len(sm)-1] != ')' {
+			panic("sm selector no paren")
+		}
+		xs := strings.SplitN(sm[:len(sm)-1], "(", 2)
+		if len(xs) <= 1 {
+			panic("sm selector no paren")
+		}
+		fn, args := strings.TrimSpace(xs[0]), strings.Split(xs[1], ",")
+		switch fn {
+		case "!=":
+			am.matchers = append(am.matchers, newNEQMatcher(args))
+		default:
+			panic("todo fn")
+		}
+	}
+	return am
+}
+
+type TrueMatcher struct {
+}
+
+func (t2 TrueMatcher) Match(t *TestCase) (bool, error) {
+	return true, nil
+}
+
+func newPathMatcher(p string) Matcher {
+	if p != "." {
+		panic("todo")
+	}
+	return TrueMatcher{}
+}
+
+func newNEQMatcher(args []string) Matcher {
+	if len(args) != 2 {
+		panic("neq accept 2 string arg")
+	}
+	switch strings.TrimSpace(args[0]) {
+	case "method":
+		fallthrough
+	case "http-method":
+		m, err := newStringSelector("", strings.TrimSpace(args[1]))
+		if err != nil {
+			panic(err)
+		}
+		return newMethodNEQMatcher(m)
+	}
+	panic("todo")
+}
+
+type MethodNEQMatcher struct{ StringMatcher }
+
+func (m MethodNEQMatcher) Match(t *TestCase) (bool, error) {
+	x, y := m.StringMatcher.MatchString(t.Meta.Method)
+	return !x, y
+}
+
+func newMethodNEQMatcher(m StringMatcher) Matcher {
+	return MethodNEQMatcher{m}
 }
 
 func insertUsingV1(ctx *caseContext, us map[string]string) (err error) {
@@ -340,58 +491,61 @@ func inheritMetaMethod(dst *TestCase, src *TestCase) {
 }
 
 func parseMeta(ts *TestCase, meta map[string]interface{}) {
-	parseMetaHeader(ts, meta)
-	parseMetaMethod(ts, meta)
-	parseMetaData(ts, meta)
-	parseMetaEncoding(ts, meta)
+	ts.Meta.Header = parseMetaHeader(meta)
+	ts.Meta.Method = parseMetaMethod(meta)
+	ts.Meta.Data = parseMetaData(meta)
+	ts.Meta.Encoding = parseMetaEncoding(meta)
 }
 
-func parseMetaData(ts *TestCase, meta map[string]interface{}) {
+func parseMetaData(meta map[string]interface{}) map[string]interface{} {
 	switch d := meta["data"].(type) {
 	case map[string]interface{}:
-		ts.Meta.Data = toJSONBody(d).(map[string]interface{})
+		return toJSONBody(d).(map[string]interface{})
 	case map[interface{}]interface{}:
-		ts.Meta.Data = toJSONBody(d).(map[string]interface{})
+		return toJSONBody(d).(map[string]interface{})
 	case nil:
-		return
+		return nil
 	default:
 		panic("data type error")
 	}
 }
 
-func parseMetaEncoding(ts *TestCase, meta map[string]interface{}) {
+func parseMetaEncoding(meta map[string]interface{}) string {
 	e, ok := meta["http-encoding"]
 	if !ok {
 		e = meta["encoding"]
 	}
 	switch e := e.(type) {
 	case string:
-		ts.Meta.Encoding = e
+		return e
 	case nil:
-		return
+		return ""
 	default:
 		panic("encoding type error")
 	}
 }
 
-func parseMetaHeader(ts *TestCase, meta map[string]interface{}) {
+func parseMetaHeader(meta map[string]interface{}) (nv map[string]string) {
 	h, ok := meta["http-header"]
 	if !ok {
 		h = meta["header"]
 	}
 	switch h := h.(type) {
 	case map[string]string:
-		ts.Meta.Header = h
+		nv = h
+		return
 	case map[string]interface{}:
-		ts.Meta.Header = make(map[string]string)
+		nv = make(map[string]string)
 		for k, v := range h {
-			ts.Meta.Header[k] = v.(string)
+			nv[k] = v.(string)
 		}
+		return
 	case map[interface{}]interface{}:
-		ts.Meta.Header = make(map[string]string)
+		nv = make(map[string]string)
 		for k, v := range h {
-			ts.Meta.Header[k.(string)] = v.(string)
+			nv[k.(string)] = v.(string)
 		}
+		return
 	case nil:
 		return
 	default:
@@ -399,28 +553,18 @@ func parseMetaHeader(ts *TestCase, meta map[string]interface{}) {
 	}
 }
 
-func parseMetaMethod(ts *TestCase, meta map[string]interface{}) {
-	h, ok := meta["http-header"]
+func parseMetaMethod(meta map[string]interface{}) string {
+	e, ok := meta["http-method"]
 	if !ok {
-		h = meta["header"]
+		e = meta["method"]
 	}
-	switch h := h.(type) {
-	case map[string]string:
-		ts.Meta.Header = h
-	case map[string]interface{}:
-		ts.Meta.Header = make(map[string]string)
-		for k, v := range h {
-			ts.Meta.Header[k] = v.(string)
-		}
-	case map[interface{}]interface{}:
-		ts.Meta.Header = make(map[string]string)
-		for k, v := range h {
-			ts.Meta.Header[k.(string)] = v.(string)
-		}
+	switch e := e.(type) {
+	case string:
+		return e
 	case nil:
-		return
+		return ""
 	default:
-		panic("header type error")
+		panic("encoding type error")
 	}
 }
 
@@ -440,6 +584,12 @@ func Load() {
 		panic(err)
 	}
 	for _, x := range gd.TestCases {
-		fmt.Println(x.Name, x.Path)
+		fmt.Println("Name:", x.Name)
+		fmt.Println("Path:", x.Path)
+		fmt.Println("Method:", x.Meta.Method)
+		fmt.Println("Data:", x.Meta.Data)
+		fmt.Println("Encoding:", x.Meta.Encoding)
+		fmt.Println("Header:", x.Meta.Header)
+		fmt.Println("----------------------------------------------------------------------")
 	}
 }

@@ -14,7 +14,7 @@ func writeLevel(w io.Writer, level int) {
 	}
 }
 
-type defaultNode map[string]interface{}
+type defaultNode []map[string]interface{}
 
 type metaNode map[string]interface{}
 
@@ -36,7 +36,9 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 	var mm = false
 	switch v := v.(type) {
 	case defaultNode:
-		debugPrint(w, (map[string]interface{})(v), fmt.Sprintf("Default(%s)", dotJoin(path, "default")), level)
+		for i := range v {
+			debugPrint(w, v[i], fmt.Sprintf("Default(%s)", dotJoin(path, "default")), level)
+		}
 	case usingNode:
 		debugPrint(w, (map[string]string)(v), fmt.Sprintf("Using(%s)", path), level)
 	case usingForceNode:
@@ -71,9 +73,6 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 			sugar.HandlerError(w.Write([]byte{'\n'}))
 		}
 		debugPrint(w, v.TestDefs, path, level+1)
-		if v.Default != nil {
-			sugar.HandlerError(w.Write([]byte{'\n'}))
-		}
 		debugPrint(w, defaultNode(v.Default), path, level+1)
 		if v.Selector != nil {
 			sugar.HandlerError(w.Write([]byte{'\n'}))

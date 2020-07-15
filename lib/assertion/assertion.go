@@ -10,10 +10,10 @@ type Version struct {
 
 type SpecV1 struct {
 	BasicSpec   `yaml:"basic,inline"`
-	Selector    []SelectorDef          `yaml:"selector"`
-	Default     map[string]interface{} `yaml:"default"`
-	PackageDefs []PackageDef           `yaml:"package"`
-	TestDefs    []TestDef              `yaml:"tests"`
+	Selector    []SelectorDef            `yaml:"selector"`
+	Default     []map[string]interface{} `yaml:"default"`
+	PackageDefs []PackageDef             `yaml:"package"`
+	TestDefs    []TestDef                `yaml:"tests"`
 }
 
 type SelectorDef struct {

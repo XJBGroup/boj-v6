@@ -52,8 +52,17 @@ type NotExistsMatcher struct {
 	path string
 }
 
+func (n NotExistsMatcher) MatchString(s string) (bool, error) {
+	panic("implement me")
+}
+
 func (n NotExistsMatcher) Match(t *TestCase) (bool, error) {
 	panic("implement me")
+}
+
+type StringMatcher interface {
+	Matcher
+	MatchString(s string) (bool, error)
 }
 
 type RegexpMatcher struct {
@@ -61,20 +70,28 @@ type RegexpMatcher struct {
 	*regexp.Regexp
 }
 
+func (n RegexpMatcher) MatchString(s string) (bool, error) {
+	panic("implement me")
+}
+
 func (n RegexpMatcher) Match(t *TestCase) (bool, error) {
 	panic("implement me")
 }
 
-type StringMatcher struct {
+type StringLiteralMatcher struct {
 	path string
 	v    string
 }
 
-func (n StringMatcher) Match(t *TestCase) (bool, error) {
+func (n StringLiteralMatcher) MatchString(s string) (bool, error) {
+	return n.v == s, nil
+}
+
+func (n StringLiteralMatcher) Match(t *TestCase) (bool, error) {
 	panic("implement me")
 }
 
-func newStringSelector(path, v string) (Matcher, error) {
+func newStringSelector(path, v string) (StringMatcher, error) {
 	if len(v) == 0 {
 		return NotExistsMatcher{path}, nil
 	}
@@ -85,5 +102,5 @@ func newStringSelector(path, v string) (Matcher, error) {
 			return nil, errors.New("invalid regexp selector: " + v)
 		}
 	}
-	return StringMatcher{path: path, v: v}, nil
+	return StringLiteralMatcher{path: path, v: v}, nil
 }
