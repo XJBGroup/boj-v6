@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
-	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
 type UserCategories struct {
@@ -19,15 +18,30 @@ type UserCategories struct {
 	IdGroup      artisan.Category
 }
 
+func StdReply(description ...interface{}) artisan.ReplyObject {
+	return artisan.Reply(
+		codeField,
+		artisan.Param("data", description...),
+	)
+}
+
 func DescribeUserService() artisan.ProposingService {
 	var userModel = new(user.User)
 	var _valueUserModel user.User
+
+	var listParams = []interface{}{
+		artisan.Param("page", artisan.Int),
+		artisan.Param("page_size", artisan.Int),
+	}
+
+	var userFilter = artisan.Object(
+		append(listParams, "UserFilter")...)
 
 	svc := &UserCategories{
 		List: artisan.Ink().
 			Path("user-list").
 			Method(artisan.GET, "ListUsers",
-				artisan.QT("ListUsersRequest", mytraits.Filter{}),
+				artisan.Request(userFilter),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data",
@@ -47,10 +61,10 @@ func DescribeUserService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("user-count").
 			Method(artisan.GET, "CountUser",
-				artisan.QT("CountUsersRequest", mytraits.Filter{}),
+				artisan.Request(userFilter),
 				artisan.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", new(int))),
+					artisan.Param("data", artisan.Int64),
 				),
 			),
 		Register: artisan.Ink().
@@ -66,10 +80,10 @@ func DescribeUserService() artisan.ProposingService {
 					// Gender: 0表示保密, 1表示女, 2表示男, 3~255表示其他
 					artisan.SnakeParam(&userModel.Gender),
 				),
-				artisan.Reply(
-					codeField,
+				StdReply(artisan.Object(
+					"UserRegisterData",
 					artisan.SnakeParam(&userModel.ID),
-				),
+				)),
 			),
 		Login: artisan.Ink().
 			Path("user/login").
@@ -80,21 +94,21 @@ func DescribeUserService() artisan.ProposingService {
 					),
 					artisan.SnakeParam(&userModel.Password, required),
 				),
-				artisan.Reply(
-					codeField,
+				StdReply(artisan.Object(
+					"UserLoginData",
 					artisan.Param("user", &userModel),
 					artisan.Param("refresh_token", artisan.String),
 					artisan.Param("token", artisan.String),
 					artisan.Param("identities", artisan.Strings),
-				),
+				)),
 			),
 		RefreshToken: artisan.Ink().
 			Path("user-token").
 			Method(artisan.GET, "RefreshToken",
-				artisan.Reply(
-					codeField,
+				StdReply(artisan.Object(
+					"UserRefreshTokenData",
 					artisan.Param("token", artisan.String),
-				),
+				)),
 			),
 
 		IdGroup: artisan.Ink().
@@ -104,7 +118,7 @@ func DescribeUserService() artisan.ProposingService {
 			Method(artisan.GET, "GetUser",
 				artisan.Reply(
 					codeField,
-					artisan.Param("user", &userModel),
+					artisan.Param("data", &userModel),
 				)).
 			Method(artisan.PUT, "PutUser",
 				artisan.Request(
@@ -121,7 +135,7 @@ func DescribeUserService() artisan.ProposingService {
 				Method(artisan.GET, "InspectUser",
 					artisan.Reply(
 						codeField,
-						artisan.Param("user", &userModel),
+						artisan.Param("data", &userModel),
 					)),
 			).
 			Method(artisan.DELETE, "Delete"),

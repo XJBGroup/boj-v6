@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
-	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
 type AnnouncementCategories struct {
@@ -19,11 +18,19 @@ func DescribeAnnouncementService() artisan.ProposingService {
 	var announcementModel = new(announcement.Announcement)
 	var _announcementModel = new(announcement.Announcement)
 
+	var listParams = []interface{}{
+		artisan.Param("page", artisan.Int),
+		artisan.Param("page_size", artisan.Int),
+	}
+
+	var announcementFilter = artisan.Object(
+		append(listParams, "AnnouncementFilter")...)
+
 	svc := &AnnouncementCategories{
 		List: artisan.Ink().
 			Path("announcement-list").
 			Method(artisan.GET, "ListAnnouncements",
-				artisan.QT("ListAnnouncementsRequest", mytraits.Filter{}),
+				artisan.Request(announcementFilter),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", _announcementModel)),
@@ -32,7 +39,6 @@ func DescribeAnnouncementService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("announcement-count").
 			Method(artisan.GET, "CountAnnouncement",
-				artisan.QT("CountAnnouncementsRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),

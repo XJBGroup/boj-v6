@@ -2,11 +2,13 @@ package api
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
-	"github.com/Myriad-Dreamin/go-model-traits/gorm-crud-dao"
 	"time"
 )
 
-type ListUsersRequest = gorm_crud_dao.Filter
+type UserFilter struct {
+	Page     int `json:"page" form:"page"`
+	PageSize int `json:"page_size" form:"page_size"`
+}
 
 type ListUsersReply struct {
 	Code int             `json:"code" form:"code"`
@@ -16,32 +18,34 @@ type ListUsersReply struct {
 type ListUserReply struct {
 	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
-	LastLogin           time.Time `json:"last_login" form:"last_login"`
+	LastLogin           time.Time `form:"last_login" json:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
 	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
+	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 
-type CountUsersRequest = gorm_crud_dao.Filter
-
 type CountUserReply struct {
-	Code int   `form:"code" json:"code"`
-	Data []int `json:"data" form:"data"`
+	Code int   `json:"code" form:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type RegisterRequest struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
-	Password string `binding:"required" json:"password" form:"password"`
+	Password string `json:"password" form:"password" binding:"required"`
 	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
-	Gender   uint8  `json:"gender" form:"gender"`
+	Gender   uint8  `form:"gender" json:"gender"`
 }
 
 type RegisterReply struct {
-	Code int  `json:"code" form:"code"`
-	Id   uint `json:"id" form:"id"`
+	Code int              `json:"code" form:"code"`
+	Data UserRegisterData `json:"data" form:"data"`
+}
+
+type UserRegisterData struct {
+	Id uint `json:"id" form:"id"`
 }
 
 type LoginUserRequest struct {
@@ -52,38 +56,73 @@ type LoginUserRequest struct {
 }
 
 type LoginUserReply struct {
-	Code         int        `json:"code" form:"code"`
-	User         *user.User `form:"user" json:"user"`
+	Code int           `json:"code" form:"code"`
+	Data UserLoginData `json:"data" form:"data"`
+}
+
+type UserLoginData struct {
+	User         *user.User `json:"user" form:"user"`
 	RefreshToken string     `json:"refresh_token" form:"refresh_token"`
 	Token        string     `json:"token" form:"token"`
-	Identities   []string   `json:"identities" form:"identities"`
+	Identities   []string   `form:"identities" json:"identities"`
 }
 
 type RefreshTokenReply struct {
-	Code  int    `json:"code" form:"code"`
+	Code int                  `json:"code" form:"code"`
+	Data UserRefreshTokenData `form:"data" json:"data"`
+}
+
+type UserRefreshTokenData struct {
 	Token string `json:"token" form:"token"`
+}
+
+type InspectUserReply struct {
+	Code int        `json:"code" form:"code"`
+	Data *user.User `json:"data" form:"data"`
 }
 
 type BindEmailRequest struct {
 	Email string `json:"email" form:"email" binding:"email"`
 }
 
-type InspectUserReply struct {
-	Code int        `json:"code" form:"code"`
-	User *user.User `json:"user" form:"user"`
-}
-
 type GetUserReply struct {
 	Code int        `json:"code" form:"code"`
-	User *user.User `json:"user" form:"user"`
+	Data *user.User `form:"data" json:"data"`
 }
 
 type PutUserRequest struct {
 	Gender   uint8  `json:"gender" form:"gender"`
 	NickName string `json:"nick_name" form:"nick_name"`
-	Motto    string `form:"motto" json:"motto"`
+	Motto    string `json:"motto" form:"motto"`
 }
 
+func PSerializeUserFilter(_page int, _pageSize int) *UserFilter {
+
+	return &UserFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func SerializeUserFilter(_page int, _pageSize int) UserFilter {
+
+	return UserFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func _packSerializeUserFilter(_page int, _pageSize int) UserFilter {
+
+	return UserFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func PackSerializeUserFilter(_page []int, _pageSize []int) (pack []UserFilter) {
+	for i := range _page {
+		pack = append(pack, _packSerializeUserFilter(_page[i], _pageSize[i]))
+	}
+	return
+}
 func PSerializeListUsersReply(_code int, _data []ListUserReply) *ListUsersReply {
 
 	return &ListUsersReply{
@@ -159,28 +198,28 @@ func PackSerializeListUserReply(valueUser []user.User) (pack []ListUserReply) {
 	}
 	return
 }
-func PSerializeCountUserReply(_code int, _data []int) *CountUserReply {
+func PSerializeCountUserReply(_code int, _data int64) *CountUserReply {
 
 	return &CountUserReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeCountUserReply(_code int, _data []int) CountUserReply {
+func SerializeCountUserReply(_code int, _data int64) CountUserReply {
 
 	return CountUserReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeCountUserReply(_code int, _data []int) CountUserReply {
+func _packSerializeCountUserReply(_code int, _data int64) CountUserReply {
 
 	return CountUserReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeCountUserReply(_code []int, _data [][]int) (pack []CountUserReply) {
+func PackSerializeCountUserReply(_code []int, _data []int64) (pack []CountUserReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeCountUserReply(_code[i], _data[i]))
 	}
@@ -219,30 +258,54 @@ func PackSerializeRegisterRequest(user []*user.User) (pack []RegisterRequest) {
 	}
 	return
 }
-func PSerializeRegisterReply(_code int, user *user.User) *RegisterReply {
+func PSerializeRegisterReply(_code int, _data UserRegisterData) *RegisterReply {
 
 	return &RegisterReply{
 		Code: _code,
-		Id:   user.ID,
+		Data: _data,
 	}
 }
-func SerializeRegisterReply(_code int, user *user.User) RegisterReply {
+func SerializeRegisterReply(_code int, _data UserRegisterData) RegisterReply {
 
 	return RegisterReply{
 		Code: _code,
-		Id:   user.ID,
+		Data: _data,
 	}
 }
-func _packSerializeRegisterReply(_code int, user *user.User) RegisterReply {
+func _packSerializeRegisterReply(_code int, _data UserRegisterData) RegisterReply {
 
 	return RegisterReply{
 		Code: _code,
-		Id:   user.ID,
+		Data: _data,
 	}
 }
-func PackSerializeRegisterReply(_code []int, user []*user.User) (pack []RegisterReply) {
+func PackSerializeRegisterReply(_code []int, _data []UserRegisterData) (pack []RegisterReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeRegisterReply(_code[i], user[i]))
+		pack = append(pack, _packSerializeRegisterReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeUserRegisterData(user *user.User) *UserRegisterData {
+
+	return &UserRegisterData{
+		Id: user.ID,
+	}
+}
+func SerializeUserRegisterData(user *user.User) UserRegisterData {
+
+	return UserRegisterData{
+		Id: user.ID,
+	}
+}
+func _packSerializeUserRegisterData(user *user.User) UserRegisterData {
+
+	return UserRegisterData{
+		Id: user.ID,
+	}
+}
+func PackSerializeUserRegisterData(user []*user.User) (pack []UserRegisterData) {
+	for i := range user {
+		pack = append(pack, _packSerializeUserRegisterData(user[i]))
 	}
 	return
 }
@@ -279,66 +342,141 @@ func PackSerializeLoginUserRequest(user []*user.User) (pack []LoginUserRequest) 
 	}
 	return
 }
-func PSerializeLoginUserReply(_code int, _user *user.User, _refreshToken string, _token string, _identities []string) *LoginUserReply {
+func PSerializeLoginUserReply(_code int, _data UserLoginData) *LoginUserReply {
 
 	return &LoginUserReply{
-		Code:         _code,
-		User:         _user,
-		RefreshToken: _refreshToken,
-		Token:        _token,
-		Identities:   _identities,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializeLoginUserReply(_code int, _user *user.User, _refreshToken string, _token string, _identities []string) LoginUserReply {
+func SerializeLoginUserReply(_code int, _data UserLoginData) LoginUserReply {
 
 	return LoginUserReply{
-		Code:         _code,
-		User:         _user,
-		RefreshToken: _refreshToken,
-		Token:        _token,
-		Identities:   _identities,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializeLoginUserReply(_code int, _user *user.User, _refreshToken string, _token string, _identities []string) LoginUserReply {
+func _packSerializeLoginUserReply(_code int, _data UserLoginData) LoginUserReply {
 
 	return LoginUserReply{
-		Code:         _code,
-		User:         _user,
-		RefreshToken: _refreshToken,
-		Token:        _token,
-		Identities:   _identities,
+		Code: _code,
+		Data: _data,
 	}
 }
-func PackSerializeLoginUserReply(_code []int, _user []*user.User, _refreshToken []string, _token []string, _identities [][]string) (pack []LoginUserReply) {
+func PackSerializeLoginUserReply(_code []int, _data []UserLoginData) (pack []LoginUserReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeLoginUserReply(_code[i], _user[i], _refreshToken[i], _token[i], _identities[i]))
+		pack = append(pack, _packSerializeLoginUserReply(_code[i], _data[i]))
 	}
 	return
 }
-func PSerializeRefreshTokenReply(_code int, _token string) *RefreshTokenReply {
+func PSerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) *UserLoginData {
+
+	return &UserLoginData{
+		User:         _user,
+		RefreshToken: _refreshToken,
+		Token:        _token,
+		Identities:   _identities,
+	}
+}
+func SerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
+
+	return UserLoginData{
+		User:         _user,
+		RefreshToken: _refreshToken,
+		Token:        _token,
+		Identities:   _identities,
+	}
+}
+func _packSerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
+
+	return UserLoginData{
+		User:         _user,
+		RefreshToken: _refreshToken,
+		Token:        _token,
+		Identities:   _identities,
+	}
+}
+func PackSerializeUserLoginData(_user []*user.User, _refreshToken []string, _token []string, _identities [][]string) (pack []UserLoginData) {
+	for i := range _user {
+		pack = append(pack, _packSerializeUserLoginData(_user[i], _refreshToken[i], _token[i], _identities[i]))
+	}
+	return
+}
+func PSerializeRefreshTokenReply(_code int, _data UserRefreshTokenData) *RefreshTokenReply {
 
 	return &RefreshTokenReply{
-		Code:  _code,
-		Token: _token,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializeRefreshTokenReply(_code int, _token string) RefreshTokenReply {
+func SerializeRefreshTokenReply(_code int, _data UserRefreshTokenData) RefreshTokenReply {
 
 	return RefreshTokenReply{
-		Code:  _code,
-		Token: _token,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializeRefreshTokenReply(_code int, _token string) RefreshTokenReply {
+func _packSerializeRefreshTokenReply(_code int, _data UserRefreshTokenData) RefreshTokenReply {
 
 	return RefreshTokenReply{
-		Code:  _code,
-		Token: _token,
+		Code: _code,
+		Data: _data,
 	}
 }
-func PackSerializeRefreshTokenReply(_code []int, _token []string) (pack []RefreshTokenReply) {
+func PackSerializeRefreshTokenReply(_code []int, _data []UserRefreshTokenData) (pack []RefreshTokenReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeRefreshTokenReply(_code[i], _token[i]))
+		pack = append(pack, _packSerializeRefreshTokenReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeUserRefreshTokenData(_token string) *UserRefreshTokenData {
+
+	return &UserRefreshTokenData{
+		Token: _token,
+	}
+}
+func SerializeUserRefreshTokenData(_token string) UserRefreshTokenData {
+
+	return UserRefreshTokenData{
+		Token: _token,
+	}
+}
+func _packSerializeUserRefreshTokenData(_token string) UserRefreshTokenData {
+
+	return UserRefreshTokenData{
+		Token: _token,
+	}
+}
+func PackSerializeUserRefreshTokenData(_token []string) (pack []UserRefreshTokenData) {
+	for i := range _token {
+		pack = append(pack, _packSerializeUserRefreshTokenData(_token[i]))
+	}
+	return
+}
+func PSerializeInspectUserReply(_code int, _data *user.User) *InspectUserReply {
+
+	return &InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeInspectUserReply(_code int, _data *user.User) InspectUserReply {
+
+	return InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeInspectUserReply(_code int, _data *user.User) InspectUserReply {
+
+	return InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeInspectUserReply(_code []int, _data []*user.User) (pack []InspectUserReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeInspectUserReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -366,57 +504,30 @@ func PackSerializeBindEmailRequest(user []*user.User) (pack []BindEmailRequest) 
 	}
 	return
 }
-func PSerializeInspectUserReply(_code int, _user *user.User) *InspectUserReply {
-
-	return &InspectUserReply{
-		Code: _code,
-		User: _user,
-	}
-}
-func SerializeInspectUserReply(_code int, _user *user.User) InspectUserReply {
-
-	return InspectUserReply{
-		Code: _code,
-		User: _user,
-	}
-}
-func _packSerializeInspectUserReply(_code int, _user *user.User) InspectUserReply {
-
-	return InspectUserReply{
-		Code: _code,
-		User: _user,
-	}
-}
-func PackSerializeInspectUserReply(_code []int, _user []*user.User) (pack []InspectUserReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeInspectUserReply(_code[i], _user[i]))
-	}
-	return
-}
-func PSerializeGetUserReply(_code int, _user *user.User) *GetUserReply {
+func PSerializeGetUserReply(_code int, _data *user.User) *GetUserReply {
 
 	return &GetUserReply{
 		Code: _code,
-		User: _user,
+		Data: _data,
 	}
 }
-func SerializeGetUserReply(_code int, _user *user.User) GetUserReply {
+func SerializeGetUserReply(_code int, _data *user.User) GetUserReply {
 
 	return GetUserReply{
 		Code: _code,
-		User: _user,
+		Data: _data,
 	}
 }
-func _packSerializeGetUserReply(_code int, _user *user.User) GetUserReply {
+func _packSerializeGetUserReply(_code int, _data *user.User) GetUserReply {
 
 	return GetUserReply{
 		Code: _code,
-		User: _user,
+		Data: _data,
 	}
 }
-func PackSerializeGetUserReply(_code []int, _user []*user.User) (pack []GetUserReply) {
+func PackSerializeGetUserReply(_code []int, _data []*user.User) (pack []GetUserReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeGetUserReply(_code[i], _user[i]))
+		pack = append(pack, _packSerializeGetUserReply(_code[i], _data[i]))
 	}
 	return
 }

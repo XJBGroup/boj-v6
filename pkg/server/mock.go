@@ -6,12 +6,12 @@ import (
 	"encoding/json"
 	"github.com/Myriad-Dreamin/boj-v6/lib/control"
 	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"
+	"github.com/Myriad-Dreamin/boj-v6/lib/qs"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/go-magic-package/instance"
 	parser "github.com/Myriad-Dreamin/go-parse-package"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
-	"github.com/google/go-querystring/query"
 	"github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
@@ -340,10 +340,10 @@ func (mocker *Mocker) Method(method, path string, params ...interface{}) mock.Re
 				contentType = "application/json"
 			} else {
 
-				if v, err := query.Values(p); err != nil {
+				if v, err := qs.Values(p); err != nil {
 					mocker.Logger.Error("encode request to query string error", "error", err)
 				} else {
-					path += v.Encode()
+					path = (&url.URL{Path: path, RawQuery: v.Encode()}).RequestURI()
 				}
 
 			}

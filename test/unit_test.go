@@ -20,7 +20,7 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 		if tt.Abstract {
 			continue
 		}
-		if tt.Meta[unittest.MetaUri] == nil {
+		if tt.Meta[unittest.MetaUrl] == nil {
 			continue
 		}
 		s := crc32.NewIEEE()
@@ -51,10 +51,10 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 			var mockResponse mock.ResponseI
 			switch method {
 			case "GET":
-				mockResponse = ctx.Get(tt.Meta[unittest.MetaUri].(string), tt.Meta[unittest.MetaData], server.Header(header))
+				mockResponse = ctx.Get(tt.Meta[unittest.MetaUrl].(string), tt.Meta[unittest.MetaData], server.Header(header))
 			case "POST", "PUT", "DELETE":
 				mockResponse = ctx.Method(method.(string),
-					tt.Meta[unittest.MetaUri].(string), tt.Meta[unittest.MetaData], server.Header(header))
+					tt.Meta[unittest.MetaUrl].(string), tt.Meta[unittest.MetaData], server.Header(header))
 			default:
 				panic(fmt.Sprintf("%v", tt))
 			}
@@ -62,12 +62,13 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 			if mockResponse == nil {
 				panic("nil response")
 			}
+			req := &unittest.Request{Body: mockResponse.Body().Bytes()}
 			for _, assertion := range tt.Assertions {
-				ok, err := assertion.F(&unittest.Request{Body: mockResponse.Body().Bytes()}, assertion.VArgs...)
+				ok, err := assertion.F(req, assertion.VArgs...)
 				if err != nil {
-					t.Errorf("%v(%v): url>> %v@%v, err>> %v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUri].(string), method, err, characteristic)
+					t.Errorf("%v(%v): url>> %v@%v, err>> %v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUrl].(string), method, err, characteristic)
 				} else if !ok {
-					t.Errorf("%v(%v) == false: url %v@%v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUri].(string), method, characteristic)
+					t.Errorf("%v(%v) == false: url %v@%v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUrl].(string), method, characteristic)
 				}
 			}
 		})

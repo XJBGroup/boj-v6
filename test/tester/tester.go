@@ -110,7 +110,7 @@ func (tester *Tester) MakeAdminContext() bool {
 	}
 	resp = tester.Post("/v1/user/login",
 		api.LoginUserRequest{
-			Id:       r.Id,
+			Id:       r.Data.Id,
 			Password: "Admin12345678",
 		}, mock.Comment("admin login for test"))
 	if !tester.NoErr(resp) {
@@ -126,14 +126,14 @@ func (tester *Tester) MakeAdminContext() bool {
 
 	//fmt.Println(r2)
 	//r2.RefreshToken
-	_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.User.ID)), "admin")
+	_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.Data.User.ID)), "admin")
 	if err != nil {
 		tester.Logger.Debug("update group error", "error", err)
 	}
 	fmt.Println("QAQQQ", rbac.GetPolicy())
 	fmt.Println("QAQQQ", rbac.GetGroupingPolicy())
-	tester.UseToken(r2.Token)
-	tester.identityToken["admin"] = r2.Token
+	tester.UseToken(r2.Data.Token)
+	tester.identityToken["admin"] = r2.Data.Token
 	return true
 }
 

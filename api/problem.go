@@ -10,7 +10,7 @@ type ListProblemsRequest = gorm_crud_dao.Filter
 
 type ListProblemsReply struct {
 	Code int               `json:"code" form:"code"`
-	Data []problem.Problem `form:"data" json:"data"`
+	Data []problem.Problem `json:"data" form:"data"`
 }
 
 type CountProblemsRequest = gorm_crud_dao.Filter
@@ -33,12 +33,12 @@ type PostProblemReply struct {
 
 type ChangeProblemDescriptionRefRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	NewName string `binding:"required" json:"new_name" form:"new_name"`
+	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostProblemDescRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
-	Content string `json:"content" form:"content"`
+	Name    string `json:"name" form:"name" binding:"required"`
+	Content string `form:"content" json:"content"`
 }
 
 type GetProblemDescRequest struct {
@@ -51,7 +51,7 @@ type GetProblemDescReply struct {
 }
 
 type ProblemDesc struct {
-	Name    string `form:"name" json:"name"`
+	Name    string `json:"name" form:"name"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -66,7 +66,7 @@ type GetProblemReply struct {
 }
 
 type PutProblemRequest struct {
-	Title          string `json:"title" form:"title"`
+	Title          string `form:"title" json:"title"`
 	Description    string `form:"description" json:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }

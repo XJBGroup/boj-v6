@@ -25,74 +25,156 @@ tests:
       - name: ~failed.default
         assertion:
           - [AssertNEQ, code, 0]
-      - name: ~post-announcement
-        method: POST
-        uri: /v1/announcement
+      - name: ~announcement
         cases:
-          - name: ~success<post-announcement, success.suit>
-          - name: ~failed<post-announcement, failed.suit>
-          - name: s1.success
-            data: { title: t1, content: c1 }
-            assertion:
-              - [Assert, data.title, t1]
-              - [Assert, data.content, c1]
-          - name: s2.success
-            data: { title: t2, content: c2 }
-          - name: s3.success
-            data: { title: t3, content: c2 }
-          # - name: f1.failed
-          #   data: { title: t3, content: c2 }
-          - name: f2.failed
-            data: { title: c1 }
-          - name: f3.failed
-            data: { content: c1 }
-      - name: ~get-announcement
-        method: GET
-        uri: /v1/announcement/:aid
-        cases:
-          - name: ~success<get-announcement, success.suit>
-          - name: ~failed<get-announcement, failed.suit>
-          - name: case1.success
-            uri: /v1/announcement/3
-            assertion:
-              - [Assert, data.title, t3]
-              - [Assert, data.content, c2]
-          - name: case2.failed
-            uri: /v1/announcement/4
-      - name: ~put-announcement
-        method: PUT
-        uri: /v1/announcement/:aid
-        cases:
-          - name: ~success<put-announcement, success.suit>
-          - name: ~failed<put-announcement, failed.suit>
-          - name: p1.success
-            uri: /v1/announcement/3
-            data: { title: t2 }
-          - name: g1.success
+          - name: ~post
+            method: POST
+            url: /v1/announcement
+            cases:
+              - name: ~success<post, success.suit>
+              - name: ~failed<post, failed.suit>
+              - name: s1.success
+                data: { title: t1, content: c1 }
+                assertion:
+                  - [Assert, data.title, t1]
+                  - [Assert, data.content, c1]
+              - name: s2.success
+                data: { title: t2, content: c2 }
+              - name: s3.success
+                data: { title: t3, content: c2 }
+              # - name: f1.failed
+              #   data: { title: t3, content: c2 }
+              - name: f2.failed
+                data: { title: c1 }
+              - name: f3.failed
+                data: { content: c1 }
+          - name: ~get
             method: GET
-            uri: /v1/announcement/3
-            assertion:
-              - [Assert, data.title, t2]
-              - [Assert, data.content, c2]
-          - name: p2.success
-            uri: /v1/announcement/3
-            data: { title: t4, content: c3 }
-          - name: g2.success
+            url: /v1/announcement/:aid
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                url: /v1/announcement/3
+                assertion:
+                  - [Assert, data.title, t3]
+                  - [Assert, data.content, c2]
+              - name: case2.failed
+                url: /v1/announcement/4
+          - name: ~list
             method: GET
-            uri: /v1/announcement/3
+            url: /v1/announcement-list
+            cases:
+              - name: ~success<list, success.suit>
+              - name: ~failed<list, failed.suit>
+              - name: l1.success
+                data: { page: 1, page_size: 2 }
+                assertion:
+                  - [Assert, len(data), 2]
+              - name: l2.success
+                data: { page: 2, page_size: 2 }
+                assertion:
+                  - [Assert, len(data), 1]
+              - name: l3.success
+                data: { page: 1, page_size: 4 }
+                assertion:
+                  - [Assert, len(data), 3]
+          - name: ~count
+            method: GET
+            url: /v1/announcement-count
             assertion:
-              - [Assert, data.title, t4]
-              - [Assert, data.content, c3]
-      - name: ~delete-announcement
-        method: DELETE
-        uri: /v1/announcement/:aid
+              - [Assert, data, 3]
+          - name: ~put
+            method: PUT
+            url: /v1/announcement/:aid
+            cases:
+              - name: ~success<put, success.suit>
+              - name: ~failed<put, failed.suit>
+              - name: p1.success
+                url: /v1/announcement/3
+                data: { title: t2 }
+              - name: g1.success
+                method: GET
+                url: /v1/announcement/3
+                assertion:
+                  - [Assert, data.title, t2]
+                  - [Assert, data.content, c2]
+              - name: p2.success
+                url: /v1/announcement/3
+                data: { title: t4, content: c3 }
+              - name: g2.success
+                method: GET
+                url: /v1/announcement/3
+                assertion:
+                  - [Assert, data.title, t4]
+                  - [Assert, data.content, c3]
+          - name: ~delete
+            method: DELETE
+            url: /v1/announcement/:aid
+            cases:
+              - name: ~success<delete, success.suit>
+              - name: ~failed<delete, failed.suit>
+              - name: d1.success
+                url: /v1/announcement/3
+              - name: g1.failed
+                method: GET
+                url: /v1/announcement/3
+              - name: d2.failed
+                url: /v1/announcement/3
+      - name: ~user
         cases:
-          - name: ~success<delete-announcement, success.suit>
-          - name: ~failed<delete-announcement, failed.suit>
-          - name: d1.success
-            uri: /v1/announcement/3
-          - name: g1.failed
+          - name: ~register
+            method: POST
+            url: /v1/user/register
+            cases:
+              - name: ~success<register, success.suit>
+              - name: ~failed<register, failed.suit>
+              - name: s1.success
+                data: { user_name: u1, password: p1, nick_name: n1 }
+                assertion:
+                  - [Assert, data.id, 2]
+              - name: absent1.failed
+                data: { user_name: u1, nick_name: n1 }
+              - name: absent2.failed
+                data: { password: p1, nick_name: n1 }
+              - name: absent3.failed
+                data: { user_name: u1, password: p1 }
+          - name: ~get
             method: GET
-            uri: /v1/announcement/3
-          - name: d2.failed
-            uri: /v1/announcement/3
+            url: /v1/user/:id
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                url: /v1/user/2
+                assertion:
+                  - [Assert, data.user_name, u1]
+                  - [Assert, data.nick_name, n1]
+                  - [Assert, data.solved_problems, 0]
+                  - [Assert, data.tried_problems, 0]
+              - name: case2.failed
+                url: /v1/user/4
+          - name: ~list
+            method: GET
+            url: /v1/user-list
+          - name: ~count
+            method: GET
+            url: /v1/user-count
+          - name: ~login
+            method: POST
+            url: /v1/user/login
+          - name: ~refresh-token
+            method: GET
+            url: /v1/user-token
+          - name: ~put
+            method: PUT
+            url: /v1/user/:id
+          - name: ~bind-email
+            method: PUT
+            url: /v1/user/:id/email
+          - name: ~inspect
+            method: GET
+            url: /v1/user/:id
+          - name: ~delete
+            method: DELETE
+            url: /v1/user/:id

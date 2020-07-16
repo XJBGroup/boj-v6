@@ -18,15 +18,15 @@ type ListContestsReply struct {
 type CountContestsRequest = gorm_crud_dao.Filter
 
 type CountContestReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
 type PostContestRequest struct {
-	Title               string        `json:"title" form:"title" binding:"required"`
+	Title               string        `form:"title" binding:"required" json:"title"`
 	Description         string        `json:"description" form:"description" binding:"required"`
 	StartAt             *time.Time    `json:"start_at" form:"start_at" binding:"required"`
-	EndDuration         time.Duration `json:"end_duration" form:"end_duration" binding:"required"`
+	EndDuration         time.Duration `binding:"required" json:"end_duration" form:"end_duration"`
 	BoardFrozenDuration time.Duration `json:"board_frozen_duration" form:"board_frozen_duration" binding:"required"`
 }
 
@@ -36,12 +36,12 @@ type PostContestReply struct {
 }
 
 type ChangeContestProblemDescriptionRefRequest struct {
-	Name    string `binding:"required" json:"name" form:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostContestProblemDescRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -51,7 +51,7 @@ type GetContestProblemDescRequest struct {
 
 type GetContestProblemDescReply struct {
 	Code int                `json:"code" form:"code"`
-	Data ContestProblemDesc `json:"data" form:"data"`
+	Data ContestProblemDesc `form:"data" json:"data"`
 }
 
 type ContestProblemDesc struct {
@@ -60,8 +60,8 @@ type ContestProblemDesc struct {
 }
 
 type PutContestProblemDescRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `json:"content" form:"content"`
+	Name    string `binding:"required" json:"name" form:"name"`
+	Content string `form:"content" json:"content"`
 }
 
 type GetContestProblemReply struct {
@@ -71,7 +71,7 @@ type GetContestProblemReply struct {
 
 type PutContestProblemRequest struct {
 	Title          string `json:"title" form:"title"`
-	Description    string `json:"description" form:"description"`
+	Description    string `form:"description" json:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 
@@ -96,7 +96,7 @@ type PostContestProblemRequest struct {
 }
 
 type PostContestProblemReply struct {
-	Code int  `json:"code" form:"code"`
+	Code int  `form:"code" json:"code"`
 	Id   uint `json:"id" form:"id"`
 }
 
@@ -112,7 +112,7 @@ type PutContestRequest struct {
 	EndDuration         time.Duration `json:"end_duration" form:"end_duration"`
 	BoardFrozenDuration time.Duration `json:"board_frozen_duration" form:"board_frozen_duration"`
 	ConfigPath          string        `json:"config_path" form:"config_path"`
-	RolePath            string        `json:"role_path" form:"role_path"`
+	RolePath            string        `form:"role_path" json:"role_path"`
 }
 
 func PSerializeListContestsReply(_code int, _data []contest.Contest) *ListContestsReply {

@@ -17,8 +17,8 @@ type User struct {
 	Gender   uint8  `dorm:"gender" gorm:"type:varchar(128);column:gender" json:"gender"`
 
 	LastLogin           time.Time `dorm:"last_login" gorm:"column:last_login;default:CURRENT_TIMESTAMP" json:"last_login"`
-	SolvedProblemsCount int64     `dorm:"solved_problems" gorm:"column:solved_problems" json:"-"`
-	TriedProblemsCount  int64     `dorm:"tried_problems" gorm:"column:tried_problems" json:"-"`
+	SolvedProblemsCount int64     `dorm:"solved_problems" gorm:"column:solved_problems" json:"solved_problems"`
+	TriedProblemsCount  int64     `dorm:"tried_problems" gorm:"column:tried_problems" json:"tried_problems"`
 }
 
 // TableName specification

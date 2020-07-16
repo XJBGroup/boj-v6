@@ -12,7 +12,7 @@ func generateCaseV1(s *SpecV1) (*GoDynamicTestData, error) {
 	var inheritFnMap = map[string]MetaOperation{
 		MetaEncoding:     stringMetaPropertyOperation(MetaEncoding),
 		MetaMethod:       stringMetaPropertyOperation(MetaMethod),
-		MetaUri:          stringMetaPropertyOperation(MetaUri),
+		MetaUrl:          stringMetaPropertyOperation(MetaUrl),
 		MetaData:         dataBodyMetaPropertyOperation(MetaData),
 		MetaHeader:       stringMapMetaPropertyOperation(MetaHeader),
 		MetaHTTPEncoding: stringMetaPropertyOperation(MetaHTTPEncoding),
@@ -23,7 +23,7 @@ func generateCaseV1(s *SpecV1) (*GoDynamicTestData, error) {
 	var parseMetaFnMap = map[string]MetaParser{
 		"encoding":      parseStringProperty(MetaEncoding),
 		"method":        parseStringProperty(MetaMethod),
-		"uri":           parseStringProperty(MetaUri),
+		"url":           parseStringProperty(MetaUrl),
 		"data":          parseDataBodyProperty(MetaData),
 		"header":        parseStringMapProperty(MetaHeader),
 		"http-encoding": parseStringProperty(MetaHTTPEncoding),

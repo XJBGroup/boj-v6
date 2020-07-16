@@ -3,6 +3,7 @@ package unittest
 import (
 	"fmt"
 	"math"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -282,90 +283,109 @@ func getFuncRecursive(p LinkedContext, k string) (f CheckFunc) {
 
 var rg = `"'` + "`"
 
+func composed(s string) (string, []string) {
+	if len(s) > 0 && s[len(s)-1] == ')' {
+		i := strings.IndexByte(s, '(')
+		if i == -1 {
+			panic(fmt.Errorf("invalid form of field %v", s))
+		}
+		f, s := s[:i], s[i+1:len(s)-1]
+		s, fs := composed(s)
+		return s, append(fs, f)
+	}
+	return s, nil
+}
+
+func convertValue(ref interface{}, strVar string) (wv interface{}, err error) {
+	switch ref.(type) {
+	case float64:
+		wv, err = strconv.ParseFloat(strVar, 64)
+		if err != nil {
+			return nil, fmt.Errorf("assertion equal error: %v", err)
+		}
+	case bool:
+		wv, err = strconv.ParseBool(strVar)
+		if err != nil {
+			return nil, fmt.Errorf("assertion equal error: %v", err)
+		}
+	case string:
+		if strVar[0] == strVar[len(strVar)-1] && strings.IndexByte(rg, strVar[0]) != -1 {
+			strVar = strVar[1 : len(strVar)-1]
+		}
+		wv = strVar
+	case nil:
+		if strVar != "nil" {
+			wv = struct{}{}
+		} else {
+			wv = nil
+		}
+	default:
+		return nil, fmt.Errorf("bad assertion type: %T", ref)
+	}
+	return
+}
+
+var EQFunctions = map[reflect.Type]func(u, v interface{}) bool{
+	reflect.TypeOf(float64(1)): func(u, v interface{}) bool {
+		return math.Abs(v.(float64)-u.(float64)) <= 1e-6
+	},
+	reflect.TypeOf(""):   func(u, v interface{}) bool { return u == v },
+	reflect.TypeOf(true): func(u, v interface{}) bool { return u == v },
+	reflect.TypeOf(nil):  func(u, v interface{}) bool { return u == v },
+}
+
+func applyFunc(value interface{}, fs []string) (interface{}, error) {
+	for i := range fs {
+		switch fs[i] {
+		case "len":
+			v := reflect.ValueOf(value)
+			switch v.Kind() {
+			case reflect.Array, reflect.Slice, reflect.Map, reflect.String:
+				value = float64(v.Len())
+			default:
+				return nil, fmt.Errorf("could not perform len on %v(%T)", value, value)
+			}
+		}
+	}
+	return value, nil
+}
+
 func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
 	ensureVarLength(s2, 2, &err)
+	field, fs := composed(s2[0])
 	if body := ensureJSONBody(req, &err); err == nil {
-		k := body.Get(s2[0])
-		switch v := k.Value().(type) {
-		case float64:
-			wv, err := strconv.ParseFloat(s2[1], 64)
-			if err != nil {
-				return false, fmt.Errorf("assertion equal error: %v", err)
-			}
-			if math.Abs(v-wv) > 1e-6 {
-				return false, fmt.Errorf("float assertion equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case bool:
-			wv, err := strconv.ParseBool(s2[1])
-			if err != nil {
-				return false, fmt.Errorf("assertion equal error: %v", err)
-			}
-			if wv != v {
-				return false, fmt.Errorf("boolean assertion equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case string:
-			wv := s2[1]
-			if wv[0] == wv[len(wv)-1] && strings.IndexByte(rg, wv[0]) != -1 {
-				wv = wv[1 : len(wv)-1]
-			}
-			if wv != v {
-				return false, fmt.Errorf("string assertion equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case nil:
-			if s2[1] != "nil" {
-				return false, fmt.Errorf("nil assertion equal error: want %v, got %v", s2[1], v)
-			}
-			return true, nil
-		default:
-			return false, fmt.Errorf("bad assertion type: %v", k.Type)
+		k, err := applyFunc(body.Get(field).Value(), fs)
+		if err != nil {
+			return false, err
 		}
+		wv, err := convertValue(k, s2[1])
+		if err != nil {
+			return false, err
+		}
+		if EQFunctions[reflect.TypeOf(k)](k, wv) == false {
+			return false, fmt.Errorf("float assertion equal error: want %v, got %v", wv, k)
+		}
+		return true, nil
 	}
 	return
 }
 
 func assertJSONNEQ(req *Request, s2 ...string) (s bool, err error) {
 	ensureVarLength(s2, 2, &err)
+	field, fs := composed(s2[0])
 	if body := ensureJSONBody(req, &err); err == nil {
-		k := body.Get(s2[0])
-		switch v := k.Value().(type) {
-		case float64:
-			wv, err := strconv.ParseFloat(s2[1], 64)
-			if err != nil {
-				return false, fmt.Errorf("assertion not equal error: %v", err)
-			}
-			if math.Abs(v-wv) <= 1e-6 {
-				return false, fmt.Errorf("float assertion not equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case bool:
-			wv, err := strconv.ParseBool(s2[1])
-			if err != nil {
-				return false, fmt.Errorf("assertion not equal error: %v", err)
-			}
-			if wv == v {
-				return false, fmt.Errorf("boolean assertion not equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case string:
-			wv := s2[1]
-			if wv[0] == wv[len(wv)-1] && strings.IndexByte(rg, wv[0]) != -1 {
-				wv = wv[1 : len(wv)-1]
-			}
-			if wv == v {
-				return false, fmt.Errorf("string assertion not equal error: want %v, got %v", wv, v)
-			}
-			return true, nil
-		case nil:
-			if s2[1] == "nil" {
-				return false, fmt.Errorf("nil assertion not equal error: want %v, got %v", s2[1], v)
-			}
-			return true, nil
-		default:
-			return false, fmt.Errorf("bad assertion type: %v", k.Type)
+		k, err := applyFunc(body.Get(field).Value(), fs)
+		if err != nil {
+			return false, err
 		}
+		wv, err := convertValue(k, s2[1])
+		if err != nil {
+			return false, err
+		}
+		if EQFunctions[reflect.TypeOf(k)](k, wv) == true {
+			return false, fmt.Errorf("float assertion not equal error: want %v, got %v", wv, k)
+		}
+		return true, nil
 	}
 	return
 }

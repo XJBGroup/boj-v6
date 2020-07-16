@@ -19,7 +19,7 @@ const (
 	MetaHTTPHeader   = "HTTPHeader"
 	MetaHTTPMethod   = "HTTPMethod"
 	MetaHTTPEncoding = "HTTPEncoding"
-	MetaUri          = "HTTPUri"
+	MetaUrl          = "HTTPUri"
 	MetaMethod       = "Method"
 	MetaEncoding     = "Encoding"
 	MetaHeader       = "Header"
@@ -48,7 +48,7 @@ func load() {
 		fmt.Println("Encoding:", x.Meta[MetaEncoding])
 		fmt.Println("Data:", x.Meta[MetaData])
 		fmt.Println("Header:", x.Meta[MetaHeader])
-		fmt.Println("HTTPUri:", x.Meta[MetaUri])
+		fmt.Println("HTTPUri:", x.Meta[MetaUrl])
 		fmt.Println("HTTPMethod:", x.Meta[MetaHTTPMethod])
 		fmt.Println("HTTPEncoding:", x.Meta[MetaHTTPEncoding])
 		fmt.Println("HTTPHeader:", x.Meta[MetaHTTPHeader])

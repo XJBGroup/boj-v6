@@ -17,14 +17,14 @@ type ListGroupsReply struct {
 type CountGroupsRequest = gorm_crud_dao.Filter
 
 type CountGroupReply struct {
-	Code int   `json:"code" form:"code"`
-	Data int64 `form:"data" json:"data"`
+	Code int   `form:"code" json:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type PostGroupRequest struct {
-	Name        string `form:"name" binding:"required" json:"name"`
+	Name        string `json:"name" form:"name" binding:"required"`
 	Description string `json:"description" form:"description" binding:"required"`
-	OwnerId     uint   `json:"owner_id" form:"owner_id" binding:"required"`
+	OwnerId     uint   `form:"owner_id" binding:"required" json:"owner_id"`
 }
 
 type PostGroupReply struct {
@@ -33,7 +33,7 @@ type PostGroupReply struct {
 }
 
 type PutGroupOwnerRequest struct {
-	OwnerId uint `binding:"required" json:"owner_id" form:"owner_id"`
+	OwnerId uint `json:"owner_id" form:"owner_id" binding:"required"`
 }
 
 type GroupUserListRequest = gorm_crud_dao.Filter
@@ -45,7 +45,7 @@ type GetGroupMembersReply struct {
 
 type ListGroupUserReply struct {
 	Id                  uint      `json:"id" form:"id"`
-	Gender              uint8     `json:"gender" form:"gender"`
+	Gender              uint8     `form:"gender" json:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
@@ -59,16 +59,16 @@ type PostGroupMemberRequest struct {
 }
 
 type PostGroupMemberReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type GetGroupReply struct {
 	Code  int          `json:"code" form:"code"`
-	Group *group.Group `json:"group" form:"group"`
+	Group *group.Group `form:"group" json:"group"`
 }
 
 type PutGroupRequest struct {
-	Name        string `form:"name" json:"name"`
+	Name        string `json:"name" form:"name"`
 	Description string `json:"description" form:"description"`
 }
 

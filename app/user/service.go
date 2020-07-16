@@ -102,7 +102,7 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 
 	r = &api.RegisterReply{
 		Code: types.CodeOK,
-		Id:   usr.ID,
+		Data: api.SerializeUserRegisterData(usr),
 	}
 	c.JSON(http.StatusOK, r)
 	return
@@ -118,7 +118,7 @@ func (svc *Service) RegisterAdmin(c controller.MContext) {
 		return
 	}
 
-	_, err := svc.enforcer.AddGroupingPolicy("user:"+strconv.Itoa(int(resp.Id)), "admin")
+	_, err := svc.enforcer.AddGroupingPolicy("user:"+strconv.Itoa(int(resp.Data.Id)), "admin")
 	if err != nil {
 		svc.logger.Debug("update group error", "error", err)
 	}
@@ -170,11 +170,8 @@ func (svc *Service) LoginUser(c controller.MContext) {
 		}
 
 		c.JSON(http.StatusOK, api.LoginUserReply{
-			Code:         types.CodeOK,
-			User:         usr,
-			RefreshToken: refreshToken,
-			Token:        token,
-			Identities:   identities,
+			Code: types.CodeOK,
+			Data: api.SerializeUserLoginData(usr, refreshToken, token, identities),
 		})
 
 		aff, err := svc.db.UpdateFields(usr, []string{"last_login"})
@@ -194,8 +191,8 @@ func (svc *Service) RefreshToken(c controller.MContext) {
 	}
 
 	c.JSON(http.StatusOK, api.RefreshTokenReply{
-		Code:  types.CodeOK,
-		Token: newToken,
+		Code: types.CodeOK,
+		Data: api.UserRefreshTokenData{Token: newToken},
 	})
 }
 
@@ -237,7 +234,7 @@ func (svc *Service) GetUser(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, User: obj})
+	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, Data: obj})
 }
 
 func (svc *Service) PutUser(c controller.MContext) {
