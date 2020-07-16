@@ -11,6 +11,7 @@ import (
 	"github.com/Myriad-Dreamin/go-magic-package/instance"
 	parser "github.com/Myriad-Dreamin/go-parse-package"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
+	"github.com/google/go-querystring/query"
 	"github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
@@ -22,7 +23,7 @@ import (
 	"testing"
 
 	"github.com/Myriad-Dreamin/gin-middleware/mock"
-	abstract_test "github.com/Myriad-Dreamin/minimum-lib/abstract-test"
+	"github.com/Myriad-Dreamin/minimum-lib/abstract-test"
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"github.com/stretchr/testify/assert"
@@ -211,8 +212,8 @@ func (mocker *Mocker) mockServe(r *Request, params ...interface{}) (w *mock.Resp
 	var (
 		b           []byte
 		err         error
-		comment     string = "the request url is " + r.URL.String() + ". "
-		abortRecord        = false
+		comment     = "the request url is " + r.URL.String() + ". "
+		abortRecord = false
 	)
 
 	for i := range params {
@@ -289,7 +290,7 @@ func (mocker *Mocker) report(err error) {
 
 type emptyBody struct{}
 
-func (body emptyBody) Read(p []byte) (n int, err error) {
+func (body emptyBody) Read([]byte) (n int, err error) {
 	return 0, io.EOF
 }
 
@@ -330,12 +331,22 @@ func (mocker *Mocker) Method(method, path string, params ...interface{}) mock.Re
 		case Header:
 			header = p
 		default:
-			buf := bytes.NewBuffer(nil)
-			body = buf
-			if err := json.NewEncoder(buf).Encode(p); err != nil {
-				mocker.Logger.Error("encode request to json error", "error", err)
+			if method != http.MethodGet {
+				buf := bytes.NewBuffer(nil)
+				body = buf
+				if err := json.NewEncoder(buf).Encode(p); err != nil {
+					mocker.Logger.Error("encode request to json error", "error", err)
+				}
+				contentType = "application/json"
+			} else {
+
+				if v, err := query.Values(p); err != nil {
+					mocker.Logger.Error("encode request to query string error", "error", err)
+				} else {
+					path += v.Encode()
+				}
+
 			}
-			contentType = "application/json"
 		}
 	}
 	if r == nil {

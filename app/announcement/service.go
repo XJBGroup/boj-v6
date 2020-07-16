@@ -39,12 +39,12 @@ func (svc *Service) ListAnnouncements(c controller.MContext) {
 		return
 	}
 
-	ancs, err := svc.db.Find(page, pageSize)
-	if snippet.MaybeSelectError(c, ancs, err) {
+	announcements, err := svc.db.Find(page, pageSize)
+	if snippet.MaybeSelectError(c, announcements, err) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListAnnouncementsReply(types.CodeOK, ancs))
+	c.JSON(http.StatusOK, api.SerializeListAnnouncementsReply(types.CodeOK, announcements))
 	return
 }
 
@@ -83,10 +83,7 @@ func (svc *Service) PostAnnouncement(c controller.MContext) {
 
 	a, e := svc.db.Create(obj)
 	if snippet.CreateObj(c, a, e) {
-		c.JSON(http.StatusOK, &api.PostAnnouncementReply{
-			Code:         types.CodeOK,
-			Announcement: obj,
-		})
+		c.JSON(http.StatusOK, api.SerializePostAnnouncementReply(types.CodeOK, obj))
 	}
 }
 

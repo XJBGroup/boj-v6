@@ -290,36 +290,77 @@ func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
 		case float64:
 			wv, err := strconv.ParseFloat(s2[1], 64)
 			if err != nil {
-				return false, err
+				return false, fmt.Errorf("assertion equal error: %v", err)
 			}
 			if math.Abs(v-wv) > 1e-6 {
-				return false, fmt.Errorf("float assertion error: want %v, got %v", wv, v)
+				return false, fmt.Errorf("float assertion equal error: want %v, got %v", wv, v)
 			}
 			return true, nil
 		case bool:
 			wv, err := strconv.ParseBool(s2[1])
 			if err != nil {
-				return false, err
+				return false, fmt.Errorf("assertion equal error: %v", err)
 			}
 			if wv != v {
-				return false, fmt.Errorf("boolean assertion error: want %v, got %v", wv, v)
+				return false, fmt.Errorf("boolean assertion equal error: want %v, got %v", wv, v)
 			}
 			return true, nil
 		case string:
-			if s2[1][0] != s2[1][len(s2)-1] || strings.IndexByte(rg, s2[1][0]) == -1 {
-				return false, fmt.Errorf("invalid string literal")
-			}
-			wv := s2[1][1 : len(s2)-1]
-			if err != nil {
-				return false, err
+			wv := s2[1]
+			if wv[0] == wv[len(wv)-1] && strings.IndexByte(rg, wv[0]) != -1 {
+				wv = wv[1 : len(wv)-1]
 			}
 			if wv != v {
-				return false, fmt.Errorf("boolean assertion error: want %v, got %v", wv, v)
+				return false, fmt.Errorf("string assertion equal error: want %v, got %v", wv, v)
 			}
 			return true, nil
 		case nil:
 			if s2[1] != "nil" {
-				return false, fmt.Errorf("boolean assertion error: want %v, got %v", s2[1], v)
+				return false, fmt.Errorf("nil assertion equal error: want %v, got %v", s2[1], v)
+			}
+			return true, nil
+		default:
+			return false, fmt.Errorf("bad assertion type: %v", k.Type)
+		}
+	}
+	return
+}
+
+func assertJSONNEQ(req *Request, s2 ...string) (s bool, err error) {
+	ensureVarLength(s2, 2, &err)
+	if body := ensureJSONBody(req, &err); err == nil {
+		k := body.Get(s2[0])
+		switch v := k.Value().(type) {
+		case float64:
+			wv, err := strconv.ParseFloat(s2[1], 64)
+			if err != nil {
+				return false, fmt.Errorf("assertion not equal error: %v", err)
+			}
+			if math.Abs(v-wv) <= 1e-6 {
+				return false, fmt.Errorf("float assertion not equal error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case bool:
+			wv, err := strconv.ParseBool(s2[1])
+			if err != nil {
+				return false, fmt.Errorf("assertion not equal error: %v", err)
+			}
+			if wv == v {
+				return false, fmt.Errorf("boolean assertion not equal error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case string:
+			wv := s2[1]
+			if wv[0] == wv[len(wv)-1] && strings.IndexByte(rg, wv[0]) != -1 {
+				wv = wv[1 : len(wv)-1]
+			}
+			if wv == v {
+				return false, fmt.Errorf("string assertion not equal error: want %v, got %v", wv, v)
+			}
+			return true, nil
+		case nil:
+			if s2[1] == "nil" {
+				return false, fmt.Errorf("nil assertion not equal error: want %v, got %v", s2[1], v)
 			}
 			return true, nil
 		default:
@@ -330,15 +371,9 @@ func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
 }
 
 var namespaceStd = Package{
-	"Assert":   assertJSONEQ,
-	"AssertEQ": assertJSONEQ,
-	"AssertNEQ": func(req *Request, s2 ...string) (s bool, err error) {
-		ensureVarLength(s2, 2, &err)
-		if body := ensureJSONBody(req, &err); err == nil {
-			fmt.Println("asserting", body, s2[1])
-		}
-		return
-	},
+	"Assert":    assertJSONEQ,
+	"AssertEQ":  assertJSONEQ,
+	"AssertNEQ": assertJSONNEQ,
 	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
 		ensureVarLength(s2, 1, &err)
 		if body := ensureJSONBody(req, &err); err == nil {
@@ -349,15 +384,9 @@ var namespaceStd = Package{
 }
 
 var namespaceJSON = Package{
-	"Assert":   assertJSONEQ,
-	"AssertEQ": assertJSONEQ,
-	"AssertNEQ": func(req *Request, s2 ...string) (s bool, err error) {
-		ensureVarLength(s2, 2, &err)
-		if body := ensureJSONBody(req, &err); err == nil {
-			fmt.Println("asserting", body, s2[1])
-		}
-		return
-	},
+	"Assert":    assertJSONEQ,
+	"AssertEQ":  assertJSONEQ,
+	"AssertNEQ": assertJSONNEQ,
 	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
 		ensureVarLength(s2, 1, &err)
 		if body := ensureJSONBody(req, &err); err == nil {

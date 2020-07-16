@@ -5,9 +5,7 @@ selector:
       header:
         Content-Type: /^application\/json/ # 正则
 default:
-  # 选择器入参只能是 (string...)
-  #  $(suit[=(method, GET), <(meta.json-selector), my_selector_method(GET)]).encoding: json # 选择器
-  - $(.[!=(method, GET)]).encoding: json # 选择器
+  - $(.[!=(method, GET)]).encoding: json
   # 分层赋初值
   - encoding: query-string
 package: # 包声明
@@ -23,21 +21,78 @@ tests:
       - name: ~default
       - name: ~success.default
         assertion:
-          - - Assert
-            - code # arg1
-            - 0 # arg2
+          - [Assert, code, 0]
       - name: ~failed.default
         assertion:
-          - - AssertNEQ
-            - code # arg1
-            - 0 # arg2
+          - [AssertNEQ, code, 0]
       - name: ~post-announcement
         method: POST
         uri: /v1/announcement
         cases:
           - name: ~success<post-announcement, success.suit>
-          - name: ~failed<post-announcement,failed.suit>
+          - name: ~failed<post-announcement, failed.suit>
+          - name: s1.success
+            data: { title: t1, content: c1 }
+            assertion:
+              - [Assert, data.title, t1]
+              - [Assert, data.content, c1]
+          - name: s2.success
+            data: { title: t2, content: c2 }
+          - name: s3.success
+            data: { title: t3, content: c2 }
+          # - name: f1.failed
+          #   data: { title: t3, content: c2 }
+          - name: f2.failed
+            data: { title: c1 }
+          - name: f3.failed
+            data: { content: c1 }
+      - name: ~get-announcement
+        method: GET
+        uri: /v1/announcement/:aid
+        cases:
+          - name: ~success<get-announcement, success.suit>
+          - name: ~failed<get-announcement, failed.suit>
           - name: case1.success
-            data:
-              title: t1
-              content: c1
+            uri: /v1/announcement/3
+            assertion:
+              - [Assert, data.title, t3]
+              - [Assert, data.content, c2]
+          - name: case2.failed
+            uri: /v1/announcement/4
+      - name: ~put-announcement
+        method: PUT
+        uri: /v1/announcement/:aid
+        cases:
+          - name: ~success<put-announcement, success.suit>
+          - name: ~failed<put-announcement, failed.suit>
+          - name: p1.success
+            uri: /v1/announcement/3
+            data: { title: t2 }
+          - name: g1.success
+            method: GET
+            uri: /v1/announcement/3
+            assertion:
+              - [Assert, data.title, t2]
+              - [Assert, data.content, c2]
+          - name: p2.success
+            uri: /v1/announcement/3
+            data: { title: t4, content: c3 }
+          - name: g2.success
+            method: GET
+            uri: /v1/announcement/3
+            assertion:
+              - [Assert, data.title, t4]
+              - [Assert, data.content, c3]
+      - name: ~delete-announcement
+        method: DELETE
+        uri: /v1/announcement/:aid
+        cases:
+          - name: ~success<delete-announcement, success.suit>
+          - name: ~failed<delete-announcement, failed.suit>
+          - name: d1.success
+            uri: /v1/announcement/3
+          - name: g1.failed
+            method: GET
+            uri: /v1/announcement/3
+          - name: d2.failed
+            uri: /v1/announcement/3

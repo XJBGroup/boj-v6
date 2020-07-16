@@ -22,6 +22,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/google/go-querystring v1.0.0
 	github.com/jinzhu/gorm v1.9.14
 	github.com/mattn/go-sqlite3 v1.14.0
 	github.com/pelletier/go-toml v1.8.0

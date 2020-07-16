@@ -8,30 +8,30 @@ import (
 type ListAnnouncementsRequest = gorm_crud_dao.Filter
 
 type ListAnnouncementsReply struct {
-	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `form:"data" json:"data"`
+	Code int                         `form:"code" json:"code"`
+	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
 type CountAnnouncementsRequest = gorm_crud_dao.Filter
 
 type CountAnnouncementReply struct {
 	Code int   `json:"code" form:"code"`
-	Data int64 `json:"data" form:"data"`
+	Data int64 `form:"data" json:"data"`
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `json:"title" form:"title"`
-	Content string `form:"content" json:"content"`
+	Title   string `json:"title" form:"title" binding:"required"`
+	Content string `binding:"required" json:"content" form:"content"`
 }
 
 type PostAnnouncementReply struct {
-	Code         int                        `json:"code" form:"code"`
-	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
+	Code int                        `json:"code" form:"code"`
+	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
 type GetAnnouncementReply struct {
-	Code         int                        `json:"code" form:"code"`
-	Announcement *announcement.Announcement `json:"announcement" form:"announcement"`
+	Code int                        `json:"code" form:"code"`
+	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
 type PutAnnouncementRequest struct {
@@ -120,57 +120,57 @@ func PackSerializePostAnnouncementRequest(announcement []*announcement.Announcem
 	}
 	return
 }
-func PSerializePostAnnouncementReply(_code int, _announcement *announcement.Announcement) *PostAnnouncementReply {
+func PSerializePostAnnouncementReply(_code int, _data *announcement.Announcement) *PostAnnouncementReply {
 
 	return &PostAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializePostAnnouncementReply(_code int, _announcement *announcement.Announcement) PostAnnouncementReply {
+func SerializePostAnnouncementReply(_code int, _data *announcement.Announcement) PostAnnouncementReply {
 
 	return PostAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializePostAnnouncementReply(_code int, _announcement *announcement.Announcement) PostAnnouncementReply {
+func _packSerializePostAnnouncementReply(_code int, _data *announcement.Announcement) PostAnnouncementReply {
 
 	return PostAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func PackSerializePostAnnouncementReply(_code []int, _announcement []*announcement.Announcement) (pack []PostAnnouncementReply) {
+func PackSerializePostAnnouncementReply(_code []int, _data []*announcement.Announcement) (pack []PostAnnouncementReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializePostAnnouncementReply(_code[i], _announcement[i]))
+		pack = append(pack, _packSerializePostAnnouncementReply(_code[i], _data[i]))
 	}
 	return
 }
-func PSerializeGetAnnouncementReply(_code int, _announcement *announcement.Announcement) *GetAnnouncementReply {
+func PSerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) *GetAnnouncementReply {
 
 	return &GetAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializeGetAnnouncementReply(_code int, _announcement *announcement.Announcement) GetAnnouncementReply {
+func SerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) GetAnnouncementReply {
 
 	return GetAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializeGetAnnouncementReply(_code int, _announcement *announcement.Announcement) GetAnnouncementReply {
+func _packSerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) GetAnnouncementReply {
 
 	return GetAnnouncementReply{
-		Code:         _code,
-		Announcement: _announcement,
+		Code: _code,
+		Data: _data,
 	}
 }
-func PackSerializeGetAnnouncementReply(_code []int, _announcement []*announcement.Announcement) (pack []GetAnnouncementReply) {
+func PackSerializeGetAnnouncementReply(_code []int, _data []*announcement.Announcement) (pack []GetAnnouncementReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeGetAnnouncementReply(_code[i], _announcement[i]))
+		pack = append(pack, _packSerializeGetAnnouncementReply(_code[i], _data[i]))
 	}
 	return
 }

@@ -30,7 +30,7 @@ type ListSubmissionReply struct {
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `json:"run_memory" form:"run_memory"`
+	RunMemory  int64     `form:"run_memory" json:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
@@ -44,8 +44,8 @@ type CountSubmissionsReply struct {
 type PostSubmissionRequest struct {
 	Information string `json:"information" form:"information"`
 	Shared      uint8  `json:"shared" form:"shared"`
-	Language    uint8  `binding:"required" json:"language" form:"language"`
-	Code        string `json:"code" form:"code" binding:"required"`
+	Language    uint8  `json:"language" form:"language" binding:"required"`
+	Code        string `form:"code" binding:"required" json:"code"`
 }
 
 type PostSubmissionReply struct {
@@ -55,7 +55,7 @@ type PostSubmissionReply struct {
 
 type GetSubmissionReply struct {
 	Code       int                     `json:"code" form:"code"`
-	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
+	Submission GetSubmissionInnerReply `form:"submission" json:"submission"`
 }
 
 type GetSubmissionInnerReply struct {

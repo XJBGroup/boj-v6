@@ -42,11 +42,12 @@ func DescribeAnnouncementService() artisan.ProposingService {
 			Path("announcement").
 			Method(artisan.POST, "PostAnnouncement", artisan.AuthMeta("~"),
 				artisan.Request(
-					artisan.SPsC(&announcementModel.Title, &announcementModel.Content),
+					artisan.SnakeParam(&announcementModel.Title, required),
+					artisan.SnakeParam(&announcementModel.Content, required),
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("announcement", &announcementModel),
+					artisan.Param("data", &announcementModel),
 				),
 			),
 		IdGroup: artisan.Ink().
@@ -56,13 +57,13 @@ func DescribeAnnouncementService() artisan.ProposingService {
 			Method(artisan.GET, "GetAnnouncement",
 				artisan.Reply(
 					codeField,
-					artisan.Param("announcement", &announcementModel),
+					artisan.Param("data", &announcementModel),
 				)).
-			Method(artisan.PUT, "PutAnnouncement",
+			Method(artisan.PUT, "PutAnnouncement", artisan.AuthMeta("~"),
 				artisan.Request(
 					artisan.SPsC(&announcementModel.Title, &announcementModel.Content),
 				)).
-			Method(artisan.DELETE, "Delete"),
+			Method(artisan.DELETE, "Delete", artisan.AuthMeta("~")),
 	}
 	svc.Name("AnnouncementService").
 		UseModel(artisan.Model(artisan.Name("announcement"), &announcementModel))
