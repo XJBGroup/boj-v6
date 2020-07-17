@@ -19,8 +19,8 @@ type CountCommentReply struct {
 }
 
 type PostCommentRequest struct {
-	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Title   string `form:"title" json:"title"`
+	Content string `form:"content" json:"content"`
 }
 
 type PostCommentReply struct {

@@ -135,7 +135,7 @@ func (svc *Service) LoginUser(c controller.MContext) {
 	if req.Id != 0 {
 		usr, err = svc.db.ID(req.Id)
 	} else if len(req.UserName) != 0 {
-		usr, err = svc.db.QueryName(req.UserName)
+		usr, err = svc.db.QueryUserName(req.UserName)
 	} else if len(req.Email) != 0 {
 		usr, err = svc.db.QueryEmail(req.Email)
 		//} else if len(req.Phone) != 0 {

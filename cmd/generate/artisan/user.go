@@ -96,7 +96,7 @@ func DescribeUserService() artisan.ProposingService {
 				),
 				StdReply(artisan.Object(
 					"UserLoginData",
-					artisan.Param("user", &userModel),
+					artisan.SnakeParam(&userModel.ID),
 					artisan.Param("refresh_token", artisan.String),
 					artisan.Param("token", artisan.String),
 					artisan.Param("identities", artisan.Strings),

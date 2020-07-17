@@ -9,7 +9,7 @@ type DB interface {
 	Count() (int64, error)
 
 	ID(id uint) (*User, error)
-	QueryName(name string) (*User, error)
+	QueryUserName(name string) (*User, error)
 	QueryEmail(email string) (*User, error)
 	AuthenticatePassword(user *User, password string) (verified bool, err error)
 }

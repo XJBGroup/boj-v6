@@ -10,35 +10,39 @@ type ListProblemsRequest = gorm_crud_dao.Filter
 
 type ListProblemsReply struct {
 	Code int               `json:"code" form:"code"`
-	Data []problem.Problem `json:"data" form:"data"`
+	Data []problem.Problem `form:"data" json:"data"`
 }
 
 type CountProblemsRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
 type PostProblemRequest struct {
-	Title       string                       `form:"title" binding:"required" json:"title"`
+	Title       string                       `json:"title" form:"title" binding:"required"`
 	Description string                       `json:"description" form:"description"`
 	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
 
 type PostProblemReply struct {
-	Code int  `json:"code" form:"code"`
-	Id   uint `json:"id" form:"id"`
+	Code int             `json:"code" form:"code"`
+	Data PostProblemData `json:"data" form:"data"`
+}
+
+type PostProblemData struct {
+	Id uint `json:"id" form:"id"`
 }
 
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
-	NewName string `json:"new_name" form:"new_name" binding:"required"`
+	Name    string `binding:"required" json:"name" form:"name"`
+	NewName string `binding:"required" json:"new_name" form:"new_name"`
 }
 
 type PostProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 type GetProblemDescRequest struct {
@@ -57,17 +61,17 @@ type ProblemDesc struct {
 
 type PutProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 type GetProblemReply struct {
-	Code    int              `json:"code" form:"code"`
-	Problem *problem.Problem `json:"problem" form:"problem"`
+	Code int              `json:"code" form:"code"`
+	Data *problem.Problem `json:"data" form:"data"`
 }
 
 type PutProblemRequest struct {
-	Title          string `form:"title" json:"title"`
-	Description    string `form:"description" json:"description"`
+	Title          string `json:"title" form:"title"`
+	Description    string `json:"description" form:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 
@@ -155,30 +159,54 @@ func PackSerializePostProblemRequest(problem []*problem.Problem, _config []*prob
 	}
 	return
 }
-func PSerializePostProblemReply(_code int, problem *problem.Problem) *PostProblemReply {
+func PSerializePostProblemReply(_code int, _data PostProblemData) *PostProblemReply {
 
 	return &PostProblemReply{
 		Code: _code,
-		Id:   problem.ID,
+		Data: _data,
 	}
 }
-func SerializePostProblemReply(_code int, problem *problem.Problem) PostProblemReply {
+func SerializePostProblemReply(_code int, _data PostProblemData) PostProblemReply {
 
 	return PostProblemReply{
 		Code: _code,
-		Id:   problem.ID,
+		Data: _data,
 	}
 }
-func _packSerializePostProblemReply(_code int, problem *problem.Problem) PostProblemReply {
+func _packSerializePostProblemReply(_code int, _data PostProblemData) PostProblemReply {
 
 	return PostProblemReply{
 		Code: _code,
-		Id:   problem.ID,
+		Data: _data,
 	}
 }
-func PackSerializePostProblemReply(_code []int, problem []*problem.Problem) (pack []PostProblemReply) {
+func PackSerializePostProblemReply(_code []int, _data []PostProblemData) (pack []PostProblemReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializePostProblemReply(_code[i], problem[i]))
+		pack = append(pack, _packSerializePostProblemReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializePostProblemData(problem *problem.Problem) *PostProblemData {
+
+	return &PostProblemData{
+		Id: problem.ID,
+	}
+}
+func SerializePostProblemData(problem *problem.Problem) PostProblemData {
+
+	return PostProblemData{
+		Id: problem.ID,
+	}
+}
+func _packSerializePostProblemData(problem *problem.Problem) PostProblemData {
+
+	return PostProblemData{
+		Id: problem.ID,
+	}
+}
+func PackSerializePostProblemData(problem []*problem.Problem) (pack []PostProblemData) {
+	for i := range problem {
+		pack = append(pack, _packSerializePostProblemData(problem[i]))
 	}
 	return
 }
@@ -341,30 +369,30 @@ func PackSerializePutProblemDescRequest(_name []string, _content []string) (pack
 	}
 	return
 }
-func PSerializeGetProblemReply(_code int, _problem *problem.Problem) *GetProblemReply {
+func PSerializeGetProblemReply(_code int, _data *problem.Problem) *GetProblemReply {
 
 	return &GetProblemReply{
-		Code:    _code,
-		Problem: _problem,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializeGetProblemReply(_code int, _problem *problem.Problem) GetProblemReply {
+func SerializeGetProblemReply(_code int, _data *problem.Problem) GetProblemReply {
 
 	return GetProblemReply{
-		Code:    _code,
-		Problem: _problem,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializeGetProblemReply(_code int, _problem *problem.Problem) GetProblemReply {
+func _packSerializeGetProblemReply(_code int, _data *problem.Problem) GetProblemReply {
 
 	return GetProblemReply{
-		Code:    _code,
-		Problem: _problem,
+		Code: _code,
+		Data: _data,
 	}
 }
-func PackSerializeGetProblemReply(_code []int, _problem []*problem.Problem) (pack []GetProblemReply) {
+func PackSerializeGetProblemReply(_code []int, _data []*problem.Problem) (pack []GetProblemReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeGetProblemReply(_code[i], _problem[i]))
+		pack = append(pack, _packSerializeGetProblemReply(_code[i], _data[i]))
 	}
 	return
 }

@@ -18,7 +18,7 @@ type ListUsersReply struct {
 type ListUserReply struct {
 	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
-	LastLogin           time.Time `form:"last_login" json:"last_login"`
+	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
@@ -36,12 +36,12 @@ type RegisterRequest struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
 	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
-	Gender   uint8  `form:"gender" json:"gender"`
+	Gender   uint8  `json:"gender" form:"gender"`
 }
 
 type RegisterReply struct {
 	Code int              `json:"code" form:"code"`
-	Data UserRegisterData `json:"data" form:"data"`
+	Data UserRegisterData `form:"data" json:"data"`
 }
 
 type UserRegisterData struct {
@@ -52,7 +52,7 @@ type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
 	UserName string `json:"user_name" form:"user_name"`
 	Email    string `json:"email" form:"email"`
-	Password string `json:"password" form:"password" binding:"required"`
+	Password string `binding:"required" json:"password" form:"password"`
 }
 
 type LoginUserReply struct {
@@ -61,19 +61,23 @@ type LoginUserReply struct {
 }
 
 type UserLoginData struct {
-	User         *user.User `json:"user" form:"user"`
-	RefreshToken string     `json:"refresh_token" form:"refresh_token"`
-	Token        string     `json:"token" form:"token"`
-	Identities   []string   `form:"identities" json:"identities"`
+	Id           uint     `form:"id" json:"id"`
+	RefreshToken string   `json:"refresh_token" form:"refresh_token"`
+	Token        string   `json:"token" form:"token"`
+	Identities   []string `json:"identities" form:"identities"`
 }
 
 type RefreshTokenReply struct {
 	Code int                  `json:"code" form:"code"`
-	Data UserRefreshTokenData `form:"data" json:"data"`
+	Data UserRefreshTokenData `json:"data" form:"data"`
 }
 
 type UserRefreshTokenData struct {
 	Token string `json:"token" form:"token"`
+}
+
+type BindEmailRequest struct {
+	Email string `json:"email" form:"email" binding:"email"`
 }
 
 type InspectUserReply struct {
@@ -81,13 +85,9 @@ type InspectUserReply struct {
 	Data *user.User `json:"data" form:"data"`
 }
 
-type BindEmailRequest struct {
-	Email string `json:"email" form:"email" binding:"email"`
-}
-
 type GetUserReply struct {
 	Code int        `json:"code" form:"code"`
-	Data *user.User `form:"data" json:"data"`
+	Data *user.User `json:"data" form:"data"`
 }
 
 type PutUserRequest struct {
@@ -369,36 +369,36 @@ func PackSerializeLoginUserReply(_code []int, _data []UserLoginData) (pack []Log
 	}
 	return
 }
-func PSerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) *UserLoginData {
+func PSerializeUserLoginData(user *user.User, _refreshToken string, _token string, _identities []string) *UserLoginData {
 
 	return &UserLoginData{
-		User:         _user,
+		Id:           user.ID,
 		RefreshToken: _refreshToken,
 		Token:        _token,
 		Identities:   _identities,
 	}
 }
-func SerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
+func SerializeUserLoginData(user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
 
 	return UserLoginData{
-		User:         _user,
+		Id:           user.ID,
 		RefreshToken: _refreshToken,
 		Token:        _token,
 		Identities:   _identities,
 	}
 }
-func _packSerializeUserLoginData(_user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
+func _packSerializeUserLoginData(user *user.User, _refreshToken string, _token string, _identities []string) UserLoginData {
 
 	return UserLoginData{
-		User:         _user,
+		Id:           user.ID,
 		RefreshToken: _refreshToken,
 		Token:        _token,
 		Identities:   _identities,
 	}
 }
-func PackSerializeUserLoginData(_user []*user.User, _refreshToken []string, _token []string, _identities [][]string) (pack []UserLoginData) {
-	for i := range _user {
-		pack = append(pack, _packSerializeUserLoginData(_user[i], _refreshToken[i], _token[i], _identities[i]))
+func PackSerializeUserLoginData(user []*user.User, _refreshToken []string, _token []string, _identities [][]string) (pack []UserLoginData) {
+	for i := range user {
+		pack = append(pack, _packSerializeUserLoginData(user[i], _refreshToken[i], _token[i], _identities[i]))
 	}
 	return
 }
@@ -453,6 +453,30 @@ func PackSerializeUserRefreshTokenData(_token []string) (pack []UserRefreshToken
 	}
 	return
 }
+func PSerializeBindEmailRequest(user *user.User) *BindEmailRequest {
+
+	return &BindEmailRequest{
+		Email: user.Email,
+	}
+}
+func SerializeBindEmailRequest(user *user.User) BindEmailRequest {
+
+	return BindEmailRequest{
+		Email: user.Email,
+	}
+}
+func _packSerializeBindEmailRequest(user *user.User) BindEmailRequest {
+
+	return BindEmailRequest{
+		Email: user.Email,
+	}
+}
+func PackSerializeBindEmailRequest(user []*user.User) (pack []BindEmailRequest) {
+	for i := range user {
+		pack = append(pack, _packSerializeBindEmailRequest(user[i]))
+	}
+	return
+}
 func PSerializeInspectUserReply(_code int, _data *user.User) *InspectUserReply {
 
 	return &InspectUserReply{
@@ -477,30 +501,6 @@ func _packSerializeInspectUserReply(_code int, _data *user.User) InspectUserRepl
 func PackSerializeInspectUserReply(_code []int, _data []*user.User) (pack []InspectUserReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeInspectUserReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeBindEmailRequest(user *user.User) *BindEmailRequest {
-
-	return &BindEmailRequest{
-		Email: user.Email,
-	}
-}
-func SerializeBindEmailRequest(user *user.User) BindEmailRequest {
-
-	return BindEmailRequest{
-		Email: user.Email,
-	}
-}
-func _packSerializeBindEmailRequest(user *user.User) BindEmailRequest {
-
-	return BindEmailRequest{
-		Email: user.Email,
-	}
-}
-func PackSerializeBindEmailRequest(user []*user.User) (pack []BindEmailRequest) {
-	for i := range user {
-		pack = append(pack, _packSerializeBindEmailRequest(user[i]))
 	}
 	return
 }

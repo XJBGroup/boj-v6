@@ -78,7 +78,7 @@ func (svc Service) PostGroup(c controller.MContext) {
 	//if req.OwnerId != 0 {
 	u, err = svc.userDB.ID(req.OwnerId)
 	//} else if len(req.OwnerName) != 0 {
-	//	u, err = svc.userDB.QueryName(req.OwnerName)
+	//	u, err = svc.userDB.QueryUserName(req.OwnerName)
 	//}
 	if snippet.MaybeSelectError(c, u, err) {
 		return

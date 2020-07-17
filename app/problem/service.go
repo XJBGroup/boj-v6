@@ -130,7 +130,7 @@ func (svc Service) PostProblem(c controller.MContext) {
 
 	c.JSON(http.StatusOK, &api.PostProblemReply{
 		Code: types.CodeOK,
-		Id:   p.ID,
+		Data: api.PostProblemData{Id: p.ID},
 	})
 }
 

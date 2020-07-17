@@ -126,7 +126,7 @@ func (tester *Tester) MakeAdminContext() bool {
 
 	//fmt.Println(r2)
 	//r2.RefreshToken
-	_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.Data.User.ID)), "admin")
+	_, err = rbac.AddGroupingPolicy("user:"+strconv.Itoa(int(r2.Data.Id)), "admin")
 	if err != nil {
 		tester.Logger.Debug("update group error", "error", err)
 	}

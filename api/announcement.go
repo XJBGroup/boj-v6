@@ -5,7 +5,7 @@ import (
 )
 
 type AnnouncementFilter struct {
-	Page     int `form:"page" json:"page"`
+	Page     int `json:"page" form:"page"`
 	PageSize int `json:"page_size" form:"page_size"`
 }
 
@@ -21,16 +21,16 @@ type CountAnnouncementReply struct {
 
 type PostAnnouncementRequest struct {
 	Title   string `json:"title" form:"title" binding:"required"`
-	Content string `json:"content" form:"content" binding:"required"`
+	Content string `form:"content" binding:"required" json:"content"`
 }
 
 type PostAnnouncementReply struct {
-	Code int                        `json:"code" form:"code"`
+	Code int                        `form:"code" json:"code"`
 	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
 type GetAnnouncementReply struct {
-	Code int                        `json:"code" form:"code"`
+	Code int                        `form:"code" json:"code"`
 	Data *announcement.Announcement `json:"data" form:"data"`
 }
 

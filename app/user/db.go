@@ -16,9 +16,9 @@ func (db DBImpl) Create(obj *user.User) (int64, error) {
 	return db.db.Create(obj)
 }
 
-func (db DBImpl) QueryName(name string) (usr *user.User, err error) {
+func (db DBImpl) QueryUserName(name string) (usr *user.User, err error) {
 	usr = new(user.User)
-	err = db.GORMDBImpl.QueryOne("name = ?", name, usr)
+	err = db.GORMDBImpl.QueryOne("user_name = ?", name, usr)
 	if err == dao.DBErrorNotFound {
 		usr = nil
 		err = nil

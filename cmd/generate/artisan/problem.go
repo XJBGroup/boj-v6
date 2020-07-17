@@ -54,7 +54,10 @@ func getPostProblemCate(prefix string) artisan.Category {
 			),
 			artisan.Reply(
 				codeField,
-				artisan.SnakeParam(&problemModel.ID),
+				StdReply(artisan.Object(
+					"Post"+prefix+"ProblemData",
+					artisan.SnakeParam(&problemModel.ID),
+				)),
 			),
 		)
 }
@@ -73,7 +76,7 @@ func getProblemIDCate(prefix string) artisan.Category {
 		Method(artisan.GET, "Get"+prefix+"Problem",
 			artisan.Reply(
 				codeField,
-				artisan.Param("problem", &problemModel),
+				artisan.Param("data", &problemModel),
 			)).
 		Method(artisan.PUT, "Put"+prefix+"Problem",
 			artisan.Request(
