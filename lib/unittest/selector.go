@@ -2,6 +2,7 @@ package unittest
 
 import (
 	"errors"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/inner"
 	"regexp"
 	"strings"
 )
@@ -33,13 +34,13 @@ func newSelector(path string, c map[string]interface{}) (g Matcher, err error) {
 		case string:
 			g, err = newStringSelector(path, v)
 		case map[string]interface{}:
-			g, err = newSelector(dotJoin(path, k), v)
+			g, err = newSelector(inner.DotJoin(path, k), v)
 		case map[interface{}]interface{}:
 			var sc = map[string]interface{}{}
 			for k, vv := range v {
 				sc[k.(string)] = vv
 			}
-			g, err = newSelector(dotJoin(path, k), sc)
+			g, err = newSelector(inner.DotJoin(path, k), sc)
 		}
 		if err != nil {
 			return

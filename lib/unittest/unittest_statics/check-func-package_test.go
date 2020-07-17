@@ -1,29 +1,30 @@
-package unittest
+package unittest_statics
 
 import (
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"reflect"
 	"testing"
 )
 
 func Test_RepositionCtx(t *testing.T) {
-	var p = &linkedContext{name: "root"}
-	a := &linkedContext{name: "a"}
+	var p = &LinkedContext{name: "root"}
+	a := &LinkedContext{name: "a"}
 	p.Insert("a", a)
-	json := &linkedContext{name: "json"}
+	json := &LinkedContext{name: "json"}
 	p.Insert("json", json)
-	aa := &linkedContext{name: "a"}
+	aa := &LinkedContext{name: "a"}
 	a.Insert("a", aa)
-	aaa := &linkedContext{name: "a"}
+	aaa := &LinkedContext{name: "a"}
 	aa.Insert("a", aaa)
 
 	type args struct {
-		p LinkedContext
+		p unittest_types.LinkedContext
 		k string
 	}
 	tests := []struct {
 		name string
 		args args
-		want LinkedContext
+		want unittest_types.LinkedContext
 	}{
 		{"easy", args{a, "a"}, a},
 		{"easy", args{aa, "a"}, aa},

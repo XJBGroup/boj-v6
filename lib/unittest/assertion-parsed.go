@@ -1,15 +1,10 @@
 package unittest
 
-type DataBody = map[string]interface{}
+import "github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 
-type Request struct {
-	Body      []byte
-	CacheBody interface{}
-}
-
-type Assertion struct {
+type Statement struct {
 	FN    string
-	F     CheckFunc
+	F     unittest_types.CheckFunc
 	VArgs []interface{}
 }
 
@@ -18,7 +13,7 @@ type TestCase struct {
 	Path     string
 	Name     string
 	Meta     map[string]interface{}
-	Script   []Assertion
+	Script   []Statement
 }
 
 func (t *TestCase) GetMeta(k string) (v interface{}) {

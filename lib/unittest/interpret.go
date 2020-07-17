@@ -2,19 +2,23 @@ package unittest
 
 import (
 	"fmt"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/inner"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_script"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_statics"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"strings"
 )
 
 func interpretPackageDef(ctx *caseContext, s *SpecV1) (err error) {
 
-	var existingPackages = map[string]Package{
-		"std-assert":  namespaceStd,
-		"json-assert": namespaceJSON,
+	var existingPackages = map[string]unittest_types.Package{
+		"std-assert":  unittest_script.NamespaceStd,
+		"json-assert": unittest_script.NamespaceJSON,
 	}
 
 	for _, pd := range s.PackageDefs {
 		if p, ok := existingPackages[pd.Path]; ok {
-			ctx.Packages.Insert(pd.Namespace, newFunctionPackage(pd.Namespace, p))
+			ctx.Packages.Insert(pd.Namespace, unittest_statics.NewFunctionPackage(pd.Namespace, p))
 		} else {
 			panic("not found existing package")
 		}
@@ -76,7 +80,7 @@ func interpretTestCaseV1(ctx *caseContext, td *TestDef) (err error) {
 	}
 
 	// create linked context
-	lc := &linkedContext{name: name}
+	lc := unittest_statics.NewFunctionPackage(name, nil)
 	// update ctx.Packages
 	ctx.Packages.Insert(name, lc)
 	ctx.Packages = lc
@@ -120,11 +124,11 @@ func interpretTestCaseV1(ctx *caseContext, td *TestDef) (err error) {
 		if len(a) == 0 {
 			panic("nil assertion")
 		}
-		fn := findCheckFunc(ctx.Packages, a[0].(string))
+		fn := unittest_statics.FindCheckFunc(ctx.Packages, a[0].(string))
 		if fn == nil {
 			panic("nil assertion")
 		}
-		ts.Script = append(ts.Script, Assertion{
+		ts.Script = append(ts.Script, Statement{
 			F:     fn,
 			FN:    a[0].(string),
 			VArgs: a[1:],
@@ -132,7 +136,7 @@ func interpretTestCaseV1(ctx *caseContext, td *TestDef) (err error) {
 	}
 
 	// update ctx.testCasePath
-	ctx.TestCasePath = dotJoin(ts.Name, ts.Path)
+	ctx.TestCasePath = inner.DotJoin(ts.Name, ts.Path)
 
 	for _, std := range td.Cases {
 
@@ -157,16 +161,16 @@ func interpretUsingV1(ctx *caseContext, us map[string]string) (err error) {
 			return fmt.Errorf("nil k")
 		}
 		if k[0] == '$' {
-			p := RepositionCtx(ctx.Packages, v)
+			p := unittest_statics.RepositionCtx(ctx.Packages, v)
 			if p == nil {
-				p = RepositionCtx(ctx.Packages, dotJoin("root", v))
+				p = unittest_statics.RepositionCtx(ctx.Packages, inner.DotJoin("root", v))
 			}
 			if p == nil {
 				return fmt.Errorf("package not found")
 			}
-			ctx.Packages.Insert(k[1:], copyLink(p))
+			ctx.Packages.Insert(k[1:], unittest_statics.CopyLink(p))
 		} else {
-			f := findCheckFunc(ctx.Packages, v)
+			f := unittest_statics.FindCheckFunc(ctx.Packages, v)
 			if f == nil {
 				return fmt.Errorf("func not found")
 			}

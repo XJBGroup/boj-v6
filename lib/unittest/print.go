@@ -2,6 +2,7 @@ package unittest
 
 import (
 	"fmt"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/inner"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"io"
 	"reflect"
@@ -37,18 +38,18 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 	switch v := v.(type) {
 	case defaultNode:
 		for i := range v {
-			debugPrint(w, v[i], fmt.Sprintf("Default(%s)", dotJoin(path, "default")), level)
+			debugPrint(w, v[i], fmt.Sprintf("Default(%s)", inner.DotJoin(path, "default")), level)
 		}
 	case usingNode:
 		debugPrint(w, (map[string]string)(v), fmt.Sprintf("Using(%s)", path), level)
 	case usingForceNode:
 		debugPrint(w, (map[string]string)(v), fmt.Sprintf("UsingFor(%s)", path), level)
 	case metaNode:
-		debugPrint(w, (map[string]interface{})(v), fmt.Sprintf("Meta(%s)", dotJoin(path, "meta")), level)
+		debugPrint(w, (map[string]interface{})(v), fmt.Sprintf("Meta(%s)", inner.DotJoin(path, "meta")), level)
 	case versionNode:
-		debugPrint(w, (string)(v), dotJoin(path, "version"), level)
+		debugPrint(w, (string)(v), inner.DotJoin(path, "version"), level)
 	case nameNode:
-		debugPrint(w, (string)(v), dotJoin(path, "name"), level)
+		debugPrint(w, (string)(v), inner.DotJoin(path, "name"), level)
 	default:
 		mm = true
 	}
@@ -62,7 +63,7 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 	writeLevel(w, level)
 	switch v := v.(type) {
 	case SpecV1:
-		path = dotJoin(path, "spec")
+		path = inner.DotJoin(path, "spec")
 		sugar.HandlerError(fmt.Fprintf(w, "Spec(%s):\n", path))
 		debugPrint(w, versionNode(v.Version), path, level+1)
 		if v.Meta != nil {
@@ -110,7 +111,7 @@ func debugPrint(w io.Writer, v interface{}, path string, level int) {
 	case PackageDef:
 		sugar.HandlerError(fmt.Fprintf(w, "%s: %s", v.Path, v.Namespace))
 	case TestDef:
-		path = dotJoin(path, v.Name)
+		path = inner.DotJoin(path, v.Name)
 		sugar.HandlerError(fmt.Fprintf(w, "%s:", path))
 		if v.Using != nil {
 			sugar.HandlerError(w.Write([]byte{'\n'}))

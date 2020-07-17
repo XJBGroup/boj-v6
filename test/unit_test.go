@@ -3,6 +3,7 @@ package tests
 import (
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
 	"hash/crc32"
@@ -70,9 +71,10 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 			if mockResponse == nil {
 				panic("nil response")
 			}
-			req := &unittest.Request{Body: mockResponse.Body().Bytes()}
+			req := &unittest_types.Response{Body: mockResponse.Body().Bytes()}
+			st := &unittest_types.State{Res: req}
 			for _, assertion := range tt.Script {
-				ok, err := assertion.F(req, nil, assertion.VArgs...)
+				ok, err := assertion.F(st, assertion.VArgs...)
 				if err != nil {
 					t.Errorf("%v(%v): url>> %v@%v, err>> %v, test id>> %v", assertion.FN,
 						strings.Join(mapConvertString(func(i interface{}) string {

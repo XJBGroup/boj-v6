@@ -1,18 +1,10 @@
-package unittest
+package unittest_statics
 
-import "errors"
-
-type MetaStorage = map[string]interface{}
-
-type MetaParser interface {
-	GetTargetProperty() string
-	ParseMeta(v interface{}) (parsedValue interface{}, err error)
-}
-
-type MetaOperation interface {
-	ZeroValue(t MetaStorage) bool
-	AssignDefault(v interface{}, t MetaStorage) error
-}
+import (
+	"errors"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/inner"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
+)
 
 type StringPropertyParser struct {
 	metaKey string
@@ -33,7 +25,7 @@ func (p StringPropertyParser) ParseMeta(v interface{}) (parsedValue interface{},
 	}
 }
 
-func ParseStringProperty(metaKey string) MetaParser {
+func ParseStringProperty(metaKey string) unittest_types.MetaParser {
 	return StringPropertyParser{metaKey: metaKey}
 }
 
@@ -70,7 +62,7 @@ func (p StringMapPropertyParser) ParseMeta(v interface{}) (parsedValue interface
 	}
 }
 
-func ParseStringMapProperty(metaKey string) MetaParser {
+func ParseStringMapProperty(metaKey string) unittest_types.MetaParser {
 	return StringMapPropertyParser{metaKey: metaKey}
 }
 
@@ -85,9 +77,9 @@ func (p DataBodyPropertyParser) GetTargetProperty() string {
 func (p DataBodyPropertyParser) ParseMeta(v interface{}) (parsedValue interface{}, err error) {
 	switch d := v.(type) {
 	case map[string]interface{}:
-		return toDataBody(d).(map[string]interface{}), nil
+		return inner.ToDataBody(d).(map[string]interface{}), nil
 	case map[interface{}]interface{}:
-		return toDataBody(d).(map[string]interface{}), nil
+		return inner.ToDataBody(d).(map[string]interface{}), nil
 	case nil:
 		return nil, nil
 	default:
@@ -95,7 +87,7 @@ func (p DataBodyPropertyParser) ParseMeta(v interface{}) (parsedValue interface{
 	}
 }
 
-func ParseDataBodyProperty(metaKey string) MetaParser {
+func ParseDataBodyProperty(metaKey string) unittest_types.MetaParser {
 	return DataBodyPropertyParser{metaKey: metaKey}
 }
 
@@ -103,7 +95,7 @@ type StringMetaOperation struct {
 	metaKey string
 }
 
-func (o StringMetaOperation) ZeroValue(t MetaStorage) bool {
+func (o StringMetaOperation) ZeroValue(t unittest_types.MetaStorage) bool {
 	if tv, ok := t[o.metaKey]; !ok || len(tv.(string)) == 0 {
 		return true
 	} else {
@@ -111,7 +103,7 @@ func (o StringMetaOperation) ZeroValue(t MetaStorage) bool {
 	}
 }
 
-func (o StringMetaOperation) AssignDefault(v interface{}, t MetaStorage) error {
+func (o StringMetaOperation) AssignDefault(v interface{}, t unittest_types.MetaStorage) error {
 	if v != nil && len(v.(string)) != 0 {
 		if o.ZeroValue(t) {
 			t[o.metaKey] = v.(string)
@@ -120,7 +112,7 @@ func (o StringMetaOperation) AssignDefault(v interface{}, t MetaStorage) error {
 	return nil
 }
 
-func StringMetaPropertyOperation(metaKey string) MetaOperation {
+func StringMetaPropertyOperation(metaKey string) unittest_types.MetaOperation {
 	return StringMetaOperation{metaKey: metaKey}
 }
 
@@ -128,25 +120,25 @@ type DataBodyMetaOperation struct {
 	metaKey string
 }
 
-func (o DataBodyMetaOperation) ZeroValue(t MetaStorage) bool {
-	if tv, ok := t[o.metaKey]; !ok || len(tv.(DataBody)) == 0 {
+func (o DataBodyMetaOperation) ZeroValue(t unittest_types.MetaStorage) bool {
+	if tv, ok := t[o.metaKey]; !ok || len(tv.(unittest_types.DataBody)) == 0 {
 		return true
 	} else {
 		return false
 	}
 }
 
-func (o DataBodyMetaOperation) AssignDefault(v interface{}, t MetaStorage) error {
-	if v != nil && len(v.(DataBody)) != 0 {
+func (o DataBodyMetaOperation) AssignDefault(v interface{}, t unittest_types.MetaStorage) error {
+	if v != nil && len(v.(unittest_types.DataBody)) != 0 {
 		if t[o.metaKey] == nil {
-			t[o.metaKey] = make(DataBody)
+			t[o.metaKey] = make(unittest_types.DataBody)
 		}
-		inheritMapType(t[o.metaKey].(DataBody), v.(DataBody))
+		inner.InheritMapType(t[o.metaKey].(unittest_types.DataBody), v.(unittest_types.DataBody))
 	}
 	return nil
 }
 
-func DataBodyMetaPropertyOperation(metaKey string) MetaOperation {
+func DataBodyMetaPropertyOperation(metaKey string) unittest_types.MetaOperation {
 	return DataBodyMetaOperation{metaKey: metaKey}
 }
 
@@ -155,7 +147,7 @@ type StringMapMetaOperation struct {
 	metaKey string
 }
 
-func (o StringMapMetaOperation) ZeroValue(t MetaStorage) bool {
+func (o StringMapMetaOperation) ZeroValue(t unittest_types.MetaStorage) bool {
 	if tv, ok := t[o.metaKey]; !ok || len(tv.(StringMap)) == 0 {
 		return true
 	} else {
@@ -163,7 +155,7 @@ func (o StringMapMetaOperation) ZeroValue(t MetaStorage) bool {
 	}
 }
 
-func (o StringMapMetaOperation) AssignDefault(v interface{}, t MetaStorage) error {
+func (o StringMapMetaOperation) AssignDefault(v interface{}, t unittest_types.MetaStorage) error {
 	if v != nil && len(v.(StringMap)) != 0 {
 		if t[o.metaKey] == nil {
 			t[o.metaKey] = make(map[string]string)
@@ -178,6 +170,6 @@ func (o StringMapMetaOperation) AssignDefault(v interface{}, t MetaStorage) erro
 	return nil
 }
 
-func StringMapMetaPropertyOperation(metaKey string) MetaOperation {
+func StringMapMetaPropertyOperation(metaKey string) unittest_types.MetaOperation {
 	return StringMapMetaOperation{metaKey: metaKey}
 }

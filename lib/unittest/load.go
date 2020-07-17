@@ -4,15 +4,17 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_statics"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
 	"syscall"
 )
 
-type TMetaHTTPHeader = StringMap
+type TMetaHTTPHeader = unittest_statics.StringMap
 type TMetaHTTPMethod = string
-type TMetaHTTPData = DataBody
+type TMetaHTTPData = unittest_types.DataBody
 type TMetaHTTPEncoding = string
 
 const (

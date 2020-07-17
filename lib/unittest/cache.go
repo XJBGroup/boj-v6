@@ -2,6 +2,8 @@ package unittest
 
 import (
 	"encoding/gob"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_statics"
+	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"io"
 	"os"
 )
@@ -33,6 +35,6 @@ func saveCache(filepath string, d *GoDynamicTestData) (err error) {
 
 func init() {
 	gob.Register(new(GoDynamicTestData))
-	gob.Register(StringMap{})
-	gob.Register(DataBody{})
+	gob.Register(unittest_statics.StringMap{})
+	gob.Register(unittest_types.DataBody{})
 }
