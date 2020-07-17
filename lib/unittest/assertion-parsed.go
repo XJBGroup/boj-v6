@@ -10,15 +10,15 @@ type Request struct {
 type Assertion struct {
 	FN    string
 	F     CheckFunc
-	VArgs []string
+	VArgs []interface{}
 }
 
 type TestCase struct {
-	Abstract   bool
-	Path       string
-	Name       string
-	Meta       map[string]interface{}
-	Assertions []Assertion
+	Abstract bool
+	Path     string
+	Name     string
+	Meta     map[string]interface{}
+	Script   []Assertion
 }
 
 func (t *TestCase) GetMeta(k string) (v interface{}) {

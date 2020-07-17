@@ -11,8 +11,16 @@ import (
 )
 
 func TestUnit(t *testing.T) {
-	g := unittest.Load("test.yaml", false)
+	g := unittest.Load("test.yaml", false, unittest.V1Opt)
 	runUnitTest(t, g.TestCases)
+}
+
+func mapConvertString(f func(interface{}) string, x []interface{}) (s []string) {
+	s = make([]string, len(x))
+	for i := range x {
+		s[i] = f(x[i])
+	}
+	return
 }
 
 func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
@@ -63,12 +71,20 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 				panic("nil response")
 			}
 			req := &unittest.Request{Body: mockResponse.Body().Bytes()}
-			for _, assertion := range tt.Assertions {
-				ok, err := assertion.F(req, assertion.VArgs...)
+			for _, assertion := range tt.Script {
+				ok, err := assertion.F(req, nil, assertion.VArgs...)
 				if err != nil {
-					t.Errorf("%v(%v): url>> %v@%v, err>> %v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUrl].(string), method, err, characteristic)
+					t.Errorf("%v(%v): url>> %v@%v, err>> %v, test id>> %v", assertion.FN,
+						strings.Join(mapConvertString(func(i interface{}) string {
+							return fmt.Sprintf("%v", i)
+						}, assertion.VArgs), ", "),
+						tt.Meta[unittest.MetaUrl].(string), method, err, characteristic)
 				} else if !ok {
-					t.Errorf("%v(%v) == false: url %v@%v, test id>> %v", assertion.FN, strings.Join(assertion.VArgs, ", "), tt.Meta[unittest.MetaUrl].(string), method, characteristic)
+					t.Errorf("%v(%v) == false: url %v@%v, test id>> %v", assertion.FN,
+						strings.Join(mapConvertString(func(i interface{}) string {
+							return fmt.Sprintf("%v", i)
+						}, assertion.VArgs), ", "),
+						tt.Meta[unittest.MetaUrl].(string), method, characteristic)
 				}
 			}
 		})

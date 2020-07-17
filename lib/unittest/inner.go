@@ -88,11 +88,18 @@ func ensureJSONBody(req *Request, err *error) (body gjson.Result) {
 	return
 }
 
-func ensureVarLength(s []string, wantLen int, err *error) {
+func ensureVarLength(s []interface{}, wantLen int, err *error) {
 	if *err != nil {
 		return
 	}
 	if len(s) != wantLen {
 		panic("var length error")
 	}
+}
+
+func mapString(f func(string) string, x []string) []string {
+	for i := range x {
+		x[i] = f(x[i])
+	}
+	return x
 }

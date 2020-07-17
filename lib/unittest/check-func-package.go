@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-type CheckFunc = func(*Request, ...string) (bool, error)
+type State struct{}
+type CheckFunc = func(*Request, *State, ...interface{}) (bool, error)
 type Package = map[string]CheckFunc
 type LinkedContext interface {
 	Last() LinkedContext
@@ -281,8 +282,6 @@ func getFuncRecursive(p LinkedContext, k string) (f CheckFunc) {
 	return
 }
 
-var rg = `"'` + "`"
-
 func composed(s string) (string, []string) {
 	if len(s) > 0 && s[len(s)-1] == ')' {
 		i := strings.IndexByte(s, '(')
@@ -296,28 +295,50 @@ func composed(s string) (string, []string) {
 	return s, nil
 }
 
-func convertValue(ref interface{}, strVar string) (wv interface{}, err error) {
+var ft = reflect.TypeOf(float64(1))
+
+func convertValue(ref interface{}, v interface{}) (wv interface{}, err error) {
 	switch ref.(type) {
 	case float64:
-		wv, err = strconv.ParseFloat(strVar, 64)
-		if err != nil {
-			return nil, fmt.Errorf("assertion equal error: %v", err)
+		switch v := v.(type) {
+		case float64:
+			wv = v
+		case int, int64, int32, int16, int8, uint, uint64, uint32, uint16, uint8:
+			wv = reflect.ValueOf(v).Convert(ft).Interface()
+		case string:
+			wv, err = strconv.ParseFloat(v, 64)
+			if err != nil {
+				return nil, fmt.Errorf("convert error: %v", err)
+			}
+		default:
+			err = fmt.Errorf("unknown convert value from %T to %T", v, ref)
 		}
 	case bool:
-		wv, err = strconv.ParseBool(strVar)
-		if err != nil {
-			return nil, fmt.Errorf("assertion equal error: %v", err)
+		switch v := v.(type) {
+		case bool:
+			wv = v
+		case string:
+			wv, err = strconv.ParseBool(v)
+			if err != nil {
+				return nil, fmt.Errorf("convert error: %v", err)
+			}
+		default:
+			err = fmt.Errorf("unknown convert value from %T to %T", v, ref)
 		}
 	case string:
-		if strVar[0] == strVar[len(strVar)-1] && strings.IndexByte(rg, strVar[0]) != -1 {
-			strVar = strVar[1 : len(strVar)-1]
-		}
-		wv = strVar
+		wv = fmt.Sprintf("%v", v)
 	case nil:
-		if strVar != "nil" {
-			wv = struct{}{}
-		} else {
+		switch v := v.(type) {
+		case nil:
 			wv = nil
+		case string:
+			if v != "nil" {
+				wv = struct{}{}
+			} else {
+				wv = nil
+			}
+		default:
+			err = fmt.Errorf("unknown convert value from %T to %T", v, ref)
 		}
 	default:
 		return nil, fmt.Errorf("bad assertion type: %T", ref)
@@ -350,9 +371,9 @@ func applyFunc(value interface{}, fs []string) (interface{}, error) {
 	return value, nil
 }
 
-func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
+func assertJSONEQ(req *Request, st *State, s2 ...interface{}) (s bool, err error) {
 	ensureVarLength(s2, 2, &err)
-	field, fs := composed(s2[0])
+	field, fs := composed(s2[0].(string))
 	if body := ensureJSONBody(req, &err); err == nil {
 		k, err := applyFunc(body.Get(field).Value(), fs)
 		if err != nil {
@@ -370,9 +391,9 @@ func assertJSONEQ(req *Request, s2 ...string) (s bool, err error) {
 	return
 }
 
-func assertJSONNEQ(req *Request, s2 ...string) (s bool, err error) {
+func assertJSONNEQ(req *Request, st *State, s2 ...interface{}) (s bool, err error) {
 	ensureVarLength(s2, 2, &err)
-	field, fs := composed(s2[0])
+	field, fs := composed(s2[0].(string))
 	if body := ensureJSONBody(req, &err); err == nil {
 		k, err := applyFunc(body.Get(field).Value(), fs)
 		if err != nil {
@@ -394,7 +415,7 @@ var namespaceStd = Package{
 	"Assert":    assertJSONEQ,
 	"AssertEQ":  assertJSONEQ,
 	"AssertNEQ": assertJSONNEQ,
-	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
+	"AssertZeroValue": func(req *Request, st *State, s2 ...interface{}) (s bool, err error) {
 		ensureVarLength(s2, 1, &err)
 		if body := ensureJSONBody(req, &err); err == nil {
 			fmt.Println("asserting", body)
@@ -407,7 +428,7 @@ var namespaceJSON = Package{
 	"Assert":    assertJSONEQ,
 	"AssertEQ":  assertJSONEQ,
 	"AssertNEQ": assertJSONNEQ,
-	"AssertZeroValue": func(req *Request, s2 ...string) (s bool, err error) {
+	"AssertZeroValue": func(req *Request, st *State, s2 ...interface{}) (s bool, err error) {
 		ensureVarLength(s2, 1, &err)
 		if body := ensureJSONBody(req, &err); err == nil {
 			fmt.Println("asserting", body)

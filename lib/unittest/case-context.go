@@ -6,7 +6,7 @@ import (
 )
 
 type Option struct {
-	metaOperationMap map[string]MetaOperation
+	MetaOperationMap map[string]MetaOperation
 	ParseMetaMap     map[string]MetaParser
 }
 
@@ -19,47 +19,51 @@ func (e ErrMetaParserNotFound) Error() string {
 }
 
 type caseContext struct {
-	warnings          []error
-	Packages          LinkedContext
-	gd                *GoDynamicTestData
-	testCasePath      string
+	// raw data
+	Opt          *Option
+	Packages     LinkedContext
+	TestCasePath string
+
+	// parsed data
+	Warnings  []error
+	Selectors map[string]Matcher
+	Gd        *GoDynamicTestData
+
 	inheritFunction   func(k string, v interface{}, t MetaStorage) error
 	parseMetaFunction func(k string, v interface{}) (propertyName string, parsedValue interface{}, err error)
-	mt                map[string]Matcher
 }
 
 func newContext(opt *Option) (*caseContext, error) {
-	metaOperationMap := opt.metaOperationMap
-	if metaOperationMap == nil {
-		metaOperationMap = make(map[string]MetaOperation)
+	if opt.MetaOperationMap == nil {
+		opt.MetaOperationMap = make(map[string]MetaOperation)
 	}
-	parseMetaMap := opt.ParseMetaMap
-	if parseMetaMap == nil {
-		parseMetaMap = make(map[string]MetaParser)
+	if opt.ParseMetaMap == nil {
+		opt.ParseMetaMap = make(map[string]MetaParser)
 	}
 
 	// todo: check parseMeta propertyName not conflict
 
 	return &caseContext{
+		Opt: opt,
 		Packages: &linkedContext{
 			name: "root",
 		},
 		inheritFunction: func(k string, v interface{}, t MetaStorage) error {
-			fn, ok := metaOperationMap[k]
+			fn, ok := opt.MetaOperationMap[k]
 			if !ok {
 				return errors.New("inherit function of " + k + " not found")
 			}
 			return fn.AssignDefault(v, t)
 		},
 		parseMetaFunction: func(k string, v interface{}) (string, interface{}, error) {
-			fn, ok := parseMetaMap[k]
+			fn, ok := opt.ParseMetaMap[k]
 			if !ok {
 				return "", nil, ErrMetaParserNotFound{k}
 			}
 			pv, err := fn.ParseMeta(v)
 			return fn.GetTargetProperty(), pv, err
 		},
-		gd: new(GoDynamicTestData),
+		Gd: new(GoDynamicTestData),
 	}, nil
 }
 
@@ -105,7 +109,7 @@ func (c *caseContext) parseMeta(meta map[string]interface{}, t *TestCase) error 
 		if err != nil {
 			switch warning := err.(type) {
 			case ErrMetaParserNotFound:
-				c.warnings = append(c.warnings, warning)
+				c.Warnings = append(c.Warnings, warning)
 			default:
 				return err
 			}
@@ -117,9 +121,9 @@ func (c *caseContext) parseMeta(meta map[string]interface{}, t *TestCase) error 
 }
 
 func (c *caseContext) findTestCase(p string) *TestCase {
-	for i := len(c.gd.TestCases) - 1; i >= 0; i-- {
+	for i := len(c.Gd.TestCases) - 1; i >= 0; i-- {
 		// todo: nearest match
-		t := c.gd.TestCases[i]
+		t := c.Gd.TestCases[i]
 		if strings.HasPrefix(dotJoin(t.Name, t.Path), p) {
 			return t
 		}

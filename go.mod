@@ -27,6 +27,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.0
 	github.com/pelletier/go-toml v1.8.0
 	github.com/stretchr/testify v1.6.1
+	github.com/syndtr/goleveldb v1.0.1-0.20190318030020-c3a204f8e965
 	github.com/tidwall/gjson v1.6.0
 	go.uber.org/zap v1.15.0
 	gopkg.in/yaml.v2 v2.3.0

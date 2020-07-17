@@ -26,7 +26,7 @@ const (
 	MetaData         = "Data"
 )
 
-func load() {
+func load(opt *Option) {
 	f, err := os.Open("test.yaml")
 	if err != nil {
 		panic(err)
@@ -37,7 +37,7 @@ func load() {
 		panic(err)
 	}
 
-	gd, err := generateCaseV1(&spec)
+	gd, err := generateCaseV1(&spec, opt)
 	if err != nil {
 		panic(err)
 	}
@@ -52,12 +52,12 @@ func load() {
 		fmt.Println("HTTPMethod:", x.Meta[MetaHTTPMethod])
 		fmt.Println("HTTPEncoding:", x.Meta[MetaHTTPEncoding])
 		fmt.Println("HTTPHeader:", x.Meta[MetaHTTPHeader])
-		fmt.Println("Assertion:", x.Assertions)
+		fmt.Println("Script:", x.Script)
 		fmt.Println("----------------------------------------------------------------------")
 	}
 }
 
-func Load(filepath string, withCache bool) *GoDynamicTestData {
+func Load(filepath string, withCache bool, opt *Option) *GoDynamicTestData {
 	f, err := os.Open(filepath)
 	if err != nil {
 		panic(err)
@@ -111,7 +111,7 @@ func Load(filepath string, withCache bool) *GoDynamicTestData {
 		panic(err)
 	}
 
-	gd, err := generateCaseV1(&spec)
+	gd, err := generateCaseV1(&spec, opt)
 	if err != nil {
 		panic(err)
 	}

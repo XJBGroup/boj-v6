@@ -33,7 +33,7 @@ func (p StringPropertyParser) ParseMeta(v interface{}) (parsedValue interface{},
 	}
 }
 
-func parseStringProperty(metaKey string) MetaParser {
+func ParseStringProperty(metaKey string) MetaParser {
 	return StringPropertyParser{metaKey: metaKey}
 }
 
@@ -70,7 +70,7 @@ func (p StringMapPropertyParser) ParseMeta(v interface{}) (parsedValue interface
 	}
 }
 
-func parseStringMapProperty(metaKey string) MetaParser {
+func ParseStringMapProperty(metaKey string) MetaParser {
 	return StringMapPropertyParser{metaKey: metaKey}
 }
 
@@ -95,7 +95,7 @@ func (p DataBodyPropertyParser) ParseMeta(v interface{}) (parsedValue interface{
 	}
 }
 
-func parseDataBodyProperty(metaKey string) MetaParser {
+func ParseDataBodyProperty(metaKey string) MetaParser {
 	return DataBodyPropertyParser{metaKey: metaKey}
 }
 
@@ -120,7 +120,7 @@ func (o StringMetaOperation) AssignDefault(v interface{}, t MetaStorage) error {
 	return nil
 }
 
-func stringMetaPropertyOperation(metaKey string) MetaOperation {
+func StringMetaPropertyOperation(metaKey string) MetaOperation {
 	return StringMetaOperation{metaKey: metaKey}
 }
 
@@ -146,7 +146,7 @@ func (o DataBodyMetaOperation) AssignDefault(v interface{}, t MetaStorage) error
 	return nil
 }
 
-func dataBodyMetaPropertyOperation(metaKey string) MetaOperation {
+func DataBodyMetaPropertyOperation(metaKey string) MetaOperation {
 	return DataBodyMetaOperation{metaKey: metaKey}
 }
 
@@ -178,6 +178,6 @@ func (o StringMapMetaOperation) AssignDefault(v interface{}, t MetaStorage) erro
 	return nil
 }
 
-func stringMapMetaPropertyOperation(metaKey string) MetaOperation {
+func StringMapMetaPropertyOperation(metaKey string) MetaOperation {
 	return StringMapMetaOperation{metaKey: metaKey}
 }

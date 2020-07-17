@@ -31,12 +31,12 @@ tests:
     cases:
       - name: ~default # ~name表示它是个抽象测试用例，不需要被实例化
       - name: ~success.default # success.default继承default (点符号继承方法)
-        assertion:
+        script:
           # json.Assert(code, 0), 因为using namespace json; 所以可以省略json.
           # 相当于assert decode(response.body, 'json').code == 0
           - [Assert, code, 0]
       - name: ~failed.default
-        assertion:
+        script:
           - [AssertNEQ, code, 0]
       - name: ~announcement
         cases:
@@ -48,7 +48,7 @@ tests:
               - name: ~failed<post, failed.suit>
               - name: s1.success
                 data: { title: t1, content: c1 }
-                assertion:
+                script:
                   - [Assert, data.title, t1]
                   - [Assert, data.content, c1]
               - name: s2.success
@@ -69,7 +69,7 @@ tests:
               - name: ~failed<get, failed.suit>
               - name: case1.success
                 url: /v1/announcement/3
-                assertion:
+                script:
                   - [Assert, data.title, t3]
                   - [Assert, data.content, c2]
               - name: case2.failed
@@ -82,21 +82,21 @@ tests:
               - name: ~failed<list, failed.suit>
               - name: l1.success
                 data: { page: 1, page_size: 2 }
-                assertion:
+                script:
                   # 相当于assert len(decode(response.body, 'json').data) == 2
                   - [Assert, len(data), 2]
               - name: l2.success
                 data: { page: 2, page_size: 2 }
-                assertion:
+                script:
                   - [Assert, len(data), 1]
               - name: l3.success
                 data: { page: 1, page_size: 4 }
-                assertion:
+                script:
                   - [Assert, len(data), 3]
           - name: ~count
             method: GET
             url: /v1/announcement-count
-            assertion:
+            script:
               - [Assert, data, 3]
           - name: ~put
             method: PUT
@@ -110,7 +110,7 @@ tests:
               - name: g1.success
                 method: GET
                 url: /v1/announcement/3
-                assertion:
+                script:
                   - [Assert, data.title, t2]
                   - [Assert, data.content, c2]
               - name: p2.success
@@ -119,7 +119,7 @@ tests:
               - name: g2.success
                 method: GET
                 url: /v1/announcement/3
-                assertion:
+                script:
                   - [Assert, data.title, t4]
                   - [Assert, data.content, c3]
           - name: ~delete
@@ -145,11 +145,11 @@ tests:
               - name: ~failed<register, failed.suit>
               - name: s1.success
                 data: { user_name: u1, password: p1, nick_name: n1 }
-                assertion:
+                script:
                   - [Assert, data.id, 2]
               - name: s2.success
                 data: { user_name: u2, password: p1, nick_name: n2 }
-                assertion:
+                script:
                   - [Assert, data.id, 3]
               - name: absent1.failed
                 data: { user_name: u1, nick_name: n1 }
@@ -171,7 +171,7 @@ tests:
               - name: ~failed<get, failed.suit>
               - name: case1.success
                 url: /v1/user/2
-                assertion:
+                script:
                   - [Assert, data.user_name, u1]
                   - [Assert, data.nick_name, n1]
                   - [Assert, data.solved_problems, 0]
@@ -186,7 +186,7 @@ tests:
               - name: ~failed<login, failed.suit>
               - name: l1.success
                 data: { user_name: u1, password: p1 }
-                assertion:
+                script:
                   - [Assert, data.id, 2]
           - name: ~bind-email
             method: PUT
