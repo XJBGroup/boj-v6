@@ -23,20 +23,20 @@ type CountGroupReply struct {
 
 type PostGroupRequest struct {
 	Name        string `json:"name" form:"name" binding:"required"`
-	Description string `form:"description" binding:"required" json:"description"`
+	Description string `json:"description" form:"description" binding:"required"`
 	OwnerId     uint   `json:"owner_id" form:"owner_id" binding:"required"`
 }
 
 type PostGroupReply struct {
-	Code int  `json:"code" form:"code"`
-	Data uint `json:"data" form:"data"`
+	Code int  `form:"code" json:"code"`
+	Data uint `form:"data" json:"data"`
 }
 
 type PostGroupMemberRequest struct {
 }
 
 type PostGroupMemberReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type PutGroupOwnerRequest struct {
@@ -55,9 +55,9 @@ type ListGroupUserReply struct {
 	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
-	NickName            string    `form:"nick_name" json:"nick_name"`
+	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
-	Motto               string    `form:"motto" json:"motto"`
+	Motto               string    `json:"motto" form:"motto"`
 	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }

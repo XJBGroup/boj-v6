@@ -22,8 +22,8 @@ type ListUserReply struct {
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
-	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
+	Motto               string    `form:"motto" json:"motto"`
+	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 
@@ -33,7 +33,7 @@ type CountUserReply struct {
 }
 
 type RegisterRequest struct {
-	UserName string `json:"user_name" form:"user_name" binding:"required"`
+	UserName string `binding:"required" json:"user_name" form:"user_name"`
 	Password string `json:"password" form:"password" binding:"required"`
 	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
 	Gender   uint8  `json:"gender" form:"gender"`
@@ -41,11 +41,11 @@ type RegisterRequest struct {
 
 type RegisterReply struct {
 	Code int              `json:"code" form:"code"`
-	Data UserRegisterData `form:"data" json:"data"`
+	Data UserRegisterData `json:"data" form:"data"`
 }
 
 type UserRegisterData struct {
-	Id uint `json:"id" form:"id"`
+	Id uint `form:"id" json:"id"`
 }
 
 type LoginUserRequest struct {
@@ -61,7 +61,7 @@ type LoginUserReply struct {
 }
 
 type UserLoginData struct {
-	Id           uint     `form:"id" json:"id"`
+	Id           uint     `json:"id" form:"id"`
 	RefreshToken string   `json:"refresh_token" form:"refresh_token"`
 	Token        string   `json:"token" form:"token"`
 	Identities   []string `json:"identities" form:"identities"`
@@ -82,12 +82,12 @@ type BindEmailRequest struct {
 
 type InspectUserReply struct {
 	Code int        `json:"code" form:"code"`
-	Data *user.User `json:"data" form:"data"`
+	Data *user.User `form:"data" json:"data"`
 }
 
 type GetUserReply struct {
 	Code int        `json:"code" form:"code"`
-	Data *user.User `json:"data" form:"data"`
+	Data *user.User `form:"data" json:"data"`
 }
 
 type PutUserRequest struct {

@@ -24,5 +24,5 @@ func (db *DBImpl) Filter(f *comment.Filter) (comments []comment.Comment, _ error
 }
 
 func (db *DBImpl) FilterCount(f *comment.Filter) (cnt int64, _ error) {
-	return cnt, db.ApplyFilter(f).Count(&cnt).Error
+	return cnt, db.ApplyFilter(f).Model(&db.idleObject).Count(&cnt).Error
 }

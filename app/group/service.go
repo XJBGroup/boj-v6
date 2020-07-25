@@ -144,7 +144,7 @@ func (svc Service) DeleteGroup(c controller.MContext) {
 
 func (svc Service) PutGroup(c controller.MContext) {
 	var req = new(api.PutGroupRequest)
-	id, ok := snippet.ParseUintAndBind(c, "gid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}

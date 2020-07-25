@@ -5,8 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func (db *DBImpl) ApplyFilter(f *submission.Filter) *gorm.DB {
-	engine := db.Page(f.Page, f.PageSize)
+func (db *DBImpl) ApplyFilter(f *submission.Filter) (engine *gorm.DB) {
+	engine = db.Page(f.Page, f.PageSize)
 
 	if len(f.Order) != 0 {
 		engine = engine.Order(f.Order, true)
@@ -32,9 +32,9 @@ func (db *DBImpl) Filter(f *submission.Filter) (submissions []submission.Submiss
 }
 
 func (db *DBImpl) FilterCount(f *submission.Filter) (cnt int64, _ error) {
-	return cnt, db.ApplyFilter(f).Count(&cnt).Error
+	return cnt, db.ApplyFilter(f).Model(&db.idleObject).Count(&cnt).Error
 }
 
 func (db *DBImpl) HasHash(hash string) (exists bool, err error) {
-	return db.HasOne("hash = ?", hash, &db.idleObject)
+	return db.Has(&db.idleObject, "hash = ?", hash)
 }

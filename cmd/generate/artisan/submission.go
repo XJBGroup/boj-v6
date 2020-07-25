@@ -70,7 +70,10 @@ func DescribeSubmissionService() artisan.ProposingService {
 				),
 				artisan.Reply(
 					codeField,
-					artisan.SnakeParam(&submissionModel.ID),
+					StdReply(artisan.Object(
+						"PostSubmissionData",
+						artisan.SnakeParam(&submissionModel.ID),
+					)),
 				),
 			),
 		IdGroup: artisan.Ink().

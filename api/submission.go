@@ -10,7 +10,7 @@ type SubmissionFilter struct {
 	PageSize     int   `json:"page_size" form:"page_size"`
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
-	IdOrder      *bool `form:"id_order" json:"id_order"`
+	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
 	OnProblem    uint  `json:"on_problem" form:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
@@ -19,19 +19,19 @@ type SubmissionFilter struct {
 
 type ListSubmissionsReply struct {
 	Code int                   `json:"code" form:"code"`
-	Data []ListSubmissionReply `form:"data" json:"data"`
+	Data []ListSubmissionReply `json:"data" form:"data"`
 }
 
 type ListSubmissionReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
-	ProblemId  uint      `json:"problem_id" form:"problem_id"`
+	ProblemId  uint      `form:"problem_id" json:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
-	CodeLength int       `json:"code_length" form:"code_length"`
+	CodeLength int       `form:"code_length" json:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
 }
@@ -49,12 +49,16 @@ type PostSubmissionRequest struct {
 }
 
 type PostSubmissionReply struct {
-	Code int  `json:"code" form:"code"`
-	Id   uint `json:"id" form:"id"`
+	Code int                `json:"code" form:"code"`
+	Data PostSubmissionData `json:"data" form:"data"`
+}
+
+type PostSubmissionData struct {
+	Id uint `json:"id" form:"id"`
 }
 
 type GetSubmissionReply struct {
-	Code       int                     `form:"code" json:"code"`
+	Code       int                     `json:"code" form:"code"`
 	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
 }
 
@@ -261,30 +265,54 @@ func PackSerializePostSubmissionRequest(submission []*submission.Submission, _co
 	}
 	return
 }
-func PSerializePostSubmissionReply(_code int, submission *submission.Submission) *PostSubmissionReply {
+func PSerializePostSubmissionReply(_code int, _data PostSubmissionData) *PostSubmissionReply {
 
 	return &PostSubmissionReply{
 		Code: _code,
-		Id:   submission.ID,
+		Data: _data,
 	}
 }
-func SerializePostSubmissionReply(_code int, submission *submission.Submission) PostSubmissionReply {
+func SerializePostSubmissionReply(_code int, _data PostSubmissionData) PostSubmissionReply {
 
 	return PostSubmissionReply{
 		Code: _code,
-		Id:   submission.ID,
+		Data: _data,
 	}
 }
-func _packSerializePostSubmissionReply(_code int, submission *submission.Submission) PostSubmissionReply {
+func _packSerializePostSubmissionReply(_code int, _data PostSubmissionData) PostSubmissionReply {
 
 	return PostSubmissionReply{
 		Code: _code,
-		Id:   submission.ID,
+		Data: _data,
 	}
 }
-func PackSerializePostSubmissionReply(_code []int, submission []*submission.Submission) (pack []PostSubmissionReply) {
+func PackSerializePostSubmissionReply(_code []int, _data []PostSubmissionData) (pack []PostSubmissionReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializePostSubmissionReply(_code[i], submission[i]))
+		pack = append(pack, _packSerializePostSubmissionReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializePostSubmissionData(submission *submission.Submission) *PostSubmissionData {
+
+	return &PostSubmissionData{
+		Id: submission.ID,
+	}
+}
+func SerializePostSubmissionData(submission *submission.Submission) PostSubmissionData {
+
+	return PostSubmissionData{
+		Id: submission.ID,
+	}
+}
+func _packSerializePostSubmissionData(submission *submission.Submission) PostSubmissionData {
+
+	return PostSubmissionData{
+		Id: submission.ID,
+	}
+}
+func PackSerializePostSubmissionData(submission []*submission.Submission) (pack []PostSubmissionData) {
+	for i := range submission {
+		pack = append(pack, _packSerializePostSubmissionData(submission[i]))
 	}
 	return
 }

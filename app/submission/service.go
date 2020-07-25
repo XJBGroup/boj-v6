@@ -14,7 +14,6 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -199,9 +198,9 @@ func (svc Service) PostSubmission(c controller.MContext) {
 		})
 		return
 	} else if has {
-		c.AbortWithStatusJSON(http.StatusOK, gin.H{
-			"code": types.CodeSubmissionUploaded,
-			"hash": s.Hash,
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeSubmissionUploaded,
+			Error: s.Hash,
 		})
 		return
 	}
@@ -219,7 +218,7 @@ func (svc Service) PostSubmission(c controller.MContext) {
 			return
 		}
 	}
-	path += "/main.cpp"
+	path = filepath.Join(path, "main.cpp")
 	if _, err = os.Stat(path); err != nil && !os.IsExist(err) {
 		f, err := os.Create(path)
 		if err != nil {
@@ -237,7 +236,7 @@ func (svc Service) PostSubmission(c controller.MContext) {
 
 	s.Status = types.StatusWaitingForJudge
 	cc := snippet.GetCustomFields(c)
-	s.UserID = uint(cc.UID)
+	s.UserID = cc.UID
 	s.ProblemID = pid
 	s.CodeLength = len(req.Code)
 	s.Language = req.Language
@@ -247,7 +246,10 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	aff, err := svc.db.Create(s)
 	if snippet.CreateObj(c, aff, err) {
 		//cr.Submissionr.PushTask(code)
-		c.JSON(http.StatusOK, api.SerializePostSubmissionReply(types.CodeOK, s))
+		c.JSON(http.StatusOK, api.PostSubmissionReply{
+			Code: types.CodeOK,
+			Data: api.SerializePostSubmissionData(s),
+		})
 	}
 
 	// todo append

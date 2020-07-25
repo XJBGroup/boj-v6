@@ -48,11 +48,14 @@ func (db GORMDBImpl) Query(obj interface{}, tmpl string, args ...interface{}) (e
 	return
 }
 
-func (db GORMDBImpl) HasOne(tmpl string, arg1 interface{}, obj interface{}) (exists bool, err error) {
-	rdb := db.db.Where(tmpl, arg1).First(obj)
+func (db GORMDBImpl) Has(obj interface{}, tmpl string, args ...interface{}) (exists bool, err error) {
+	rdb := db.db.Where(tmpl, args).First(obj)
 	err = rdb.Error
-	if err == nil {
-		exists = !rdb.RecordNotFound()
+	if rdb.RecordNotFound() {
+		exists = false
+		err = nil
+	} else {
+		exists = err == nil
 	}
 	return
 }
@@ -87,5 +90,8 @@ func (db GORMDBImpl) Find(page, pageSize int, obj interface{}) error {
 }
 
 func (db GORMDBImpl) Page(page, pageSize int) *gorm.DB {
+	if pageSize == 0 {
+		return db.db
+	}
 	return db.db.Limit(pageSize).Offset((page - 1) * pageSize)
 }

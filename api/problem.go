@@ -9,20 +9,20 @@ import (
 type ListProblemsRequest = gorm_crud_dao.Filter
 
 type ListProblemsReply struct {
-	Code int               `json:"code" form:"code"`
-	Data []problem.Problem `form:"data" json:"data"`
+	Code int               `form:"code" json:"code"`
+	Data []problem.Problem `json:"data" form:"data"`
 }
 
 type CountProblemsRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
 type PostProblemRequest struct {
 	Title       string                       `json:"title" form:"title" binding:"required"`
-	Description string                       `json:"description" form:"description"`
+	Description string                       `form:"description" json:"description"`
 	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
 
@@ -32,12 +32,12 @@ type PostProblemReply struct {
 }
 
 type PostProblemData struct {
-	Id uint `json:"id" form:"id"`
+	Id uint `form:"id" json:"id"`
 }
 
 type ChangeProblemDescriptionRefRequest struct {
 	Name    string `binding:"required" json:"name" form:"name"`
-	NewName string `binding:"required" json:"new_name" form:"new_name"`
+	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostProblemDescRequest struct {
@@ -51,7 +51,7 @@ type GetProblemDescRequest struct {
 
 type GetProblemDescReply struct {
 	Code int         `json:"code" form:"code"`
-	Data ProblemDesc `json:"data" form:"data"`
+	Data ProblemDesc `form:"data" json:"data"`
 }
 
 type ProblemDesc struct {
