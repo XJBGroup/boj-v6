@@ -4,6 +4,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	"github.com/syndtr/goleveldb/leveldb/storage"
 )
 
 type LevelDBEngine struct {
@@ -29,9 +30,21 @@ func (db *LevelDBEngine) Close() error {
 }
 
 func NewLevelDB(path string, opts *opt.Options) (*external.OSSEngine, error) {
+	s, err := storage.OpenFile(path, false)
+	if err != nil {
+		return nil, err
+	}
+	return NewLevelDBByStorage(s, opts)
+}
+
+func NewMemLevelDB(opts *opt.Options) (*external.OSSEngine, error) {
+	return NewLevelDBByStorage(storage.NewMemStorage(), opts)
+}
+
+func NewLevelDBByStorage(sto storage.Storage, opts *opt.Options) (*external.OSSEngine, error) {
 	e := new(LevelDBEngine)
 	var err error
-	e.DB, err = leveldb.OpenFile(path, opts)
+	e.DB, err = leveldb.Open(sto, opts)
 	if err != nil {
 		return nil, err
 	}

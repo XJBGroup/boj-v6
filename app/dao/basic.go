@@ -39,8 +39,8 @@ func (db GORMDBImpl) ID(id uint, obj interface{}) (err error) {
 	return
 }
 
-func (db GORMDBImpl) QueryOne(tmpl string, arg1 interface{}, obj interface{}) (err error) {
-	rdb := db.db.Where(tmpl, arg1).First(obj)
+func (db GORMDBImpl) Query(obj interface{}, tmpl string, args ...interface{}) (err error) {
+	rdb := db.db.Where(tmpl, args...).First(obj)
 	err = rdb.Error
 	if err == nil && rdb.RecordNotFound() {
 		return DBErrorNotFound

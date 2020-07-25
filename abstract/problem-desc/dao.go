@@ -8,6 +8,8 @@ type DB interface {
 	UpdateFields(a *ProblemDesc, fields []string) (int64, error)
 	Find(page, pageSize int) ([]ProblemDesc, error)
 	Count() (int64, error)
+	QueryByKey(pid uint, pdName string) (pd *ProblemDesc, err error)
+	QueryByPID(pid uint) (pd []ProblemDesc, err error)
 
 	ID(id uint) (*ProblemDesc, error)
 

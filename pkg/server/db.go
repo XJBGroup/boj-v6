@@ -7,12 +7,15 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/app/contest"
 	"github.com/Myriad-Dreamin/boj-v6/app/group"
 	"github.com/Myriad-Dreamin/boj-v6/app/problem"
+	problem_desc "github.com/Myriad-Dreamin/boj-v6/app/problem-desc"
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
+	"github.com/Myriad-Dreamin/boj-v6/deployment/oss"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/functional-go"
 	"github.com/Myriad-Dreamin/minimum-lib/rbac"
+	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"path"
 )
 
@@ -30,6 +33,7 @@ func (srv *Server) registerDatabaseService() bool {
 		{"CommentDB", new(*comment.DBImpl), functional.Decay(comment.NewDB(srv.Module))},
 		{"SubmissionDB", new(*submission.DBImpl), functional.Decay(submission.NewDB(srv.Module))},
 		{"ProblemDB", new(*problem.DBImpl), functional.Decay(problem.NewDB(srv.Module))},
+		{"ProblemDescDB", new(*problem_desc.DBImpl), functional.Decay(problem_desc.NewDB(srv.Module))},
 		{"ContestDB", new(*contest.DBImpl), functional.Decay(contest.NewDB(srv.Module))},
 		{"GroupDB", new(*group.DBImpl), functional.Decay(group.NewDB(srv.Module))},
 	} {
@@ -89,6 +93,7 @@ func (srv *Server) PrepareDatabase() bool {
 	//	srv.Logger.Debug("register redis error", "error", err)
 	//	return false
 	//}
+
 	err := rbac.InitGorm(m.GormDB)
 	if err != nil {
 		srv.Logger.Debug("rbac to database error", "error", err)
@@ -99,6 +104,13 @@ func (srv *Server) PrepareDatabase() bool {
 		srv.Logger.Debug("provide enforcer error", "error", err)
 		return false
 	}
+
+	engine, err := oss.NewMemLevelDB(nil)
+	if err != nil {
+		srv.Logger.Debug("init mem mock oss", "error", err)
+		return false
+	}
+	sugar.HandlerError0(srv.Module.ProvideImpl(new(*external.OSSEngine), engine))
 
 	return srv.registerDatabaseService()
 }
@@ -123,6 +135,13 @@ func (srv *Server) MockDatabase() bool {
 		srv.Logger.Debug("provide enforcer error", "error", err)
 		return false
 	}
+
+	engine, err := oss.NewMemLevelDB(nil)
+	if err != nil {
+		srv.Logger.Debug("init mem mock oss", "error", err)
+		return false
+	}
+	sugar.HandlerError0(srv.Module.ProvideImpl(new(*external.OSSEngine), engine))
 
 	return srv.registerDatabaseService()
 }

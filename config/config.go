@@ -46,8 +46,8 @@ func Default() *ServerConfig {
 	return &ServerConfig{
 		LoadType: "json",
 		PathConfig: PathConfig{
-			CodePath:    "/code",
-			ProblemPath: "/problem",
+			CodePath:    "code",
+			ProblemPath: "problem",
 		},
 	}
 }

@@ -2,10 +2,12 @@ package problem
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
+	problem_desc "github.com/Myriad-Dreamin/boj-v6/abstract/problem-desc"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
+	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	problemconfig "github.com/Myriad-Dreamin/boj-v6/types/problem-config"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -13,11 +15,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
 type Service struct {
 	db       problem.DB
+	descDB   problem_desc.DB
 	enforcer *external.Enforcer
 	logger   external.Logger
 	cfg      *config.ServerConfig
@@ -27,6 +31,7 @@ type Service struct {
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
 	s.db = m.RequireImpl(new(problem.DB)).(problem.DB)
+	s.descDB = m.RequireImpl(new(problem_desc.DB)).(problem_desc.DB)
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
@@ -84,22 +89,21 @@ func (svc Service) PostProblem(c controller.MContext) {
 		return
 	}
 
-	// todo: problem desc
-	//var problemDesc = model.NewProblemDesc(problem.ID, "default", []byte(req.Description))
-	//
-	//
-	//if !snippet.CreateObjWithTip(c, problemDesc) {
-	//	return
-	//}
+	var pd = svc.descDB.NewProblemDesc(p.ID, p.DescriptionRef, []byte(req.Description))
 
-	//if err := problemDesc.Save(); err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, snippet.ErrorSerializer{
-	//		Code:  types.CodeInsertError,
-	//		Error: err.Error(),
-	//	})
-	//}
+	aff, err = svc.descDB.Create(pd)
+	if !snippet.CreateObjWithTip(c, aff, err, "problem_desc") {
+		return
+	}
 
-	var path = svc.cfg.PathConfig.ProblemPath + strconv.Itoa(int(p.ID))
+	if err := svc.descDB.SaveDesc(pd); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
+			Code:  types.CodeInsertError,
+			Error: err.Error(),
+		})
+	}
+
+	var path = filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(p.ID)))
 	if _, err := os.Stat(path); err != nil {
 		if !os.IsExist(err) {
 			err = os.Mkdir(path, 0770)
@@ -108,15 +112,15 @@ func (svc Service) PostProblem(c controller.MContext) {
 				return
 			}
 		} else {
-			c.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code": types.CodeFSExecError,
-				"err":  err.Error(),
+			c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
+				Code:  types.CodeFSExecError,
+				Error: err.Error(),
 			})
 			return
 		}
 	}
 
-	configPath := path + "/problem-config"
+	configPath := filepath.Join(path, "/problem-config")
 
 	err = problemconfig.Save(req.Config, configPath)
 	if err != nil {
@@ -143,27 +147,39 @@ func (svc Service) GetProblem(c controller.MContext) {
 		return
 	}
 
-	// todo: get problem desc
+	// todo: query user
 	//user, err := srv.userDB.ID(problem.AuthorID)
 	//if snippet.MaybeSelectError(c, user, err) {
 	//	return
 	//}
 	//problem.Author = *user
 
-	//problemDesc, err := srv.problemDescDB.QueryTemplate(id, problem.Description)
-	//if snippet.MaybeSelectError(c, problemDesc, err) {
-	//	return
-	//}
-	//err = problemDesc.Load()
-	//if err != nil {
-	//	c.AbortWithStatusJSON(http.StatusInternalServerError, snippet.ErrorSerializer{
-	//		Code:  types.CodeSelectError,
-	//		Error: err.Error(),
-	//	})
-	//	return
-	//}
+	if len(p.Description) == 0 {
+		pd, err := svc.descDB.QueryByKey(id, p.DescriptionRef)
+		if snippet.MaybeSelectError(c, pd, err) {
+			return
+		}
+		err = svc.descDB.LoadDesc(pd)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
+				Code:  types.CodeSelectError,
+				Error: err.Error(),
+			})
+			return
+		}
 
-	c.JSON(http.StatusOK, api.SerializeGetProblemReply(types.CodeOK, p)) //ProblemToGetReply(problem, problemDesc))
+		p.Description = string(pd.Content)
+		err = svc.descDB.ReleaseDesc(pd)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
+				Code:  types.CodeSelectError,
+				Error: err.Error(),
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, api.SerializeGetProblemReply(types.CodeOK, p)) //ProblemToGetReply(problem, pd))
 }
 
 func (svc Service) PutProblem(c controller.MContext) {
@@ -192,12 +208,33 @@ func (svc Service) DeleteProblem(c controller.MContext) {
 		return
 	}
 
+	ds, err := svc.descDB.QueryByPID(obj.ID)
+	if snippet.MaybeSelectError(c, ds, err) {
+		return
+	}
+
+	for i := range ds {
+		err = svc.descDB.DeleteDesc(&ds[i])
+		if err != nil {
+			c.JSON(http.StatusOK, serial.ErrorSerializer{
+				Code:  types.CodeDeleteError,
+				Error: strconv.FormatInt(int64(i), 10) + " oss : " + err.Error(),
+			})
+		}
+
+		aff, err := svc.descDB.Delete(&ds[i])
+		if !snippet.DeleteObj(c, aff, err) {
+			c.JSON(http.StatusOK, serial.ErrorSerializer{
+				Code:  types.CodeDeleteError,
+				Error: strconv.FormatInt(int64(i), 10) + " rel : " + err.Error(),
+			})
+		}
+	}
+
 	aff, err := svc.db.Delete(obj)
 	if snippet.DeleteObj(c, aff, err) {
 		c.JSON(http.StatusOK, snippet.ResponseOK)
 	}
-
-	// todo: delete problem desc
 }
 
 func (svc *Service) FillPutFields(problem *problem.Problem, req *api.PutProblemRequest) (fields []string) {

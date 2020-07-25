@@ -125,3 +125,12 @@ func (db DBImpl) InvalidateDescCache(a *problem_desc.ProblemDesc) error {
 	a.Key = nil
 	return nil
 }
+
+func (db DBImpl) QueryByKey(pid uint, pdName string) (pd *problem_desc.ProblemDesc, err error) {
+	pd = new(problem_desc.ProblemDesc)
+	return pd, db.GORMDBImpl.Query(pd, "pid = ? and name = ?", pid, pdName)
+}
+
+func (db DBImpl) QueryByPID(pid uint) (pd []problem_desc.ProblemDesc, err error) {
+	return pd, db.GORMDBImpl.Query(&pd, "pid = ?", pid)
+}
