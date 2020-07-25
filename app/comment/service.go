@@ -3,9 +3,7 @@ package comment
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
-	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/core-oj/log"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -25,7 +23,7 @@ func (svc *Service) CommentServiceSignatureXXX() interface{} {
 
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
-	s.db = m.Require(config.ModulePath.Provider.Model).(*provider.DB).CommentDB()
+	s.db = m.RequireImpl(new(comment.DB)).(comment.DB)
 	return s, nil
 }
 

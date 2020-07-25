@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/DeanThompson/ginpprof"
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/boj-v6/external"
@@ -41,9 +40,6 @@ type Server struct {
 
 	Module         module.Module
 	DatabaseModule *database.Module
-
-	ServiceProvider *provider.Service
-	ModelProvider   *provider.DB
 
 	plugins []plugin.Plugin
 }
@@ -86,12 +82,8 @@ func newServer(options []Option) *Server {
 		srv.LoggerWriter = os.Stdout
 	}
 
-	srv.ServiceProvider = provider.NewService(config.ModulePath.Provider.Service)
-	srv.ModelProvider = provider.NewDB(config.ModulePath.Provider.Model)
 	//srv.RouterProvider = router.NewProvider(config.ModulePath.Provider.Router)
 
-	srv.Module.Provide(config.ModulePath.Provider.Service, srv.ServiceProvider)
-	srv.Module.Provide(config.ModulePath.Provider.Model, srv.ModelProvider)
 	//srv.Module.Provide(config.ModulePath.Provider.Router, srv.RouterProvider)
 	return srv
 }
@@ -125,9 +117,7 @@ func New(cfgPath string, options ...Option) (srv *Server) {
 	//if err := srv.Module.Install(srv.RouterProvider); err != nil {
 	//	srv.println("install router provider error", err)
 	//}
-	if err := srv.Module.Install(srv.ModelProvider); err != nil {
-		srv.println("install database provider error", err)
-	}
+
 	//
 	//if !PreparePlugin(cfg) {
 	//	srv = nil
@@ -154,7 +144,7 @@ func (srv *Server) Inject(plugins ...plugin.Plugin) (injectSuccess bool) {
 		if plg == nil {
 			return false
 		}
-		plg = plg.Inject(srv.ServiceProvider, srv.ModelProvider, srv.Module)
+		plg = plg.Inject(srv.Module)
 		if plg == nil {
 			return false
 		}

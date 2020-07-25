@@ -2,27 +2,25 @@ package server
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/gin-gonic/gin"
+	"path"
 	"strings"
 )
 
 type routerTraits struct {
 	module.Module
-	*provider.Service
 }
 
 func (rt routerTraits) GetJWTMiddleware() api.HandlerFunc {
-	return rt.Module.Require(config.ModulePath.Middleware.JWT).(*jwt.Middleware).Build()
+	return rt.Module.RequireImpl(new(*jwt.Middleware)).(*jwt.Middleware).Build()
 }
 
 func (rt routerTraits) GetAuthMiddleware() *api.Middleware {
-	return rt.Module.Require(
-		config.ModulePath.Middleware.RouteAuth).(*controller.Middleware)
+	return rt.Module.RequireImpl(new(*controller.Middleware)).(*controller.Middleware)
 }
 
 func (rt routerTraits) AfterBuild(_ *api.RootRouter) {
@@ -69,30 +67,11 @@ func (rt routerTraits) ApplyRouteMeta(m *api.Middleware, routeMeta string) *api.
 }
 
 func (rt routerTraits) GetServiceInstance(svcName string) interface{} {
-	switch svcName {
-	case "AnnouncementService":
-		return rt.Service.AnnouncementService()
-	case "CommentService":
-		return rt.Service.CommentService()
-	case "UserService":
-		return rt.Service.UserService()
-	case "SubmissionService":
-		return rt.Service.SubmissionService()
-	case "ProblemService":
-		return rt.Service.ProblemService()
-	case "AuthService":
-		return rt.Service.AuthService()
-	case "GroupService":
-		return rt.Service.GroupService()
-	case "ContestService":
-		return rt.Service.ContestService()
-	default:
-		panic(svcName + " not found")
-	}
+	return rt.Module.Require(path.Join("minimum", svcName))
 }
 
-func newTraitsHelper(m module.Module, s *provider.Service) routerTraits {
-	return routerTraits{m, s}
+func newTraitsHelper(m module.Module) routerTraits {
+	return routerTraits{m}
 }
 
 func (srv *Server) BuildRouter(mock bool) bool {
@@ -107,7 +86,7 @@ func (srv *Server) BuildRouter(mock bool) bool {
 		srv.HttpEngine.Use(srv.corsMW)
 	}
 
-	srv.Router = api.NewRootRouter(newTraitsHelper(srv.Module, srv.ServiceProvider))
+	srv.Router = api.NewRootRouter(newTraitsHelper(srv.Module))
 	srv.Module.Provide(config.ModulePath.Global.HttpEngine, srv.HttpEngine)
 	return true
 }

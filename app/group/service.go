@@ -4,9 +4,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/group"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
-	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -17,7 +15,7 @@ import (
 type Service struct {
 	db       group.DB
 	userDB   user.DB
-	enforcer *provider.Enforcer
+	enforcer *external.Enforcer
 	logger   external.Logger
 	key      string
 }
@@ -28,10 +26,10 @@ func (svc Service) GroupServiceSignatureXXX() interface{} {
 
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
-	s.enforcer = m.Require(config.ModulePath.Provider.Model).(*provider.DB).Enforcer()
-	s.db = m.Require(config.ModulePath.Provider.Model).(*provider.DB).GroupDB()
-	s.userDB = m.Require(config.ModulePath.Provider.Model).(*provider.DB).UserDB()
-	s.logger = m.Require(config.ModulePath.Global.Logger).(external.Logger)
+	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
+	s.db = m.RequireImpl(new(group.DB)).(group.DB)
+	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
+	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 
 	s.key = "gid"
 	return s, nil

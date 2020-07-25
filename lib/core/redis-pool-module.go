@@ -12,12 +12,16 @@ type RedisPoolModule struct {
 
 func (m *RedisPoolModule) FromRaw(db *redis.Pool, dep module.Module) bool {
 	m.RedisPool = db
-	dep.Provide(DefaultNamespace.DBInstance.RedisPool, db)
+	err := dep.ProvideImpl(new(*redis.Pool), db)
+	if err != nil {
+		// todo
+		panic(err)
+	}
 	return true
 }
 
 func (m *RedisPoolModule) FromContext(dep module.Module) bool {
-	m.RedisPool = dep.Require(DefaultNamespace.DBInstance.RedisPool).(*redis.Pool)
+	m.RedisPool = dep.RequireImpl(new(*redis.Pool)).(*redis.Pool)
 	return true
 }
 

@@ -13,12 +13,16 @@ type GormModule struct {
 
 func (m *GormModule) FromRaw(db *gorm.DB, dep module.Module) bool {
 	m.GormDB = db
-	dep.Provide(DefaultNamespace.DBInstance.GormDB, db)
+	err := dep.ProvideImpl(new(*gorm.DB), db)
+	if err != nil {
+		// todo
+		panic(err)
+	}
 	return true
 }
 
 func (m *GormModule) FromContext(dep module.Module) bool {
-	m.GormDB = dep.Require(DefaultNamespace.DBInstance.GormDB).(*gorm.DB)
+	m.GormDB = dep.RequireImpl(new(*gorm.DB)).(*gorm.DB)
 	return true
 }
 
@@ -62,11 +66,11 @@ func concatQueryString(options string) string {
 }
 
 func getDatabaseConfiguration(dep module.Module) core_cfg.DatabaseConfig {
-	return dep.Require(DefaultNamespace.Global.Configuration).(DatabaseConfiguration).GetDatabaseConfiguration()
+	return dep.RequireImpl(new(DatabaseConfiguration)).(DatabaseConfiguration).GetDatabaseConfiguration()
 }
 
 func getRedisConfiguration(dep module.Module) core_cfg.RedisConfig {
-	return dep.Require(DefaultNamespace.Global.Configuration).(RedisConfiguration).GetRedisConfiguration()
+	return dep.RequireImpl(new(RedisConfiguration)).(RedisConfiguration).GetRedisConfiguration()
 }
 
 func parseConfig(dep module.Module) (string, string, error) {

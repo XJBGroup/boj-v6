@@ -11,30 +11,32 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/functional-go"
+	"path"
 )
 
 type serviceResult struct {
 	serviceName string
+	proto       interface{}
 	functional.DecayResult
 }
 
 func (srv *Server) PrepareService() bool {
 	for _, serviceResult := range []serviceResult{
-		{"authService",
+		{"AuthService", new(*auth.Service),
 			functional.Decay(auth.NewService(srv.Module))},
-		{"announcementService",
+		{"AnnouncementService", new(*announcement.Service),
 			functional.Decay(announcement.NewService(srv.Module))},
-		{"commentService",
+		{"CommentService", new(*comment.Service),
 			functional.Decay(comment.NewService(srv.Module))},
-		{"submissionService",
+		{"SubmissionService", new(*submission.Service),
 			functional.Decay(submission.NewService(srv.Module))},
-		{"userService",
+		{"UserService", new(*user.Service),
 			functional.Decay(user.NewService(srv.Module))},
-		{"problemService",
+		{"ProblemService", new(*problem.Service),
 			functional.Decay(problem.NewService(srv.Module))},
-		{"contestService",
+		{"ContestService", new(*contest.Service),
 			functional.Decay(contest.NewService(srv.Module))},
-		{"groupService",
+		{"GroupService", new(*group.Service),
 			functional.Decay(group.NewService(srv.Module))},
 	} {
 		// build Router failed when requesting service with database, report and return
@@ -42,7 +44,12 @@ func (srv *Server) PrepareService() bool {
 			srv.Logger.Debug(fmt.Sprintf("get %T service error", serviceResult.First), "error", serviceResult.Err)
 			return false
 		}
-		srv.ServiceProvider.Register(serviceResult.serviceName, serviceResult.First)
+		err := srv.Module.ProvideNamedImpl(
+			path.Join("minimum", serviceResult.serviceName), serviceResult.proto, serviceResult.First)
+		if err != nil {
+			srv.Logger.Debug("provide service error", "name", serviceResult.First)
+			return false
+		}
 	}
 	return true
 }

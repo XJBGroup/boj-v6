@@ -16,7 +16,7 @@ func (m *LoggerModule) FromRaw(mlogger logger.Logger, dep module.Module) bool {
 }
 
 func (m *LoggerModule) FromContext(dep module.Module) bool {
-	m.Logger = dep.Require(DefaultNamespace.Global.Logger).(logger.Logger)
+	m.Logger = dep.RequireImpl(new(logger.Logger)).(logger.Logger)
 
 	return true
 }

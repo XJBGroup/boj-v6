@@ -32,11 +32,12 @@ func objectTemplate(snakeRep string, src string, target string) {
 	sugar.HandlerError0(err)
 
 	var obj = []byte(snakeRep)
+	var middleObj = bytes.ReplaceAll(obj, []byte("_"), []byte("-"))
 	var entity = fromSnakeToCamel(obj, true)
 
 	b = bytes.ReplaceAll(b, []byte("user."), bytes.Join([][]byte{obj, []byte(".")}, []byte{}))
 	b = bytes.ReplaceAll(b, []byte("package user"), bytes.Join([][]byte{[]byte("package "), obj}, []byte{}))
-	b = bytes.ReplaceAll(b, []byte("/user"), bytes.Join([][]byte{[]byte("/"), obj}, []byte{}))
+	b = bytes.ReplaceAll(b, []byte("/user"), bytes.Join([][]byte{[]byte("/"), middleObj}, []byte{}))
 	b = bytes.ReplaceAll(b, []byte("User"), entity)
 
 	sugar.HandlerError0(ioutil.WriteFile(target, b, 0644))
@@ -50,4 +51,5 @@ func main() {
 	objectTemplate("comment", "app/user/db_generated.go", "app/comment/db_generated.go")
 	objectTemplate("contest", "app/user/db_generated.go", "app/contest/db_generated.go")
 	objectTemplate("group", "app/user/db_generated.go", "app/group/db_generated.go")
+	//objectTemplate("problem_desc", "app/user/db_generated.go", "app/problem-desc/db_generated.go")
 }

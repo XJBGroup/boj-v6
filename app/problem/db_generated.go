@@ -3,7 +3,6 @@ package problem
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/app/dao"
-	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/jinzhu/gorm"
 )
@@ -21,7 +20,7 @@ type DBImpl struct {
 
 func newDB(m module.Module) (db, error) {
 	return db{
-		GORMDBImpl: dao.NewGORMBasic(m.Require(config.ModulePath.DBInstance.GormDB).(*gorm.DB)),
+		GORMDBImpl: dao.NewGORMBasic(m.RequireImpl(new(*gorm.DB)).(*gorm.DB)),
 	}, nil
 }
 

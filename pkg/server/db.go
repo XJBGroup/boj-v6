@@ -10,25 +10,28 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
+	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/functional-go"
 	"github.com/Myriad-Dreamin/minimum-lib/rbac"
+	"path"
 )
 
 type dbResult struct {
 	dbName string
+	proto  interface{}
 	functional.DecayResult
 }
 
 func (srv *Server) registerDatabaseService() bool {
 
 	for _, dbResult := range []dbResult{
-		{"announcementDB", functional.Decay(announcement.NewDB(srv.Module))},
-		{"userDB", functional.Decay(user.NewDB(srv.Module))},
-		{"commentDB", functional.Decay(comment.NewDB(srv.Module))},
-		{"submissionDB", functional.Decay(submission.NewDB(srv.Module))},
-		{"problemDB", functional.Decay(problem.NewDB(srv.Module))},
-		{"contestDB", functional.Decay(contest.NewDB(srv.Module))},
-		{"groupDB", functional.Decay(group.NewDB(srv.Module))},
+		{"AnnouncementDB", new(*announcement.DBImpl), functional.Decay(announcement.NewDB(srv.Module))},
+		{"UserDB", new(*user.DBImpl), functional.Decay(user.NewDB(srv.Module))},
+		{"CommentDB", new(*comment.DBImpl), functional.Decay(comment.NewDB(srv.Module))},
+		{"SubmissionDB", new(*submission.DBImpl), functional.Decay(submission.NewDB(srv.Module))},
+		{"ProblemDB", new(*problem.DBImpl), functional.Decay(problem.NewDB(srv.Module))},
+		{"ContestDB", new(*contest.DBImpl), functional.Decay(contest.NewDB(srv.Module))},
+		{"GroupDB", new(*group.DBImpl), functional.Decay(group.NewDB(srv.Module))},
 	} {
 		if dbResult.Err != nil {
 			srv.Logger.Debug(fmt.Sprintf("init %T DB error", dbResult.First), "error", dbResult.Err)
@@ -43,8 +46,12 @@ func (srv *Server) registerDatabaseService() bool {
 				return false
 			}
 		}
-
-		srv.ModelProvider.Register(dbResult.dbName, dbResult.First)
+		err := srv.Module.ProvideNamedImpl(
+			path.Join("minimum", dbResult.dbName), dbResult.proto, dbResult.First)
+		if err != nil {
+			srv.Logger.Debug("provide database error", "name", dbResult.dbName)
+			return false
+		}
 	}
 	return true
 }
@@ -87,7 +94,11 @@ func (srv *Server) PrepareDatabase() bool {
 		srv.Logger.Debug("rbac to database error", "error", err)
 		return false
 	}
-	srv.ModelProvider.Register("enforcer", rbac.GetEnforcer())
+	err = srv.Module.ProvideImpl(new(*external.Enforcer), rbac.GetEnforcer())
+	if err != nil {
+		srv.Logger.Debug("provide enforcer error", "error", err)
+		return false
+	}
 
 	return srv.registerDatabaseService()
 }
@@ -107,7 +118,11 @@ func (srv *Server) MockDatabase() bool {
 		srv.Logger.Debug("rbac to database error", "error", err)
 		return false
 	}
-	srv.ModelProvider.Register("enforcer", rbac.GetEnforcer())
+	err = srv.Module.ProvideImpl(new(*external.Enforcer), rbac.GetEnforcer())
+	if err != nil {
+		srv.Logger.Debug("provide enforcer error", "error", err)
+		return false
+	}
 
 	return srv.registerDatabaseService()
 }

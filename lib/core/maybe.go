@@ -10,7 +10,7 @@ type ErrorLogger interface {
 
 func Maybe(dep module.Module, hint string, err error) bool {
 	if err != nil {
-		logger := dep.Require(DefaultNamespace.Global.Logger).(ErrorLogger)
+		logger := dep.RequireImpl(new(ErrorLogger)).(ErrorLogger)
 		logger.Error(hint, "error", err)
 		return false
 	}

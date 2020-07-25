@@ -97,9 +97,6 @@ func Mock(options ...Option) (srv *Mocker) {
 	//if err := srv.Module.Install(srv.RouterProvider); err != nil {
 	//	srv.println("install router provider error", err)
 	//}
-	if err := srv.Module.Install(srv.ModelProvider); err != nil {
-		srv.println("install database provider error", err)
-	}
 
 	defer func() {
 		if err := recover(); err != nil {

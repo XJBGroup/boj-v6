@@ -2,9 +2,7 @@ package auth
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	ginhelper "github.com/Myriad-Dreamin/boj-v6/app/snippet"
-	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"
@@ -14,7 +12,7 @@ import (
 )
 
 type Service struct {
-	enforcer *provider.Enforcer
+	enforcer *external.Enforcer
 	logger   external.Logger
 }
 
@@ -24,8 +22,8 @@ func (svc Service) AuthServiceSignatureXXX() interface{} {
 
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
-	s.enforcer = m.Require(config.ModulePath.Provider.Model).(*provider.DB).Enforcer()
-	s.logger = m.Require(config.ModulePath.Global.Logger).(external.Logger)
+	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
+	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 
 	return s, nil
 }

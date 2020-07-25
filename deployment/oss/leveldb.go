@@ -28,7 +28,7 @@ func (db *LevelDBEngine) Close() error {
 	return db.DB.Close()
 }
 
-func NewLevelDB(path string, opts *opt.Options) (external.Engine, error) {
+func NewLevelDB(path string, opts *opt.Options) (*external.OSSEngine, error) {
 	e := new(LevelDBEngine)
 	var err error
 	e.DB, err = leveldb.OpenFile(path, opts)
@@ -43,5 +43,17 @@ func NewLevelDB(path string, opts *opt.Options) (external.Engine, error) {
 		DontFillCache: false,
 		Strict:        0,
 	}
-	return e, nil
+	return &external.OSSEngine{Engine: e}, nil
+}
+
+type byteObject []byte
+
+func (b byteObject) Data() []byte { return b }
+func (b byteObject) Free()        {}
+
+func ToByteObject(obj []byte, err error) (external.ByteObject, error) {
+	if err != nil {
+		return nil, err
+	}
+	return byteObject(obj), nil
 }

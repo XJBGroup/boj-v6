@@ -3,7 +3,6 @@ package problem
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
@@ -19,7 +18,7 @@ import (
 
 type Service struct {
 	db       problem.DB
-	enforcer *provider.Enforcer
+	enforcer *external.Enforcer
 	logger   external.Logger
 	cfg      *config.ServerConfig
 	key      string
@@ -27,10 +26,10 @@ type Service struct {
 
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
-	s.db = m.Require(config.ModulePath.Provider.Model).(*provider.DB).ProblemDB()
-	s.enforcer = m.Require(config.ModulePath.Provider.Model).(*provider.DB).Enforcer()
-	s.logger = m.Require(config.ModulePath.Global.Logger).(external.Logger)
-	s.cfg = m.Require(config.ModulePath.Global.Configuration).(*config.ServerConfig)
+	s.db = m.RequireImpl(new(problem.DB)).(problem.DB)
+	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
+	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
+	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
 
 	s.key = "pid"
 	return s, nil

@@ -3,6 +3,7 @@ package server
 import (
 	ginhelper "github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
+	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -24,7 +25,7 @@ func (srv *Server) PrepareMiddleware() bool {
 	srv.jwtMW.ExpireSecond = 3600 * 24 * 7
 	srv.jwtMW.RefreshSecond = 3600 * 24 * 7
 
-	srv.routerAuthMW = controller.NewMiddleware(srv.ModelProvider.Enforcer(),
+	srv.routerAuthMW = controller.NewMiddleware(srv.Module.RequireImpl(new(*external.Enforcer)).(*external.Enforcer),
 		"user:", "uid", ginhelper.MissID, ginhelper.AuthFailed)
 
 	srv.corsMW = cors.New(cors.Config{

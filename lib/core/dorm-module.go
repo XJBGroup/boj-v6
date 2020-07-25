@@ -19,8 +19,8 @@ func (m *DormModule) FromRaw(db *dorm.DB, dep module.Module) bool {
 }
 
 func (m *DormModule) FromRawSQL(db *sql.DB, dep module.Module) bool {
-	logger := dep.Require(DefaultNamespace.Global.Logger).(logger.Logger)
-	options := []interface{}{adapt(logger)}
+	instanceLogger := dep.RequireImpl(new(logger.Logger)).(logger.Logger)
+	options := []interface{}{adapt(instanceLogger)}
 
 	escaper := m.getEscaper(dep)
 	if len(escaper) != 0 {
@@ -36,7 +36,7 @@ func (m *DormModule) FromRawSQL(db *sql.DB, dep module.Module) bool {
 }
 
 func (m *DormModule) FromContext(dep module.Module) bool {
-	m.DormDB = dep.Require(DefaultNamespace.DBInstance.DormDB).(*dorm.DB)
+	m.DormDB = dep.RequireImpl(new(*dorm.DB)).(*dorm.DB)
 	return true
 }
 
@@ -57,7 +57,7 @@ type RedisConfiguration interface {
 }
 
 func (m *DormModule) getEscaper(dep module.Module) string {
-	return dep.Require(DefaultNamespace.Global.Configuration).(DatabaseConfiguration).GetDatabaseConfiguration().Escaper
+	return dep.RequireImpl(new(DatabaseConfiguration)).(DatabaseConfiguration).GetDatabaseConfiguration().Escaper
 }
 
 type L struct {

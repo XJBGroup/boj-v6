@@ -3,9 +3,7 @@ package user
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/api"
-	"github.com/Myriad-Dreamin/boj-v6/app/provider"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
-	"github.com/Myriad-Dreamin/boj-v6/config"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
@@ -21,17 +19,17 @@ import (
 type Service struct {
 	db         user.DB
 	middleware *jwt.Middleware
-	enforcer   *provider.Enforcer
+	enforcer   *external.Enforcer
 	logger     external.Logger
 	key        string
 }
 
 func NewService(m module.Module) (*Service, error) {
 	s := new(Service)
-	s.db = m.Require(config.ModulePath.Provider.Model).(*provider.DB).UserDB()
-	s.middleware = m.Require(config.ModulePath.Middleware.JWT).(*jwt.Middleware)
-	s.enforcer = m.Require(config.ModulePath.Provider.Model).(*provider.DB).Enforcer()
-	s.logger = m.Require(config.ModulePath.Global.Logger).(external.Logger)
+	s.db = m.RequireImpl(new(user.DB)).(user.DB)
+	s.middleware = m.RequireImpl(new(*jwt.Middleware)).(*jwt.Middleware)
+	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
+	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 
 	s.key = "id"
 	return s, nil

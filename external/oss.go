@@ -1,5 +1,9 @@
 package external
 
+type OSSEngine struct {
+	Engine
+}
+
 type Engine interface {
 	Get([]byte) (ByteObject, error)
 	Put([]byte, []byte) error
