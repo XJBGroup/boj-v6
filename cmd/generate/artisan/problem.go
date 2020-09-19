@@ -69,6 +69,8 @@ func getProblemIDCate(prefix string) artisan.Category {
 		artisan.Param("content", artisan.String),
 	)
 
+
+	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
 	return artisan.Ink().
 		Path("problem/:pid").Meta(&Meta{artisan.RouterMeta{
 		RuntimeRouterMeta: "problem:pid",

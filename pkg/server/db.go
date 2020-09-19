@@ -10,6 +10,7 @@ import (
 	problem_desc "github.com/Myriad-Dreamin/boj-v6/app/problem-desc"
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
+	"github.com/Myriad-Dreamin/boj-v6/app/user_problem"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/oss"
 	"github.com/Myriad-Dreamin/boj-v6/external"
@@ -36,6 +37,9 @@ func (srv *Server) registerDatabaseService() bool {
 		{"ProblemDescDB", new(*problem_desc.DBImpl), functional.Decay(problem_desc.NewDB(srv.Module))},
 		{"ContestDB", new(*contest.DBImpl), functional.Decay(contest.NewDB(srv.Module))},
 		{"GroupDB", new(*group.DBImpl), functional.Decay(group.NewDB(srv.Module))},
+
+		{"UserProblemRelationshipDB", new(*user_problem.DBImpl),
+			functional.Decay(user_problem.NewDB(srv.Module))},
 	} {
 		if dbResult.Err != nil {
 			srv.Logger.Debug(fmt.Sprintf("init %T DB error", dbResult.First), "error", dbResult.Err)

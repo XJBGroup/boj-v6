@@ -260,8 +260,16 @@ func (svc *Service) ChangePassword(c controller.MContext) {
 }
 
 func (svc *Service) InspectUser(c controller.MContext) {
-	// todo
-	panic("implement me")
+	id, ok := snippet.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+	obj, err := svc.db.ID(id)
+	if snippet.MaybeSelectError(c, obj, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, Data: obj})
 }
 
 func (svc *Service) GetUser(c controller.MContext) {
