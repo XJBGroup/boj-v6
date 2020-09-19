@@ -48,6 +48,7 @@ const (
 	CodeAuthGenerateTokenError ServiceCode = iota + 1000
 	CodeAuthenticatePasswordError
 	CodeAuthenticatePolicyError
+	CodeGeneratePasswordError
 
 	CodeChangeOwnerError
 	CodeGroupCreateError

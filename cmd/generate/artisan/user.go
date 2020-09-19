@@ -18,13 +18,6 @@ type UserCategories struct {
 	IdGroup      artisan.Category
 }
 
-func StdReply(description ...interface{}) artisan.ReplyObject {
-	return artisan.Reply(
-		codeField,
-		artisan.Param("data", description...),
-	)
-}
-
 func DescribeUserService() artisan.ProposingService {
 	var userModel = new(user.User)
 	var _valueUserModel user.User
@@ -130,6 +123,15 @@ func DescribeUserService() artisan.ProposingService {
 					artisan.Request(
 						// Email: 邮箱
 						artisan.SnakeParam(&userModel.Email, artisan.Tag("binding", "email")))),
+			).
+			SubCate("/password", artisan.Ink().WithName("ChangePassword").
+				Method(artisan.PUT, "ChangePassword",
+					artisan.Request(
+						// Old Password: 旧密码
+						artisan.Param("old_password", artisan.String, required),
+						// New Password: 新密码
+						artisan.Param("new_password", artisan.String, required),
+						)),
 			).
 			SubCate("/inspect", artisan.Ink().WithName("Inspect").
 				Method(artisan.GET, "InspectUser",

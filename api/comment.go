@@ -1,63 +1,64 @@
+
 package api
 
 import (
-	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
+    "github.com/Myriad-Dreamin/boj-v6/abstract/comment"
+
 )
 
 type ListCommentsRequest = comment.Filter
 
 type ListCommentsReply struct {
-	Code int               `json:"code" form:"code"`
-	Data []comment.Comment `json:"data" form:"data"`
+    Code int `json:"code" form:"code"`
+    Data []comment.Comment `json:"data" form:"data"`
 }
 
 type CountCommentsRequest = comment.Filter
 
 type CountCommentReply struct {
-	Code int   `json:"code" form:"code"`
-	Data int64 `json:"data" form:"data"`
+    Code int `json:"code" form:"code"`
+    Data int64 `json:"data" form:"data"`
 }
 
 type PostCommentRequest struct {
-	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+    Title string `form:"title" json:"title"`
+    Content string `json:"content" form:"content"`
 }
 
 type PostCommentReply struct {
-	Code    int              `json:"code" form:"code"`
-	Comment *comment.Comment `json:"comment" form:"comment"`
+    Code int `json:"code" form:"code"`
+    Comment *comment.Comment `json:"comment" form:"comment"`
 }
 
 type GetCommentReply struct {
-	Code int              `form:"code" json:"code"`
-	Data *comment.Comment `form:"data" json:"data"`
+    Code int `form:"code" json:"code"`
+    Data *comment.Comment `json:"data" form:"data"`
 }
 
 type PutCommentRequest struct {
-	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+    Title string `json:"title" form:"title"`
+    Content string `json:"content" form:"content"`
 }
-
 func PSerializeListCommentsReply(_code int, _data []comment.Comment) *ListCommentsReply {
 
-	return &ListCommentsReply{
-		Code: _code,
-		Data: _data,
-	}
+    return &ListCommentsReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func SerializeListCommentsReply(_code int, _data []comment.Comment) ListCommentsReply {
 
-	return ListCommentsReply{
-		Code: _code,
-		Data: _data,
-	}
+    return ListCommentsReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func _packSerializeListCommentsReply(_code int, _data []comment.Comment) ListCommentsReply {
 
-	return ListCommentsReply{
-		Code: _code,
-		Data: _data,
-	}
+    return ListCommentsReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func PackSerializeListCommentsReply(_code []int, _data [][]comment.Comment) (pack []ListCommentsReply) {
 	for i := range _code {
@@ -67,24 +68,24 @@ func PackSerializeListCommentsReply(_code []int, _data [][]comment.Comment) (pac
 }
 func PSerializeCountCommentReply(_code int, _data int64) *CountCommentReply {
 
-	return &CountCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return &CountCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func SerializeCountCommentReply(_code int, _data int64) CountCommentReply {
 
-	return CountCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return CountCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func _packSerializeCountCommentReply(_code int, _data int64) CountCommentReply {
 
-	return CountCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return CountCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func PackSerializeCountCommentReply(_code []int, _data []int64) (pack []CountCommentReply) {
 	for i := range _code {
@@ -94,24 +95,24 @@ func PackSerializeCountCommentReply(_code []int, _data []int64) (pack []CountCom
 }
 func PSerializePostCommentRequest(comment *comment.Comment) *PostCommentRequest {
 
-	return &PostCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return &PostCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func SerializePostCommentRequest(comment *comment.Comment) PostCommentRequest {
 
-	return PostCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return PostCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func _packSerializePostCommentRequest(comment *comment.Comment) PostCommentRequest {
 
-	return PostCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return PostCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func PackSerializePostCommentRequest(comment []*comment.Comment) (pack []PostCommentRequest) {
 	for i := range comment {
@@ -121,24 +122,24 @@ func PackSerializePostCommentRequest(comment []*comment.Comment) (pack []PostCom
 }
 func PSerializePostCommentReply(_code int, _comment *comment.Comment) *PostCommentReply {
 
-	return &PostCommentReply{
-		Code:    _code,
-		Comment: _comment,
-	}
+    return &PostCommentReply{
+        Code: _code,
+        Comment: _comment,
+    }
 }
 func SerializePostCommentReply(_code int, _comment *comment.Comment) PostCommentReply {
 
-	return PostCommentReply{
-		Code:    _code,
-		Comment: _comment,
-	}
+    return PostCommentReply{
+        Code: _code,
+        Comment: _comment,
+    }
 }
 func _packSerializePostCommentReply(_code int, _comment *comment.Comment) PostCommentReply {
 
-	return PostCommentReply{
-		Code:    _code,
-		Comment: _comment,
-	}
+    return PostCommentReply{
+        Code: _code,
+        Comment: _comment,
+    }
 }
 func PackSerializePostCommentReply(_code []int, _comment []*comment.Comment) (pack []PostCommentReply) {
 	for i := range _code {
@@ -148,24 +149,24 @@ func PackSerializePostCommentReply(_code []int, _comment []*comment.Comment) (pa
 }
 func PSerializeGetCommentReply(_code int, _data *comment.Comment) *GetCommentReply {
 
-	return &GetCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return &GetCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func SerializeGetCommentReply(_code int, _data *comment.Comment) GetCommentReply {
 
-	return GetCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return GetCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func _packSerializeGetCommentReply(_code int, _data *comment.Comment) GetCommentReply {
 
-	return GetCommentReply{
-		Code: _code,
-		Data: _data,
-	}
+    return GetCommentReply{
+        Code: _code,
+        Data: _data,
+    }
 }
 func PackSerializeGetCommentReply(_code []int, _data []*comment.Comment) (pack []GetCommentReply) {
 	for i := range _code {
@@ -175,24 +176,24 @@ func PackSerializeGetCommentReply(_code []int, _data []*comment.Comment) (pack [
 }
 func PSerializePutCommentRequest(comment *comment.Comment) *PutCommentRequest {
 
-	return &PutCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return &PutCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func SerializePutCommentRequest(comment *comment.Comment) PutCommentRequest {
 
-	return PutCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return PutCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func _packSerializePutCommentRequest(comment *comment.Comment) PutCommentRequest {
 
-	return PutCommentRequest{
-		Title:   comment.Title,
-		Content: comment.Content,
-	}
+    return PutCommentRequest{
+        Title: comment.Title,
+        Content: comment.Content,
+    }
 }
 func PackSerializePutCommentRequest(comment []*comment.Comment) (pack []PutCommentRequest) {
 	for i := range comment {

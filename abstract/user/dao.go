@@ -11,5 +11,7 @@ type DB interface {
 	ID(id uint) (*User, error)
 	QueryUserName(name string) (*User, error)
 	QueryEmail(email string) (*User, error)
+
 	AuthenticatePassword(user *User, password string) (verified bool, err error)
+	RecalculatePassword(user *User, password string) (err error)
 }
