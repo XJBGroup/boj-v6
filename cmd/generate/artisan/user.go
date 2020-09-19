@@ -131,7 +131,7 @@ func DescribeUserService() artisan.ProposingService {
 						artisan.Param("old_password", artisan.String, required),
 						// New Password: 新密码
 						artisan.Param("new_password", artisan.String, required),
-						)),
+					)),
 			).
 			SubCate("/inspect", artisan.Ink().WithName("Inspect").
 				Method(artisan.GET, "InspectUser",

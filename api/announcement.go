@@ -1,65 +1,64 @@
-
 package api
 
 import (
-    "github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
-
+	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
 )
 
 type AnnouncementFilter struct {
-    Page int `form:"page" json:"page"`
-    PageSize int `form:"page_size" json:"page_size"`
+	Page     int `form:"page" json:"page"`
+	PageSize int `form:"page_size" json:"page_size"`
 }
 
 type ListAnnouncementsReply struct {
-    Code int `json:"code" form:"code"`
-    Data []announcement.Announcement `json:"data" form:"data"`
+	Code int                         `json:"code" form:"code"`
+	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
 type CountAnnouncementReply struct {
-    Code int `json:"code" form:"code"`
-    Data int64 `json:"data" form:"data"`
+	Code int   `json:"code" form:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type PostAnnouncementRequest struct {
-    Title string `binding:"required" json:"title" form:"title"`
-    Content string `json:"content" form:"content" binding:"required"`
+	Title   string `binding:"required" json:"title" form:"title"`
+	Content string `json:"content" form:"content" binding:"required"`
 }
 
 type PostAnnouncementReply struct {
-    Code int `json:"code" form:"code"`
-    Data *announcement.Announcement `json:"data" form:"data"`
+	Code int                        `json:"code" form:"code"`
+	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
 type GetAnnouncementReply struct {
-    Code int `json:"code" form:"code"`
-    Data *announcement.Announcement `json:"data" form:"data"`
+	Code int                        `json:"code" form:"code"`
+	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
 type PutAnnouncementRequest struct {
-    Title string `json:"title" form:"title"`
-    Content string `json:"content" form:"content"`
+	Title   string `json:"title" form:"title"`
+	Content string `json:"content" form:"content"`
 }
+
 func PSerializeAnnouncementFilter(_page int, _pageSize int) *AnnouncementFilter {
 
-    return &AnnouncementFilter{
-        Page: _page,
-        PageSize: _pageSize,
-    }
+	return &AnnouncementFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
 }
 func SerializeAnnouncementFilter(_page int, _pageSize int) AnnouncementFilter {
 
-    return AnnouncementFilter{
-        Page: _page,
-        PageSize: _pageSize,
-    }
+	return AnnouncementFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
 }
 func _packSerializeAnnouncementFilter(_page int, _pageSize int) AnnouncementFilter {
 
-    return AnnouncementFilter{
-        Page: _page,
-        PageSize: _pageSize,
-    }
+	return AnnouncementFilter{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
 }
 func PackSerializeAnnouncementFilter(_page []int, _pageSize []int) (pack []AnnouncementFilter) {
 	for i := range _page {
@@ -69,24 +68,24 @@ func PackSerializeAnnouncementFilter(_page []int, _pageSize []int) (pack []Annou
 }
 func PSerializeListAnnouncementsReply(_code int, _data []announcement.Announcement) *ListAnnouncementsReply {
 
-    return &ListAnnouncementsReply{
-        Code: _code,
-        Data: _data,
-    }
+	return &ListAnnouncementsReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func SerializeListAnnouncementsReply(_code int, _data []announcement.Announcement) ListAnnouncementsReply {
 
-    return ListAnnouncementsReply{
-        Code: _code,
-        Data: _data,
-    }
+	return ListAnnouncementsReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func _packSerializeListAnnouncementsReply(_code int, _data []announcement.Announcement) ListAnnouncementsReply {
 
-    return ListAnnouncementsReply{
-        Code: _code,
-        Data: _data,
-    }
+	return ListAnnouncementsReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func PackSerializeListAnnouncementsReply(_code []int, _data [][]announcement.Announcement) (pack []ListAnnouncementsReply) {
 	for i := range _code {
@@ -96,24 +95,24 @@ func PackSerializeListAnnouncementsReply(_code []int, _data [][]announcement.Ann
 }
 func PSerializeCountAnnouncementReply(_code int, _data int64) *CountAnnouncementReply {
 
-    return &CountAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return &CountAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func SerializeCountAnnouncementReply(_code int, _data int64) CountAnnouncementReply {
 
-    return CountAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return CountAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func _packSerializeCountAnnouncementReply(_code int, _data int64) CountAnnouncementReply {
 
-    return CountAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return CountAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func PackSerializeCountAnnouncementReply(_code []int, _data []int64) (pack []CountAnnouncementReply) {
 	for i := range _code {
@@ -123,24 +122,24 @@ func PackSerializeCountAnnouncementReply(_code []int, _data []int64) (pack []Cou
 }
 func PSerializePostAnnouncementRequest(announcement *announcement.Announcement) *PostAnnouncementRequest {
 
-    return &PostAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return &PostAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func SerializePostAnnouncementRequest(announcement *announcement.Announcement) PostAnnouncementRequest {
 
-    return PostAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return PostAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func _packSerializePostAnnouncementRequest(announcement *announcement.Announcement) PostAnnouncementRequest {
 
-    return PostAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return PostAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func PackSerializePostAnnouncementRequest(announcement []*announcement.Announcement) (pack []PostAnnouncementRequest) {
 	for i := range announcement {
@@ -150,24 +149,24 @@ func PackSerializePostAnnouncementRequest(announcement []*announcement.Announcem
 }
 func PSerializePostAnnouncementReply(_code int, _data *announcement.Announcement) *PostAnnouncementReply {
 
-    return &PostAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return &PostAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func SerializePostAnnouncementReply(_code int, _data *announcement.Announcement) PostAnnouncementReply {
 
-    return PostAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return PostAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func _packSerializePostAnnouncementReply(_code int, _data *announcement.Announcement) PostAnnouncementReply {
 
-    return PostAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return PostAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func PackSerializePostAnnouncementReply(_code []int, _data []*announcement.Announcement) (pack []PostAnnouncementReply) {
 	for i := range _code {
@@ -177,24 +176,24 @@ func PackSerializePostAnnouncementReply(_code []int, _data []*announcement.Annou
 }
 func PSerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) *GetAnnouncementReply {
 
-    return &GetAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return &GetAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func SerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) GetAnnouncementReply {
 
-    return GetAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return GetAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func _packSerializeGetAnnouncementReply(_code int, _data *announcement.Announcement) GetAnnouncementReply {
 
-    return GetAnnouncementReply{
-        Code: _code,
-        Data: _data,
-    }
+	return GetAnnouncementReply{
+		Code: _code,
+		Data: _data,
+	}
 }
 func PackSerializeGetAnnouncementReply(_code []int, _data []*announcement.Announcement) (pack []GetAnnouncementReply) {
 	for i := range _code {
@@ -204,24 +203,24 @@ func PackSerializeGetAnnouncementReply(_code []int, _data []*announcement.Announ
 }
 func PSerializePutAnnouncementRequest(announcement *announcement.Announcement) *PutAnnouncementRequest {
 
-    return &PutAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return &PutAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func SerializePutAnnouncementRequest(announcement *announcement.Announcement) PutAnnouncementRequest {
 
-    return PutAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return PutAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func _packSerializePutAnnouncementRequest(announcement *announcement.Announcement) PutAnnouncementRequest {
 
-    return PutAnnouncementRequest{
-        Title: announcement.Title,
-        Content: announcement.Content,
-    }
+	return PutAnnouncementRequest{
+		Title:   announcement.Title,
+		Content: announcement.Content,
+	}
 }
 func PackSerializePutAnnouncementRequest(announcement []*announcement.Announcement) (pack []PutAnnouncementRequest) {
 	for i := range announcement {

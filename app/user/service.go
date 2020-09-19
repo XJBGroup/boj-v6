@@ -81,7 +81,7 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	err := svc.db.RecalculatePassword(usr, req.Password)
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code: types.CodeGeneratePasswordError,
+			Code:  types.CodeGeneratePasswordError,
 			Error: err.Error(),
 		})
 	}
@@ -242,7 +242,7 @@ func (svc *Service) ChangePassword(c controller.MContext) {
 	err = svc.db.RecalculatePassword(usr, req.NewPassword)
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code: types.CodeGeneratePasswordError,
+			Code:  types.CodeGeneratePasswordError,
 			Error: err.Error(),
 		})
 	}
