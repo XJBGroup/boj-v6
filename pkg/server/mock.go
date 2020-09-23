@@ -5,20 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Myriad-Dreamin/boj-v6/lib/control"
-	"github.com/Myriad-Dreamin/boj-v6/lib/errorc"
 	"github.com/Myriad-Dreamin/boj-v6/lib/qs"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
-	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/go-magic-package/instance"
 	parser "github.com/Myriad-Dreamin/go-parse-package"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
-	"github.com/mattn/go-sqlite3"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -27,8 +23,6 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"github.com/stretchr/testify/assert"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 type Mocker struct {
@@ -50,21 +44,6 @@ type MockerContext struct {
 type Res = mock.GinResultI
 
 func Mock(options ...Option) (srv *Mocker) {
-	errorc.RegisterCheckInsertError(func(err error) (code errorc.Code, s string) {
-		if sqlError, ok := err.(sqlite3.Error); ok {
-			switch sqlError.ExtendedCode {
-			case 1062:
-				return types.CodeDuplicatePrimaryKey, ""
-			case 1366:
-				return types.CodeDatabaseIncorrectStringValue, ""
-			case 2067:
-				return types.CodeUniqueConstraintFailed, ""
-			default:
-				return types.CodeInsertError, strconv.Itoa(int(sqlError.ExtendedCode))
-			}
-		}
-		return types.CodeOK, ""
-	})
 
 	srv = new(Mocker)
 	srv.Server = newServer(options)
