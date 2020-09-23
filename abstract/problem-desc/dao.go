@@ -10,6 +10,7 @@ type DB interface {
 	Count() (int64, error)
 	QueryByKey(pid uint, pdName string) (pd *ProblemDesc, err error)
 	QueryByPID(pid uint) (pd []ProblemDesc, err error)
+	QueryExistenceByKey(pid uint, pdName string) (exists bool, err error)
 
 	ID(id uint) (*ProblemDesc, error)
 

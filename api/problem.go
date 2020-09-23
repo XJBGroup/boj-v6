@@ -21,7 +21,7 @@ type CountProblemReply struct {
 }
 
 type PostProblemRequest struct {
-	Title       string                       `form:"title" binding:"required" json:"title"`
+	Title       string                       `json:"title" form:"title" binding:"required"`
 	Description string                       `json:"description" form:"description"`
 	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
@@ -32,16 +32,16 @@ type PostProblemReply struct {
 }
 
 type PostProblemData struct {
-	Id uint `form:"id" json:"id"`
+	Id uint `json:"id" form:"id"`
 }
 
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
-	NewName string `json:"new_name" form:"new_name" binding:"required"`
+	Name    string `json:"name" form:"name" binding:"required"`
+	NewName string `binding:"required" json:"new_name" form:"new_name"`
 }
 
 type PostProblemDescRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
+	Name    string `binding:"required" json:"name" form:"name"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -51,12 +51,16 @@ type GetProblemDescRequest struct {
 
 type GetProblemDescReply struct {
 	Code int    `json:"code" form:"code"`
-	Data string `form:"data" json:"data"`
+	Data string `json:"data" form:"data"`
 }
 
 type PutProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
+}
+
+type DeleteProblemDescRequest struct {
+	Name string `json:"name" form:"name"`
 }
 
 type GetProblemReply struct {
@@ -334,6 +338,30 @@ func _packSerializePutProblemDescRequest(_name string, _content string) PutProbl
 func PackSerializePutProblemDescRequest(_name []string, _content []string) (pack []PutProblemDescRequest) {
 	for i := range _name {
 		pack = append(pack, _packSerializePutProblemDescRequest(_name[i], _content[i]))
+	}
+	return
+}
+func PSerializeDeleteProblemDescRequest(_name string) *DeleteProblemDescRequest {
+
+	return &DeleteProblemDescRequest{
+		Name: _name,
+	}
+}
+func SerializeDeleteProblemDescRequest(_name string) DeleteProblemDescRequest {
+
+	return DeleteProblemDescRequest{
+		Name: _name,
+	}
+}
+func _packSerializeDeleteProblemDescRequest(_name string) DeleteProblemDescRequest {
+
+	return DeleteProblemDescRequest{
+		Name: _name,
+	}
+}
+func PackSerializeDeleteProblemDescRequest(_name []string) (pack []DeleteProblemDescRequest) {
+	for i := range _name {
+		pack = append(pack, _packSerializeDeleteProblemDescRequest(_name[i]))
 	}
 	return
 }

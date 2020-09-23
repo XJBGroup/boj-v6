@@ -187,6 +187,10 @@ func MaybeSelectError(c controller.MContext, anyObj interface{}, err error) bool
 	return applyContext{c}.applyError(errorc.MaybeSelectError(anyObj, err))
 }
 
+func MaybeQueryExistenceError(c controller.MContext, exists bool, err error) bool {
+	return applyContext{c}.applyError(errorc.MaybeQueryExistenceError(exists, err))
+}
+
 func MaybeSelectErrorWithTip(c controller.MContext, anyObj interface{}, err error, missError string) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{

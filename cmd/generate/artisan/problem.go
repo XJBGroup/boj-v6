@@ -110,14 +110,17 @@ func getProblemIDCate(prefix string) artisan.Category {
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
+			SubCate("/ref", artisan.Ink().WithName("ProblemDesc").
 				Method(artisan.POST, "Change"+prefix+"ProblemDescriptionRef",
 					artisan.Request(
 						artisan.Param("name", artisan.String, required),
 						artisan.Param("new_name", artisan.String, required),
 					)),
 			).
-			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc"),
+			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc",
+				artisan.Request(
+					artisan.Param("name", artisan.String),
+				)),
 		)
 }
 

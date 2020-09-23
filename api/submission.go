@@ -8,7 +8,7 @@ import (
 type SubmissionFilter struct {
 	Page         int   `json:"page" form:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
-	MemOrder     *bool `json:"mem_order" form:"mem_order"`
+	MemOrder     *bool `form:"mem_order" json:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
@@ -27,10 +27,10 @@ type ListSubmissionReply struct {
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
-	Score      int64     `json:"score" form:"score"`
+	Score      int64     `form:"score" json:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `form:"run_memory" json:"run_memory"`
+	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
@@ -43,14 +43,14 @@ type CountSubmissionsReply struct {
 
 type PostSubmissionRequest struct {
 	Information string `json:"information" form:"information"`
-	Shared      uint8  `form:"shared" json:"shared"`
+	Shared      uint8  `json:"shared" form:"shared"`
 	Language    uint8  `json:"language" form:"language" binding:"required"`
-	Code        string `binding:"required" json:"code" form:"code"`
+	Code        string `json:"code" form:"code" binding:"required"`
 }
 
 type PostSubmissionReply struct {
 	Code int                `json:"code" form:"code"`
-	Data PostSubmissionData `form:"data" json:"data"`
+	Data PostSubmissionData `json:"data" form:"data"`
 }
 
 type PostSubmissionData struct {
@@ -59,21 +59,21 @@ type PostSubmissionData struct {
 
 type GetSubmissionReply struct {
 	Code       int                     `json:"code" form:"code"`
-	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
+	Submission GetSubmissionInnerReply `form:"submission" json:"submission"`
 }
 
 type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
-	UserId     uint      `json:"user_id" form:"user_id"`
+	UserId     uint      `form:"user_id" json:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
-	Language   uint8     `form:"language" json:"language"`
-	Shared     uint8     `form:"shared" json:"shared"`
+	Language   uint8     `json:"language" form:"language"`
+	Shared     uint8     `json:"shared" form:"shared"`
 }
 
 func PSerializeSubmissionFilter(_page int, _pageSize int, _memOrder *bool, _timeOrder *bool, _idOrder *bool, _byUser uint, _onProblem uint, _withLanguage uint8, _hasStatus int64) *SubmissionFilter {
