@@ -7,8 +7,8 @@ import (
 type ListCommentsRequest = comment.Filter
 
 type ListCommentsReply struct {
-	Code int               `json:"code" form:"code"`
-	Data []comment.Comment `json:"data" form:"data"`
+	Code int               `form:"code" json:"code"`
+	Data []comment.Comment `form:"data" json:"data"`
 }
 
 type CountCommentsRequest = comment.Filter
@@ -19,7 +19,7 @@ type CountCommentReply struct {
 }
 
 type PostCommentRequest struct {
-	Title   string `form:"title" json:"title"`
+	Title   string `json:"title" form:"title"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -29,8 +29,8 @@ type PostCommentReply struct {
 }
 
 type GetCommentReply struct {
-	Code int              `form:"code" json:"code"`
-	Data *comment.Comment `json:"data" form:"data"`
+	Code int              `json:"code" form:"code"`
+	Data *comment.Comment `form:"data" json:"data"`
 }
 
 type PutCommentRequest struct {

@@ -66,3 +66,9 @@ const (
 	CodeConfigModifyError
 	CodeStatError
 )
+
+const (
+	CodeProblemErrors ServiceCode = iota + 12000
+	CodeProblemDescSaveError
+	CodeProblemDescLoadError
+)

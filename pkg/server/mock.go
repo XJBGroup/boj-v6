@@ -248,7 +248,7 @@ func (mocker *Mocker) mockServe(r *Request, params ...interface{}) (w *mock.Resp
 			}
 			results.Recs = append(results.Recs, rec)
 		} else {
-			mocker.contextHelper.Fatal("matched bad route", pattern)
+			mocker.contextHelper.Fatal("matched bad route", r.URL, pattern)
 		}
 	}
 

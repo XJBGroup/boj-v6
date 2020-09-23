@@ -1,8 +1,7 @@
 package user_problem
 
 type UserProblemRelationship struct {
-
-	UserID uint `dorm:"user_id" gorm:"column:user_id;not null" json:"user_id"`
+	UserID    uint `dorm:"user_id" gorm:"column:user_id;not null" json:"user_id"`
 	ProblemID uint `dorm:"problem_id" gorm:"column:problem_id;not null" json:"problem_id"`
 }
 

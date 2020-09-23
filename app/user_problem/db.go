@@ -15,14 +15,14 @@ type DBImpl struct {
 }
 
 func (D DBImpl) Create(r *user_problem.UserProblemRelationship) (int64, error) {
-	if r.ProblemID == 0  || r.UserID == 0 {
+	if r.ProblemID == 0 || r.UserID == 0 {
 		return 0, errors.New("invalid zero relationship")
 	}
 	return D.GORMDBImpl.Create(r)
 }
 
 func (D DBImpl) Delete(r *user_problem.UserProblemRelationship) (int64, error) {
-	if r.ProblemID == 0  || r.UserID == 0 {
+	if r.ProblemID == 0 || r.UserID == 0 {
 		return 0, errors.New("invalid zero relationship")
 	}
 	return D.GORMDBImpl.Delete(r)
@@ -37,7 +37,7 @@ func (D DBImpl) FindProblems(userID uint, page, pageSize int) (c []uint, err err
 	return
 }
 
-func (D DBImpl) FindUsers(problemID uint, page, pageSize int)(c []uint, err error) {
+func (D DBImpl) FindUsers(problemID uint, page, pageSize int) (c []uint, err error) {
 	if problemID == 0 {
 		return nil, errors.New("invalid zero value query")
 	}
@@ -74,4 +74,3 @@ func NewDB(m module.Module) (*DBImpl, error) {
 		GORMDBImpl: dao.NewGORMBasic(m.RequireImpl(new(*gorm.DB)).(*gorm.DB)),
 	}, nil
 }
-

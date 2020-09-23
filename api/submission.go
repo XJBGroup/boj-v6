@@ -11,8 +11,8 @@ type SubmissionFilter struct {
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
-	ByUser       uint  `form:"by_user" json:"by_user"`
-	OnProblem    uint  `form:"on_problem" json:"on_problem"`
+	ByUser       uint  `json:"by_user" form:"by_user"`
+	OnProblem    uint  `json:"on_problem" form:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
 	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
@@ -30,9 +30,9 @@ type ListSubmissionReply struct {
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
-	RunMemory  int64     `json:"run_memory" form:"run_memory"`
+	RunMemory  int64     `form:"run_memory" json:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
-	Language   uint8     `form:"language" json:"language"`
+	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
 }
 
@@ -43,14 +43,14 @@ type CountSubmissionsReply struct {
 
 type PostSubmissionRequest struct {
 	Information string `json:"information" form:"information"`
-	Shared      uint8  `json:"shared" form:"shared"`
-	Language    uint8  `form:"language" binding:"required" json:"language"`
-	Code        string `json:"code" form:"code" binding:"required"`
+	Shared      uint8  `form:"shared" json:"shared"`
+	Language    uint8  `json:"language" form:"language" binding:"required"`
+	Code        string `binding:"required" json:"code" form:"code"`
 }
 
 type PostSubmissionReply struct {
 	Code int                `json:"code" form:"code"`
-	Data PostSubmissionData `json:"data" form:"data"`
+	Data PostSubmissionData `form:"data" json:"data"`
 }
 
 type PostSubmissionData struct {
@@ -71,9 +71,9 @@ type GetSubmissionInnerReply struct {
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
-	CodeLength int       `form:"code_length" json:"code_length"`
-	Language   uint8     `json:"language" form:"language"`
-	Shared     uint8     `json:"shared" form:"shared"`
+	CodeLength int       `json:"code_length" form:"code_length"`
+	Language   uint8     `form:"language" json:"language"`
+	Shared     uint8     `form:"shared" json:"shared"`
 }
 
 func PSerializeSubmissionFilter(_page int, _pageSize int, _memOrder *bool, _timeOrder *bool, _idOrder *bool, _byUser uint, _onProblem uint, _withLanguage uint8, _hasStatus int64) *SubmissionFilter {

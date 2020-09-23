@@ -69,7 +69,6 @@ func getProblemIDCate(prefix string) artisan.Category {
 		artisan.Param("content", artisan.String),
 	)
 
-
 	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
 	return artisan.Ink().
 		Path("problem/:pid").Meta(&Meta{artisan.RouterMeta{
@@ -104,7 +103,7 @@ func getProblemIDCate(prefix string) artisan.Category {
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("data", problemDescObject),
+					artisan.Param("data", artisan.String),
 				)).
 			Method(artisan.PUT, "Put"+prefix+"ProblemDesc",
 				artisan.Request(

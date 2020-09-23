@@ -140,6 +140,99 @@ tests:
           #       url: /v1/problem/3
           #     - name: d2.failed
           #       url: /v1/problem/3
+          - name: ~post-desc
+            method: POST
+            url: /v1/problem/1/desc
+            cases:
+              - name: ~success<post, success.suit>
+              - name: ~failed<post, failed.suit>
+              - name: s1.success
+                data: { name: desc0, content: this is a problem desc. }
+                # script:
+                #   - [Assert, data.id, 3]
+                #   - [Assert, data.content, c1]
+              - name: s2.success
+                data: { name: desc1, content: this is the another problem desc. }
+                # script:
+                #   - [Assert, data.id, 4]
+                #   - [Assert, data.content, c1]
+          - name: ~get-desc
+            method: GET
+            url: /v1/problem/1/desc
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                data: { name: default }
+                script:
+                  - [Assert, data, a]
+              - name: case2.success
+                data: { name: desc0 }
+                script:
+                  - [Assert, data, this is a problem desc.]
+              - name: f1.failed
+                url: /v1/problem/3/desc
+          # - name: ~list
+          #   method: GET
+          #   url: /v1/problem-list
+          #   cases:
+          #     - name: ~success<list, success.suit>
+          #     - name: ~failed<list, failed.suit>
+          #     - name: l1.success
+          #       data: { page: 1, page_size: 2 }
+          #       script:
+          #         # 相当于assert len(decode(response.body, 'json').data) == 2
+          #         - [Assert, len(data), 2]
+          #     - name: l2.success
+          #       data: { page: 2, page_size: 2 }
+          #       script:
+          #         - [Assert, len(data), 1]
+          #     - name: l3.success
+          #       data: { page: 1, page_size: 4 }
+          #       script:
+          #         - [Assert, len(data), 3]
+          # - name: count
+          #   method: GET
+          #   url: /v1/problem-count
+          #   script:
+          #     - [Assert, data, 2]
+          # - name: ~put
+          #   method: PUT
+          #   url: /v1/problem/:aid
+          #   cases:
+          #     - name: ~success<put, success.suit>
+          #     - name: ~failed<put, failed.suit>
+          #     - name: p1.success
+          #       url: /v1/problem/3
+          #       data: { title: t2 }
+          #     - name: g1.success
+          #       method: GET
+          #       url: /v1/problem/3
+          #       script:
+          #         - [Assert, data.title, t2]
+          #         - [Assert, data.content, c2]
+          #     - name: p2.success
+          #       url: /v1/problem/3
+          #       data: { title: t4, content: c3 }
+          #     - name: g2.success
+          #       method: GET
+          #       url: /v1/problem/3
+          #       script:
+          #         - [Assert, data.title, t4]
+          #         - [Assert, data.content, c3]
+          # - name: ~delete
+          #   method: DELETE
+          #   url: /v1/problem/:aid
+          #   cases:
+          #     - name: ~success<delete, success.suit>
+          #     - name: ~failed<delete, failed.suit>
+          #     - name: d1.success
+          #       url: /v1/problem/3
+          #     - name: g1.failed
+          #       method: GET
+          #       url: /v1/problem/3
+          #     - name: d2.failed
+          #       url: /v1/problem/3
       - name: ~submission
         cases:
           - name: ~post
