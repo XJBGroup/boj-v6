@@ -12,11 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"hash/crc32"
 	"strings"
-	"sync"
 	"testing"
 )
-
-var lock sync.Mutex
 
 func TestCRUDUnit(t *testing.T) {
 	g := unittest.Load("test.crud.yaml", false, unittest.V1Opt)
@@ -25,31 +22,39 @@ func TestCRUDUnit(t *testing.T) {
 
 type handler struct {
 	db submission.DB
+	ch chan *submission.Submission
 	t  *testing.T
 }
 
 func (h *handler) HandlePostSubmission(ctx context.Context, e submission.PostEvent) {
-	if e.S.ID == 1 {
-		e.S.Status = types.StatusAccepted
-
-		lock.Lock()
-		aff, err := h.db.UpdateFields(&e.S, []string{"status"})
-		lock.Unlock()
-		assert.Equal(h.t, int64(1), aff)
-		assert.NoError(h.t, err, aff)
-	}
-
+	h.ch <- &e.S
 	return
 }
 
 func TestSubmissionUnit(t *testing.T) {
 	subscriber := srv.Module.RequireImpl(new(submission.Subscriber)).(submission.Subscriber)
 
+	ch := make(chan *submission.Submission, 5)
+	db := srv.Module.RequireImpl(new(submission.DB)).(submission.DB)
 	subscriber.AddPostSubmissionHandler(&handler{
-		db: srv.Module.RequireImpl(new(submission.DB)).(submission.DB), t: t})
+		ch: ch, t: t})
 
 	g := unittest.Load("submission_test.yaml", false, unittest.V1Opt)
-	runUnitTest(t, g.TestCases)
+	runUnitTestCB(t, func() {
+		select {
+		case s := <-ch:
+			if s.ID == 1 {
+				s.Status = types.StatusAccepted
+
+				aff, err := db.UpdateFields(s, []string{"status"})
+				assert.Equal(t, int64(1), aff)
+				assert.NoError(t, err, aff)
+			}
+		default:
+
+		}
+
+	}, g.TestCases)
 }
 
 func TestUnit(t *testing.T) {
@@ -66,6 +71,10 @@ func mapConvertString(f func(interface{}) string, x []interface{}) (s []string) 
 }
 
 func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
+	runUnitTestCB(t, func() {}, ts)
+}
+
+func runUnitTestCB(t *testing.T, cb func(), ts []*unittest.TestCase) {
 	for _, tt := range ts {
 		if tt.Abstract {
 			continue
@@ -98,8 +107,6 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 				header = xheader.(map[string]string)
 			}
 
-			lock.Lock()
-
 			var mockResponse mock.ResponseI
 			switch method {
 			case "GET":
@@ -110,7 +117,6 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 			default:
 				panic(fmt.Sprintf("%v", tt))
 			}
-			lock.Unlock()
 
 			if mockResponse == nil {
 				panic("nil response")
@@ -134,5 +140,6 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 				}
 			}
 		})
+		cb()
 	}
 }

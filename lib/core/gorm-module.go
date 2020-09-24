@@ -115,7 +115,7 @@ func OpenGORM(dep module.Module) (*gorm.DB, error) {
 }
 
 func MockGORM(_ module.Module) (*gorm.DB, error) {
-	db, err := gorm.Open("sqlite3", "file:test.db?cache=shared&mode=rwc")
+	db, err := gorm.Open("sqlite3", "file::memory:?cache=shared")
 	if err != nil {
 		return nil, err
 	}
@@ -124,5 +124,6 @@ func MockGORM(_ module.Module) (*gorm.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return db, nil
 }

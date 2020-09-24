@@ -2,6 +2,7 @@ package types
 
 const (
 	StatusAccepted int64 = iota
+
 	StatusWaitingForJudge
 	StatusRunning
 	StatusCompiling

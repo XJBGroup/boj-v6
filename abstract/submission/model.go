@@ -9,19 +9,19 @@ type Submission struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time `sql:"index"`
-	ProblemID    uint       `gorm:"column:problem_id;default:0;not null" json:"problem_id"`
-	UserID       uint       `gorm:"column:user_id;not null" form:"user_id" json:"user_id" binding:"required"`
-	Score        int64      `gorm:"column:score;default:0;not null" json:"score"`
-	Status       int64      `gorm:"column:status;default:0;not null"`
-	RunTime      int64      `gorm:"column:running_time;default:0;not null"`
-	RunMemory    int64      `gorm:"column:running_memory;default:0;not null"`
-	LastTestCase int64      `gorm:"column:last_test_case;default:0;not null"`
-	CodeLength   int        `gorm:"column:length;default:0;not null"`
-	Information  string     `gorm:"column:info;type:text;not null"`
-	Language     uint8      `gorm:"column:language;not null"`
-	Hash         string     `gorm:"column:hash;not null"`
-	SubmitIP     string     `gorm:"submit_ip;not null"`
-	Shared       uint8      `gorm:"shared;default:0;not null"`
+	ProblemID    uint       `gorm:"column:problem_id;default:0;not null;force" json:"problem_id"`
+	UserID       uint       `gorm:"column:user_id;not null;force" form:"user_id" json:"user_id" binding:"required"`
+	Score        int64      `gorm:"column:score;default:0;not null;force" json:"score"`
+	Status       int64      `gorm:"column:status;default:0;not null;force"`
+	RunTime      int64      `gorm:"column:running_time;default:0;not null;force"`
+	RunMemory    int64      `gorm:"column:running_memory;default:0;not null;force"`
+	LastTestCase int64      `gorm:"column:last_test_case;default:0;not null;force"`
+	CodeLength   int        `gorm:"column:length;default:0;not null;force"`
+	Information  string     `gorm:"column:info;type:text;not null;force"`
+	Language     uint8      `gorm:"column:language;not null;force"`
+	Hash         string     `gorm:"column:hash;not null;force"`
+	SubmitIP     string     `gorm:"submit_ip;not null;force"`
+	Shared       uint8      `gorm:"shared;default:0;not null;force"`
 }
 
 // TableName specification

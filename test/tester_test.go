@@ -26,11 +26,6 @@ func TestMain(m *testing.M) {
 		}
 		srv = tester.StartTester(options)
 
-		defer func() {
-			sugar.HandlerError0(srv.DatabaseModule.GormDB.Close())
-			sugar.HandlerError0(os.Remove("test.db"))
-		}()
-
 		srv.PrintRequest(true)
 		srv.CollectResults(true)
 		srv.MainM(m)
