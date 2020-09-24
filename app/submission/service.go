@@ -27,6 +27,7 @@ type Service struct {
 	cfg                *config.ServerConfig
 	key                string
 	problemKey         string
+	dispatcher         submission.Dispatcher
 
 	inner inner_control.InnerSubmissionService
 }
@@ -39,6 +40,7 @@ func NewService(m module.Module) (*Service, error) {
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
 	s.userTriedProblemDB = m.RequireImpl(new(user_problem2.TriedDB)).(user_problem2.TriedDB)
+	s.dispatcher = m.RequireImpl(new(submission.Dispatcher)).(submission.Dispatcher)
 	s.problemKey = "pid"
 	s.key = "sid"
 
@@ -46,7 +48,7 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) SubmissionServiceSignatureXXX() interface{} {
+func (svc *Service) SubmissionServiceSignatureXXX() interface{} {
 	return svc
 }
 
@@ -64,7 +66,7 @@ const (
 	notContest      = 1 << 62
 )
 
-func (svc Service) ResolveFilter(c controller.MContext) *submission.Filter {
+func (svc *Service) ResolveFilter(c controller.MContext) *submission.Filter {
 	var req = new(api.ListSubmissionRequest)
 	if !snippet.BindRequest(c, req) {
 		return nil
@@ -129,7 +131,7 @@ func (svc Service) ResolveFilter(c controller.MContext) *submission.Filter {
 	return &f
 }
 
-func (svc Service) ListSubmission(c controller.MContext) {
+func (svc *Service) ListSubmission(c controller.MContext) {
 	f := svc.ResolveFilter(c)
 	if c.IsAborted() {
 		return
@@ -146,7 +148,7 @@ func (svc Service) ListSubmission(c controller.MContext) {
 	return
 }
 
-func (svc Service) CountSubmission(c controller.MContext) {
+func (svc *Service) CountSubmission(c controller.MContext) {
 	f := svc.ResolveFilter(c)
 	if c.IsAborted() {
 		return
@@ -163,7 +165,7 @@ func (svc Service) CountSubmission(c controller.MContext) {
 	})
 }
 
-func (svc Service) GetContent(c controller.MContext) {
+func (svc *Service) GetContent(c controller.MContext) {
 	if c.IsAborted() {
 		return
 	}
@@ -183,7 +185,7 @@ func (svc Service) GetContent(c controller.MContext) {
 	}
 }
 
-func (svc Service) GetSubmission(c controller.MContext) {
+func (svc *Service) GetSubmission(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -196,7 +198,7 @@ func (svc Service) GetSubmission(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetSubmissionReply(types.CodeOK, api.SerializeGetSubmissionInnerReply(obj)))
 }
 
-func (svc Service) DeleteSubmission(c controller.MContext) {
+func (svc *Service) DeleteSubmission(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return

@@ -45,7 +45,7 @@ func (db *GORMDBImpl) Migrate(obj interface{}) error {
 	return nil
 }
 
-func (db GORMDBImpl) ID(id uint, obj interface{}) (err error) {
+func (db *GORMDBImpl) ID(id uint, obj interface{}) (err error) {
 	rdb := db.DB.First(obj, id)
 	err = rdb.Error
 	if err == nil && rdb.RecordNotFound() {
@@ -54,7 +54,7 @@ func (db GORMDBImpl) ID(id uint, obj interface{}) (err error) {
 	return
 }
 
-func (db GORMDBImpl) Query(obj interface{}, tmpl string, args ...interface{}) (err error) {
+func (db *GORMDBImpl) Query(obj interface{}, tmpl string, args ...interface{}) (err error) {
 	rdb := db.DB.Where(tmpl, args...).First(obj)
 	err = rdb.Error
 	if err == nil && rdb.RecordNotFound() {
@@ -63,7 +63,7 @@ func (db GORMDBImpl) Query(obj interface{}, tmpl string, args ...interface{}) (e
 	return
 }
 
-func (db GORMDBImpl) Has(obj interface{}, tmpl string, args ...interface{}) (exists bool, err error) {
+func (db *GORMDBImpl) Has(obj interface{}, tmpl string, args ...interface{}) (exists bool, err error) {
 	rdb := db.DB.Where(tmpl, args).First(obj)
 	err = rdb.Error
 	if rdb.RecordNotFound() {
@@ -75,41 +75,41 @@ func (db GORMDBImpl) Has(obj interface{}, tmpl string, args ...interface{}) (exi
 	return
 }
 
-func (db GORMDBImpl) Create(obj interface{}) (int64, error) {
+func (db *GORMDBImpl) Create(obj interface{}) (int64, error) {
 	rdb := db.DB.Create(obj)
 	return rdb.RowsAffected, rdb.Error
 }
 
-func (db GORMDBImpl) Update(obj interface{}) (int64, error) {
+func (db *GORMDBImpl) Update(obj interface{}) (int64, error) {
 	rdb := db.DB.Update(obj)
 	return rdb.RowsAffected, rdb.Error
 }
 
-func (db GORMDBImpl) Delete(obj interface{}) (int64, error) {
+func (db *GORMDBImpl) Delete(obj interface{}) (int64, error) {
 	rdb := db.DB.Delete(obj)
 	return rdb.RowsAffected, rdb.Error
 }
 
-func (db GORMDBImpl) UpdateFields(obj interface{}, fields []string) (int64, error) {
+func (db *GORMDBImpl) UpdateFields(obj interface{}, fields []string) (int64, error) {
 	rdb := db.DB.Model(obj).Select(fields).Updates(obj)
 	return rdb.RowsAffected, rdb.Error
 }
 
-func (db GORMDBImpl) Count(tb string) (c int64, err error) {
+func (db *GORMDBImpl) Count(tb string) (c int64, err error) {
 	err = db.DB.Table(tb).Count(&c).Error
 	return
 }
 
-func (db GORMDBImpl) CountW(tb string, tmpl string, args ...interface{}) (c int64, err error) {
+func (db *GORMDBImpl) CountW(tb string, tmpl string, args ...interface{}) (c int64, err error) {
 	err = db.DB.Table(tb).Where(tmpl, args...).Count(&c).Error
 	return
 }
 
-func (db GORMDBImpl) Find(page, pageSize int, obj interface{}) error {
+func (db *GORMDBImpl) Find(page, pageSize int, obj interface{}) error {
 	return db.Page(page, pageSize).Find(obj).Error
 }
 
-func (db GORMDBImpl) Page(page, pageSize int) *gorm.DB {
+func (db *GORMDBImpl) Page(page, pageSize int) *gorm.DB {
 	if pageSize == 0 {
 		return db.DB
 	}

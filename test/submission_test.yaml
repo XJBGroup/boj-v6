@@ -67,8 +67,16 @@ tests:
                 data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
                 script:
                   - [ Assert, data.id, 1 ]
+              - name: s2.success
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; } " }
+                script:
+                  - [ Assert, data.id, 2 ]
               - name: f1.failed
                 data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
+              - name: s3.success
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }  " }
+                script:
+                  - [ Assert, data.id, 3 ]
           #     - name: s2.success
           #       data: { title: t2, content: c2 }
           #     - name: s3.success
@@ -87,8 +95,16 @@ tests:
               - name: ~failed<get, failed.suit>
               - name: case1.success
                 url: /v1/submission/1
+                script:
+                  - [ Assert, data.id, 1 ]
+                  - [ Assert, data.status, 0 ]
               - name: f1.failed
-                url: /v1/submission/3
+                url: /v1/submission/4
+              - name: case2.success
+                url: /v1/submission/2
+                script:
+                  - [ Assert, data.id, 2 ]
+                  - [ Assert, data.status, 1 ]
           # - name: ~list
           #   method: GET
           #   url: /v1/submission-list
@@ -108,11 +124,11 @@ tests:
           #       data: { page: 1, page_size: 4 }
           #       script:
           #         - [Assert, len(data), 3]
-          - name: count
+          - name: ~count
             method: GET
             url: /v1/submission-count
             script:
-              - [ Assert, data, 1 ]
+              - [ Assert, data, 2 ]
           # - name: ~put
           #   method: PUT
           #   url: /v1/submission/:sid

@@ -1,6 +1,7 @@
 package submission
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func (svc Service) SaveCodeToFileSystem(s *submission.Submission, code string) (err error) {
@@ -104,8 +106,8 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	// Step: Save Code to Filesystem
 
 	err = svc.SaveCodeToFileSystem(&s, req.Code)
-	if err != nil {
-		snippet.DoReport(c, err)
+	if snippet.DoReport(c, err) {
+		return
 	}
 
 	// Step: Fill Submission Status
@@ -163,8 +165,10 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	})
 
 	// step: Fire Event
-	// todo: fire event
-	//cr.Submissionr.PushTask(code)
+	svc.dispatcher.HandlePostSubmission(context.Background(), submission.PostEvent{
+		S:    s,
+		Code: strings.NewReader(req.Code),
+	})
 }
 
 func WriteToFileSystem(directory string, fullPath string, code string) (err error) {

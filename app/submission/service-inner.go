@@ -18,6 +18,7 @@ type InnerService struct {
 	userDB             user.DB
 	userTriedProblemDB user_problem2.TriedDB
 	logger             external.Logger
+	dispatcher         submission.Dispatcher
 	cfg                *config.ServerConfig
 	key                string
 	problemKey         string
@@ -31,6 +32,8 @@ func NewInnerService(m module.Module) (*InnerService, error) {
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
 	s.userTriedProblemDB = m.RequireImpl(new(user_problem2.TriedDB)).(user_problem2.TriedDB)
+	s.dispatcher = m.RequireImpl(new(submission.Dispatcher)).(submission.Dispatcher)
+
 	s.problemKey = "pid"
 	s.key = "sid"
 	return s, nil

@@ -30,11 +30,11 @@ type db struct {
 	idleObject contest.Contest
 }
 
-func (d db) Migrate() error {
+func (d *db) Migrate() error {
 	return d.GORMDBImpl.Migrate(&d.idleObject)
 }
 
-func (d db) ID(id uint) (usr *contest.Contest, err error) {
+func (d *db) ID(id uint) (usr *contest.Contest, err error) {
 	usr = new(contest.Contest)
 	err = d.GORMDBImpl.ID(id, usr)
 	if err == dao.DBErrorNotFound {
@@ -44,26 +44,26 @@ func (d db) ID(id uint) (usr *contest.Contest, err error) {
 	return
 }
 
-func (d db) Create(obj *contest.Contest) (int64, error) {
+func (d *db) Create(obj *contest.Contest) (int64, error) {
 	return d.GORMDBImpl.Create(obj)
 }
 
-func (d db) Update(obj *contest.Contest) (int64, error) {
+func (d *db) Update(obj *contest.Contest) (int64, error) {
 	return d.GORMDBImpl.Update(obj)
 }
 
-func (d db) Delete(obj *contest.Contest) (int64, error) {
+func (d *db) Delete(obj *contest.Contest) (int64, error) {
 	return d.GORMDBImpl.Delete(obj)
 }
 
-func (d db) Find(page, pageSize int) (objs []contest.Contest, err error) {
+func (d *db) Find(page, pageSize int) (objs []contest.Contest, err error) {
 	return objs, d.GORMDBImpl.Find(page, pageSize, &objs)
 }
 
-func (d db) Count() (c int64, err error) {
+func (d *db) Count() (c int64, err error) {
 	return d.GORMDBImpl.Count(d.idleObject.TableName())
 }
 
-func (d db) UpdateFields(obj *contest.Contest, fields []string) (int64, error) {
+func (d *db) UpdateFields(obj *contest.Contest, fields []string) (int64, error) {
 	return d.GORMDBImpl.UpdateFields(obj, fields)
 }

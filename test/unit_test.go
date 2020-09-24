@@ -1,11 +1,15 @@
 package tests
 
 import (
+	"context"
 	"fmt"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
+	"github.com/stretchr/testify/assert"
 	"hash/crc32"
 	"strings"
 	"testing"
@@ -16,7 +20,30 @@ func TestCRUDUnit(t *testing.T) {
 	runUnitTest(t, g.TestCases)
 }
 
+type handler struct {
+	db submission.DB
+	t  *testing.T
+}
+
+func (h handler) HandlePostSubmission(ctx context.Context, e submission.PostEvent) {
+
+	if e.S.ID == 1 {
+		e.S.Status = types.StatusAccepted
+
+		aff, err := h.db.UpdateFields(&e.S, []string{})
+		assert.Equal(h.t, int64(1), aff)
+		assert.NoError(h.t, err, aff)
+	}
+
+	return
+}
+
 func TestSubmissionUnit(t *testing.T) {
+	subscriber := srv.Module.RequireImpl(new(submission.Subscriber)).(submission.Subscriber)
+
+	subscriber.AddPostSubmissionHandler(&handler{
+		db: srv.Module.RequireImpl(new(submission.DB)).(submission.DB), t: t})
+
 	g := unittest.Load("submission_test.yaml", false, unittest.V1Opt)
 	runUnitTest(t, g.TestCases)
 }

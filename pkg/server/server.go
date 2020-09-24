@@ -108,6 +108,7 @@ func InitServer(cfgPath string, mock bool) InitializeAction {
 			LoadConfig(cfgPath),
 			PrepareFileSystem,
 			PrepareDatabase(mock),
+			AddEvent,
 		})
 	}
 
