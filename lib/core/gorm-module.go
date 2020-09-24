@@ -5,6 +5,7 @@ import (
 	core_cfg "github.com/Myriad-Dreamin/boj-v6/lib/core-cfg"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/jinzhu/gorm"
+	"log"
 )
 
 type GormModule struct {
@@ -114,6 +115,14 @@ func OpenGORM(dep module.Module) (*gorm.DB, error) {
 }
 
 func MockGORM(_ module.Module) (*gorm.DB, error) {
-
-	return gorm.Open("sqlite3", ":memory:")
+	db, err := gorm.Open("sqlite3", "file:test.db?cache=shared&mode=rwc")
+	if err != nil {
+		return nil, err
+	}
+	sSql := "PRAGMA journal_mode=WAL"
+	_, err = db.DB().Exec(sSql)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db, nil
 }

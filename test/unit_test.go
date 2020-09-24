@@ -12,8 +12,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"hash/crc32"
 	"strings"
+	"sync"
 	"testing"
 )
+
+var lock sync.Mutex
 
 func TestCRUDUnit(t *testing.T) {
 	g := unittest.Load("test.crud.yaml", false, unittest.V1Opt)
@@ -25,12 +28,13 @@ type handler struct {
 	t  *testing.T
 }
 
-func (h handler) HandlePostSubmission(ctx context.Context, e submission.PostEvent) {
-
+func (h *handler) HandlePostSubmission(ctx context.Context, e submission.PostEvent) {
 	if e.S.ID == 1 {
 		e.S.Status = types.StatusAccepted
 
-		aff, err := h.db.UpdateFields(&e.S, []string{})
+		lock.Lock()
+		aff, err := h.db.UpdateFields(&e.S, []string{"status"})
+		lock.Unlock()
 		assert.Equal(h.t, int64(1), aff)
 		assert.NoError(h.t, err, aff)
 	}
@@ -94,6 +98,8 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 				header = xheader.(map[string]string)
 			}
 
+			lock.Lock()
+
 			var mockResponse mock.ResponseI
 			switch method {
 			case "GET":
@@ -104,6 +110,7 @@ func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
 			default:
 				panic(fmt.Sprintf("%v", tt))
 			}
+			lock.Unlock()
 
 			if mockResponse == nil {
 				panic("nil response")
