@@ -13,135 +13,146 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/oss"
 	"github.com/Myriad-Dreamin/boj-v6/external"
-	"github.com/Myriad-Dreamin/functional-go"
 	"github.com/Myriad-Dreamin/minimum-lib/rbac"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
+	"log"
 	"path"
+	"reflect"
 )
 
-type dbResult struct {
-	dbName string
-	proto  interface{}
-	functional.DecayResult
+var mdt = reflect.TypeOf(new(migrateDB)).Elem()
+
+type migrateDB interface {
+	Migrate() error
 }
 
-func (srv *Server) registerDatabaseService() bool {
+func RegisterDatabase(dbName string, f interface{}) InitializeAction {
+	return func(srv *Server) error {
+		return reflectCallInitDB(srv, dbName, ModuleInjectFunc(f))
+	}
+}
 
-	for _, dbResult := range []dbResult{
-		{"AnnouncementDB", new(*announcement.DBImpl), functional.Decay(announcement.NewDB(srv.Module))},
-		{"UserDB", new(*user.DBImpl), functional.Decay(user.NewDB(srv.Module))},
-		{"CommentDB", new(*comment.DBImpl), functional.Decay(comment.NewDB(srv.Module))},
-		{"SubmissionDB", new(*submission.DBImpl), functional.Decay(submission.NewDB(srv.Module))},
-		{"ProblemDB", new(*problem.DBImpl), functional.Decay(problem.NewDB(srv.Module))},
-		{"ProblemDescDB", new(*problem_desc.DBImpl), functional.Decay(problem_desc.NewDB(srv.Module))},
-		{"ContestDB", new(*contest.DBImpl), functional.Decay(contest.NewDB(srv.Module))},
-		{"GroupDB", new(*group.DBImpl), functional.Decay(group.NewDB(srv.Module))},
-	} {
-		if dbResult.Err != nil {
-			srv.Logger.Debug(fmt.Sprintf("init %T DB error", dbResult.First), "error", dbResult.Err)
-			return false
+func reflectCallInitDB(srv *Server, dbName string, rf reflect.Value) error {
+
+	res := rf.Call([]reflect.Value{reflect.ValueOf(srv.Module)})
+	if len(res) != 2 {
+		log.Fatalf("%v.Call return not length 2, got %v", rf.Type(), len(res))
+	}
+	db, err := res[0], res[1].Interface()
+	if err != nil {
+		srv.Logger.Debug(fmt.Sprintf("init %T DB error", db), "error", err)
+		return err.(error)
+	}
+
+	if db.Type().Implements(mdt) {
+		mg := db.Interface().(migrateDB)
+		if err := mg.Migrate(); err != nil {
+			srv.Logger.Debug(fmt.Sprintf("migrate %T DB error", mg), "error", err)
+			return err
 		}
+	}
 
-		if migratingDB, ok := dbResult.First.(interface {
-			Migrate() error
-		}); ok {
-			if err := migratingDB.Migrate(); err != nil {
-				srv.Logger.Debug(fmt.Sprintf("migrate %T DB error", migratingDB), "error", dbResult.Err)
-				return false
+	err = srv.Module.ProvideWithCheck(
+		path.Join("minimum", dbName), db.Interface())
+	if err != nil {
+		srv.Logger.Debug("provide database error", "name", dbName)
+		return err.(error)
+	}
+	return nil
+}
+
+func InitDatabaseModule(mock bool) InitializeAction {
+	return func(srv *Server) error {
+		var m = database.NewModule()
+		srv.DatabaseModule = &m
+
+		if mock {
+			if !m.InstallMock(srv.Module) {
+				return fmt.Errorf("mock database initialize failed")
+			}
+		} else {
+			srv.Cfg.DatabaseConfig.Debug(srv.Logger)
+			if !m.Install(srv.Module) {
+				return fmt.Errorf("initialize database with configuration failed")
 			}
 		}
-		err := srv.Module.ProvideNamedImpl(
-			path.Join("minimum", dbResult.dbName), dbResult.proto, dbResult.First)
+		return nil
+	}
+}
+
+func InitRedisModule(mock bool) InitializeAction {
+	return func(srv *Server) error {
+		//cfg:=
+		//srv.RedisPool, err = model.OpenRedis(cfg)
+		//if err != nil {
+		//	srv.Logger.Debug("create redis pool error", "error", err)
+		//	return false
+		//}
+		//
+		//srv.Logger.Info("connected to redis",
+		//	"connection-type", cfg.RedisConfig.ConnectionType,
+		//	"host", cfg.RedisConfig.Host,
+		//	"connection-timeout", cfg.RedisConfig.ConnectionTimeout,
+		//	"database", cfg.RedisConfig.Database,
+		//	"read-timeout", cfg.RedisConfig.ReadTimeout,
+		//	"write-timeout", cfg.RedisConfig.WriteTimeout,
+		//	"idle-timeout", cfg.RedisConfig.IdleTimeout,
+		//	"wait", cfg.RedisConfig.Wait,
+		//	"max-active", cfg.RedisConfig.MaxActive,
+		//	"max-idle", cfg.RedisConfig.MaxIdle,
+		//)
+		//err = model.RegisterRedis(srv.RedisPool, srv.Logger)
+		//if err != nil {
+		//	srv.Logger.Debug("register redis error", "error", err)
+		//	return false
+		//}
+		return nil
+	}
+}
+
+func InitRBACDatabase() InitializeAction {
+	return func(srv *Server) error {
+		err := rbac.InitGorm(srv.DatabaseModule.GormDB)
 		if err != nil {
-			srv.Logger.Debug("provide database error", "name", dbResult.dbName)
-			return false
+			srv.Logger.Debug("rbac to database error", "error", err)
+			return err
 		}
+		err = srv.Module.ProvideImpl(new(*external.Enforcer), rbac.GetEnforcer())
+		if err != nil {
+			srv.Logger.Debug("provide enforcer error", "error", err)
+			return err
+		}
+		return nil
 	}
-	return true
 }
 
-func (srv *Server) PrepareDatabase() bool {
-	srv.Cfg.DatabaseConfig.Debug(srv.Logger)
-
-	var m = database.NewModule()
-	srv.DatabaseModule = &m
-
-	if !m.Install(srv.Module) {
-		return false
+func InitOSSLevelDB(mock bool) InitializeAction {
+	return func(srv *Server) error {
+		_ = mock
+		engine, err := oss.NewMemLevelDB(nil)
+		if err != nil {
+			srv.Logger.Debug("init mem mock oss", "error", err)
+			return err
+		}
+		sugar.HandlerError0(srv.Module.ProvideImpl(new(*external.OSSEngine), engine))
+		return nil
 	}
-
-	//srv.RedisPool, err = model.OpenRedis(cfg)
-	//if err != nil {
-	//	srv.Logger.Debug("create redis pool error", "error", err)
-	//	return false
-	//}
-	//
-	//srv.Logger.Info("connected to redis",
-	//	"connection-type", cfg.RedisConfig.ConnectionType,
-	//	"host", cfg.RedisConfig.Host,
-	//	"connection-timeout", cfg.RedisConfig.ConnectionTimeout,
-	//	"database", cfg.RedisConfig.Database,
-	//	"read-timeout", cfg.RedisConfig.ReadTimeout,
-	//	"write-timeout", cfg.RedisConfig.WriteTimeout,
-	//	"idle-timeout", cfg.RedisConfig.IdleTimeout,
-	//	"wait", cfg.RedisConfig.Wait,
-	//	"max-active", cfg.RedisConfig.MaxActive,
-	//	"max-idle", cfg.RedisConfig.MaxIdle,
-	//)
-	//err = model.RegisterRedis(srv.RedisPool, srv.Logger)
-	//if err != nil {
-	//	srv.Logger.Debug("register redis error", "error", err)
-	//	return false
-	//}
-
-	err := rbac.InitGorm(m.GormDB)
-	if err != nil {
-		srv.Logger.Debug("rbac to database error", "error", err)
-		return false
-	}
-	err = srv.Module.ProvideImpl(new(*external.Enforcer), rbac.GetEnforcer())
-	if err != nil {
-		srv.Logger.Debug("provide enforcer error", "error", err)
-		return false
-	}
-
-	engine, err := oss.NewMemLevelDB(nil)
-	if err != nil {
-		srv.Logger.Debug("init mem mock oss", "error", err)
-		return false
-	}
-	sugar.HandlerError0(srv.Module.ProvideImpl(new(*external.OSSEngine), engine))
-
-	return srv.registerDatabaseService()
 }
 
-func (srv *Server) MockDatabase() bool {
-	srv.Cfg.DatabaseConfig.Debug(srv.Logger)
-
-	var m = database.NewModule()
-	srv.DatabaseModule = &m
-
-	if !m.InstallMock(srv.Module) {
-		return false
+func PrepareDatabase(mock bool) InitializeAction {
+	return func(srv *Server) error {
+		return srv.applyInitializeAction([]InitializeAction{
+			InitDatabaseModule(mock),
+			InitRBACDatabase(),
+			InitOSSLevelDB(mock),
+			RegisterDatabase("AnnouncementDB", announcement.NewDB),
+			RegisterDatabase("UserDB", user.NewDB),
+			RegisterDatabase("CommentDB", comment.NewDB),
+			RegisterDatabase("SubmissionDB", submission.NewDB),
+			RegisterDatabase("ProblemDB", problem.NewDB),
+			RegisterDatabase("ProblemDescDB", problem_desc.NewDB),
+			RegisterDatabase("ContestDB", contest.NewDB),
+			RegisterDatabase("GroupDB", group.NewDB),
+		})
 	}
-
-	err := rbac.InitGorm(m.GormDB)
-	if err != nil {
-		srv.Logger.Debug("rbac to database error", "error", err)
-		return false
-	}
-	err = srv.Module.ProvideImpl(new(*external.Enforcer), rbac.GetEnforcer())
-	if err != nil {
-		srv.Logger.Debug("provide enforcer error", "error", err)
-		return false
-	}
-
-	engine, err := oss.NewMemLevelDB(nil)
-	if err != nil {
-		srv.Logger.Debug("init mem mock oss", "error", err)
-		return false
-	}
-	sugar.HandlerError0(srv.Module.ProvideImpl(new(*external.OSSEngine), engine))
-
-	return srv.registerDatabaseService()
 }

@@ -2,50 +2,50 @@ package server
 
 import (
 	"os"
-	"path/filepath"
 )
 
-type FST struct {
-	Name string
-	Path *string
+func PrepareFileSystem(srv *Server) error {
+	return srv.applyInitializeAction([]InitializeAction {
+		InitFileSystem("problemPath", srv.Cfg.PathConfig.ProblemPath),
+		InitFileSystem("submissionPath", srv.Cfg.PathConfig.CodePath),
+	})
 }
 
-func (srv *Server) IterOnFileSystemPaths(mapFunc func(fst FST) bool) bool {
-	for _, cfg := range []FST{
-		{"problemPath", &srv.Cfg.PathConfig.ProblemPath},
-		{"submissionPath", &srv.Cfg.PathConfig.CodePath},
-	} {
-		if !mapFunc(cfg) {
-			return false
-		}
+func (srv *Server) DropFileSystem() error {
+	return srv.applyInitializeAction([]InitializeAction {
+		DropFileSystem("problemPath", srv.Cfg.PathConfig.ProblemPath),
+		DropFileSystem("submissionPath", srv.Cfg.PathConfig.CodePath),
+	})
+}
+
+func InitFileSystem(name, path string) InitializeAction {
+	return func(srv *Server) error {
+		return initFileSystem(srv, name, path)
 	}
-	return true
 }
 
-func (srv *Server) PrepareFileSystem() bool {
-	return srv.IterOnFileSystemPaths(func(cfg FST) bool {
-		var err error
-		if *cfg.Path, err = filepath.Abs(*cfg.Path); err != nil {
-			srv.Logger.Debug("find absolute path error", "error", err, "creating-path", *cfg.Path)
-			return false
-		}
-		*cfg.Path += "/"
-		if err = os.MkdirAll(*cfg.Path, os.ModePerm); err != nil {
-			srv.Logger.Debug("create path directory error", "error", err, "creating-path", *cfg.Path)
-			return false
-		}
+func initFileSystem(srv *Server, name, path string) error {
+	var err error
 
-		srv.Logger.Info("host path", "name", cfg.Name, "creating-path", *cfg.Path)
-		return true
-	})
+	if err = os.MkdirAll(path, os.ModePerm); err != nil {
+		srv.Logger.Debug("create path directory error", "error", err, "creating-path", path)
+		return err
+	}
+
+	srv.Logger.Info("host path", "name", name, "creating-path", path)
+	return nil
 }
 
-func (srv *Server) DropFileSystem() bool {
-	return srv.IterOnFileSystemPaths(func(cfg FST) bool {
-		if err := os.RemoveAll(*cfg.Path); err != nil {
-			srv.Logger.Debug("drop path directory error", "error", err, "dropping-path", *cfg.Path)
-			return false
-		}
-		return true
-	})
+
+func DropFileSystem(name, path string) InitializeAction {
+	return func(srv *Server) error {
+		return dropFileSystem(srv, name, path)
+	}
+}
+func dropFileSystem(srv *Server, _, path string) error {
+	if err := os.RemoveAll(path); err != nil {
+		srv.Logger.Debug("drop path directory error", "error", err, "dropping-path", path)
+		return err
+	}
+	return nil
 }

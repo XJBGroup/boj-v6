@@ -8,20 +8,29 @@ import (
 	"strconv"
 )
 
-func (srv *Server) LoadConfig(cfgPath string) bool {
-	srv.Cfg = config.Default()
-	err := config.Load(srv.Cfg, cfgPath)
-	if err != nil {
-		srv.Logger.Debug("parse config error", "error", err)
-		return false
+func LoadConfig(cfgPath string) InitializeAction {
+	if len(cfgPath) == 0 {
+		return UseDefaultConfig()
 	}
-	srv.Module.Provide(config.ModulePath.Global.Configuration, srv.Cfg)
-	return true
+
+	return func(srv *Server) error {
+		srv.Cfg = config.Default()
+		err := config.Load(srv.Cfg, cfgPath)
+		if err != nil {
+			srv.Logger.Debug("parse config error", "error", err)
+			return err
+		}
+		srv.Module.Provide(config.ModulePath.Global.Configuration, srv.Cfg)
+		return nil
+	}
 }
-func (srv *Server) UseDefaultConfig() bool {
-	srv.Cfg = config.Default()
-	srv.Module.Provide(config.ModulePath.Global.Configuration, srv.Cfg)
-	return true
+
+func UseDefaultConfig() InitializeAction {
+	return func(srv *Server) error {
+		srv.Cfg = config.Default()
+		srv.Module.Provide(config.ModulePath.Global.Configuration, srv.Cfg)
+		return nil
+	}
 }
 
 func (srv *Server) FetchConfig(cfg interface{}, cfgPath string) bool {
@@ -34,7 +43,6 @@ func (srv *Server) FetchConfig(cfg interface{}, cfgPath string) bool {
 }
 
 func init() {
-
 	errorc.RegisterCheckInsertError(func(err error) (code errorc.Code, s string) {
 		if mysqlError, ok := err.(*mysql.MySQLError); ok {
 			switch mysqlError.Number {

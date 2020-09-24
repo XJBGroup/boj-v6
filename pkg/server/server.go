@@ -88,14 +88,23 @@ func newServer(options []Option) *Server {
 	return srv
 }
 
+func InitServer(cfgPath string, mock bool) InitializeAction {
+	return func(srv *Server) error {
+		return srv.applyInitializeAction([]InitializeAction{
+			InstantiateLogger(),
+			LoadConfig(cfgPath),
+			PrepareFileSystem,
+			PrepareDatabase(mock),
+		})
+	}
+
+}
+
 func New(cfgPath string, options ...Option) (srv *Server) {
 	srv = newServer(options)
-	if !(srv.InstantiateLogger() &&
-		srv.LoadConfig(cfgPath) &&
-		srv.PrepareFileSystem() &&
-		srv.PrepareDatabase()) {
-		srv = nil
-		return
+	err := InitServer(cfgPath, false)(srv)
+	if err != nil {
+		panic(err)
 	}
 	defer func() {
 		if err := recover(); err != nil {

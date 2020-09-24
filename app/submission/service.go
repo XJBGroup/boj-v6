@@ -218,7 +218,7 @@ func (svc Service) PostSubmission(c controller.MContext) {
 			return
 		}
 	}
-	path = filepath.Join(path, "main.cpp")
+	path = filepath.Join(path, "main")
 	if _, err = os.Stat(path); err != nil && !os.IsExist(err) {
 		f, err := os.Create(path)
 		if err != nil {
@@ -281,7 +281,7 @@ func (svc Service) GetContent(c controller.MContext) {
 
 	// if s.Shared != 1
 	if s.Shared == 1 {
-		c.File(filepath.Join(svc.cfg.PathConfig.CodePath, s.Hash, "main.cpp"))
+		c.File(filepath.Join(svc.cfg.PathConfig.CodePath, s.Hash, "main"))
 	}
 }
 

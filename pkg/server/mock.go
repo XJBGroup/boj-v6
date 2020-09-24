@@ -49,6 +49,21 @@ type MockerContext struct {
 
 type Res = mock.GinResultI
 
+func TerminateBuildMiddleware(a InitializeAction) InitializeAction {
+	return func(srv *Server) error {
+		defer func() {
+			if err := recover(); err != nil {
+				sugar.PrintStack()
+				srv.Logger.Error("panic error", "error", err)
+				srv.Terminate()
+			} else if srv == nil {
+				srv.Terminate()
+			}
+		}()
+		return a(srv)
+	}
+}
+
 func Mock(options ...Option) (srv *Mocker) {
 	errorc.RegisterCheckInsertError(func(err error) (code errorc.Code, s string) {
 		if sqlError, ok := err.(sqlite3.Error); ok {
@@ -69,12 +84,10 @@ func Mock(options ...Option) (srv *Mocker) {
 	srv = new(Mocker)
 	srv.Server = newServer(options)
 	srv.header = make(map[string]string)
-	if !(srv.InstantiateLogger() &&
-		srv.UseDefaultConfig() &&
-		srv.PrepareFileSystem() &&
-		srv.MockDatabase()) {
-		srv = nil
-		return
+
+	err := InitServer("", true)(srv.Server)
+	if err != nil {
+		panic(err)
 	}
 
 	defer func() {
@@ -98,14 +111,6 @@ func Mock(options ...Option) (srv *Mocker) {
 	//	srv.println("install router provider error", err)
 	//}
 
-	defer func() {
-		if err := recover(); err != nil {
-			sugar.PrintStack()
-			srv.Logger.Error("panic error", "error", err)
-			srv.Terminate()
-		}
-	}()
-
 	srv.HttpEngine.Use(mockw.ContextRecorder())
 	control.BuildHttp(srv.Router.Root, srv.HttpEngine)
 	srv.Module.Debug(srv.Logger)
@@ -125,6 +130,7 @@ func Mock(options ...Option) (srv *Mocker) {
 		srv = nil
 		return
 	}
+
 	srv.cancel = cancel
 	srv.contextHelper = &abstract_test.ContextHelper{Logger: log.New(srv.LoggerWriter, "mocker", log.Ldate|log.Ltime|log.Llongfile|log.LstdFlags)}
 
@@ -488,5 +494,8 @@ func init() {
 }
 
 func (mocker *Mocker) DropMock() {
-	mocker.DropFileSystem()
+	err := mocker.DropFileSystem()
+	if err != nil {
+		panic(err)
+	}
 }
