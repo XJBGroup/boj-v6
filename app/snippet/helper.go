@@ -14,9 +14,9 @@ import (
 
 var ResponseOK = serial.Response{Code: types.CodeOK}
 
-func CheckInsertError(c controller.MContext, err error) bool {
-	if code, errs := errorc.CheckInsertError(err); code != types.CodeOK {
-		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{Code: code, ErrorS: errs})
+func CheckInsertError(c controller.MContext, checker func(err error) types.ServiceCode, err error) bool {
+	if code := checker(err); code != types.CodeOK {
+		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{Code: code})
 		return true
 	}
 	return false
@@ -293,9 +293,9 @@ func DeleteObj(c controller.MContext, affected int64, err error) bool {
 	return true
 }
 
-func CreateObj(c controller.MContext, affected int64, err error) bool {
+func CreateObj(c controller.MContext, checker func(err error) types.ServiceCode, affected int64, err error) bool {
 	if err != nil {
-		if CheckInsertError(c, err) {
+		if CheckInsertError(c, checker, err) {
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
@@ -312,9 +312,9 @@ func CreateObj(c controller.MContext, affected int64, err error) bool {
 	return true
 }
 
-func CreateObjWithTip(c controller.MContext, affected int64, err error, tip string) bool {
+func CreateObjWithTip(c controller.MContext, checker func(err error) types.ServiceCode, affected int64, err error, tip string) bool {
 	if err != nil {
-		if CheckInsertError(c, err) {
+		if CheckInsertError(c, checker, err) {
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
@@ -337,10 +337,10 @@ type Updatable interface {
 	Update() (int64, error)
 }
 
-func UpdateObj(c controller.MContext, updateObj Updatable) bool {
+func UpdateObj(c controller.MContext, checker func(err error) types.ServiceCode, updateObj Updatable) bool {
 	affected, err := updateObj.Update()
 	if err != nil {
-		if CheckInsertError(c, err) {
+		if CheckInsertError(c, checker, err) {
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
@@ -371,4 +371,12 @@ func UpdateFields(c controller.MContext, err error) bool {
 func GetCustomFields(c controller.MContext) *types.CustomFields {
 	claims, _ := c.Get("claims")
 	return claims.(*jwt.CustomClaims).CustomField.(*types.CustomFields)
+}
+
+func DoRollback(rollbacks []func()) {
+	var l = len(rollbacks)
+	for i := l - 1; i >= 0; i-- {
+		rollbacks[i]()
+	}
+	return
 }

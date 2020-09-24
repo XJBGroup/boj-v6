@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user_problem"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
@@ -93,7 +94,7 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	var s submission.Submission
 
 	if s.Language, ok = types.LanguageTypeMapping[req.Language]; !ok {
-		c.JSON(http.StatusOK, serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
 			Code:   types.CodeSubmissionCodeTypeUnknownError,
 			ErrorS: "code type unknown",
 		})
@@ -107,7 +108,7 @@ func (svc Service) PostSubmission(c controller.MContext) {
 		snippet.DoReport(c, err)
 	}
 
-	// Step: Update Database
+	// Step: Fill Submission Status
 
 	cc := snippet.GetCustomFields(c)
 	s.UserID = cc.UID
@@ -118,24 +119,52 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	s.Shared = req.Shared
 	s.Information = req.Information
 
+	// Step: Update Database Table `submission`
+
 	aff, err := svc.db.Create(&s)
-	if snippet.CreateObj(c, aff, err) {
-		//cr.Submissionr.PushTask(code)
-		c.JSON(http.StatusOK, api.PostSubmissionReply{
-			Code: types.CodeOK,
-			Data: api.SerializePostSubmissionData(&s),
-		})
+	if !snippet.CreateObjWithTip(c, svc.db.UnwrapError, aff, err, "submission") {
+		return
 	}
 
-	// todo append
-	//user := new(user.User)
-	//user.ID = s.UserID
-	//if _, err = user.TriedProblems().Append(p); err != nil {
-	//	srv.logger.Debug("update s failed", "error", err)
-	//}
+	var rollback = func() {
+		aff, err := svc.db.Delete(&s)
+		if err != nil || aff == 0 {
+			svc.logger.Error("create rollback error", "affect", aff,
+				"error", snippet.ConvertErrorToString(err))
+		}
+	}
+
+	// Step: Update Database Table `user_tried_problem`
+
+	var rel = user_problem.UserTriedProblemRelationship{
+		UserID:    s.UserID,
+		ProblemID: s.ProblemID,
+	}
+
+	aff, err = svc.userTriedProblemDB.Create(&rel)
+	if err != nil {
+		svcCode := svc.userTriedProblemDB.UnwrapError(err)
+		switch svcCode {
+		case types.CodeDuplicatePrimaryKey, types.CodeUniqueConstraintFailed:
+			// ignore
+		default:
+			rollback()
+			c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
+				Code:   svcCode,
+				ErrorS: "create user tried problem relationship error",
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, api.PostSubmissionReply{
+		Code: types.CodeOK,
+		Data: api.SerializePostSubmissionData(&s),
+	})
 
 	// step: Fire Event
 	// todo: fire event
+	//cr.Submissionr.PushTask(code)
 }
 
 func WriteToFileSystem(directory string, fullPath string, code string) (err error) {

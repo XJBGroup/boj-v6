@@ -1,6 +1,10 @@
 package problem_desc
 
+import "github.com/Myriad-Dreamin/boj-v6/abstract/db"
+
 type DB interface {
+	db.BasicDB
+
 	NewProblemDesc(pid uint, name string, content []byte) *ProblemDesc
 	Create(a *ProblemDesc) (int64, error)
 	Update(a *ProblemDesc) (int64, error)

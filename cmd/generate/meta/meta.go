@@ -27,20 +27,28 @@ func fromSnakeToCamel(src []byte, big bool) []byte {
 	return b.Bytes()
 }
 
-func objectTemplate(snakeRep string, src string, target string) {
+func shadowTemplate(src string, target string, replaceFunc func([]byte) []byte) {
 	var b, err = ioutil.ReadFile(src)
 	sugar.HandlerError0(err)
 
+	b = replaceFunc(b)
+
+	sugar.HandlerError0(ioutil.WriteFile(target, b, 0644))
+}
+
+func objectTemplate(snakeRep string, src string, target string) {
 	var obj = []byte(snakeRep)
 	var middleObj = bytes.ReplaceAll(obj, []byte("_"), []byte("-"))
 	var entity = fromSnakeToCamel(obj, true)
 
-	b = bytes.ReplaceAll(b, []byte("user."), bytes.Join([][]byte{obj, []byte(".")}, []byte{}))
-	b = bytes.ReplaceAll(b, []byte("package user"), bytes.Join([][]byte{[]byte("package "), obj}, []byte{}))
-	b = bytes.ReplaceAll(b, []byte("/user"), bytes.Join([][]byte{[]byte("/"), middleObj}, []byte{}))
-	b = bytes.ReplaceAll(b, []byte("User"), entity)
+	shadowTemplate(src, target, func(b []byte) []byte {
+		b = bytes.ReplaceAll(b, []byte("user."), bytes.Join([][]byte{obj, []byte(".")}, []byte{}))
+		b = bytes.ReplaceAll(b, []byte("package user"), bytes.Join([][]byte{[]byte("package "), obj}, []byte{}))
+		b = bytes.ReplaceAll(b, []byte("/user"), bytes.Join([][]byte{[]byte("/"), middleObj}, []byte{}))
+		b = bytes.ReplaceAll(b, []byte("User"), entity)
 
-	sugar.HandlerError0(ioutil.WriteFile(target, b, 0644))
+		return b
+	})
 }
 
 func main() {
@@ -52,4 +60,10 @@ func main() {
 	objectTemplate("contest", "app/user/db_generated.go", "app/contest/db_generated.go")
 	objectTemplate("group", "app/user/db_generated.go", "app/group/db_generated.go")
 	//objectTemplate("problem_desc", "app/user/db_generated.go", "app/problem-desc/db_generated.go")
+
+	shadowTemplate("app/user_problem/db.go", "app/user_problem/solved_db.go", func(b []byte) []byte {
+		b = bytes.ReplaceAll(b, []byte("Tried"), []byte("Solved"))
+		b = bytes.ReplaceAll(b, []byte("tried"), []byte("solved"))
+		return b
+	})
 }

@@ -85,14 +85,14 @@ func (svc Service) PostProblem(c controller.MContext) {
 	p.AuthorID = cc.UID
 
 	aff, err := svc.db.Create(p)
-	if !snippet.CreateObjWithTip(c, aff, err, "problem") {
+	if !snippet.CreateObjWithTip(c, svc.db.UnwrapError, aff, err, "problem") {
 		return
 	}
 
 	var pd = svc.descDB.NewProblemDesc(p.ID, p.DescriptionRef, []byte(req.Description))
 
 	aff, err = svc.descDB.Create(pd)
-	if !snippet.CreateObjWithTip(c, aff, err, "problem_desc") {
+	if !snippet.CreateObjWithTip(c, svc.descDB.UnwrapError, aff, err, "problem_desc") {
 		return
 	}
 

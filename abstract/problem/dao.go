@@ -1,6 +1,10 @@
 package problem
 
+import "github.com/Myriad-Dreamin/boj-v6/abstract/db"
+
 type DB interface {
+	db.BasicDB
+
 	Create(a *Problem) (int64, error)
 	Update(a *Problem) (int64, error)
 	Delete(a *Problem) (int64, error)

@@ -42,25 +42,3 @@ func UpdateFields(obj UpdateFieldsable, fields []string) (Code, string) {
 type Creatable interface {
 	Create() (int64, error)
 }
-
-var checkInsertError func(err error) (Code, string)
-
-func RegisterCheckInsertError(f func(err error) (Code, string)) {
-	checkInsertError = f
-}
-
-func CheckInsertError(err error) (Code, string) {
-	return checkInsertError(err)
-}
-
-func CreateObj(createObj Creatable) (Code, string) {
-	affected, err := createObj.Create()
-	if err != nil {
-		if code, errs := CheckInsertError(err); code != types.CodeOK {
-			return code, errs
-		}
-	} else if affected == 0 {
-		return types.CodeInsertError, "affect nothing"
-	}
-	return types.CodeOK, ""
-}

@@ -95,7 +95,7 @@ func (svc Service) PostGroup(c controller.MContext) {
 	g.OwnerID = u.ID
 
 	aff, err := svc.db.Create(g)
-	if !snippet.CreateObj(c, aff, err) {
+	if !snippet.CreateObj(c, svc.db.UnwrapError, aff, err) {
 		return
 	}
 

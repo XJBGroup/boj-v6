@@ -45,7 +45,7 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	return &Server{Module: make(module.Module)}
+	return &Server{}
 }
 
 func (srv *Server) Terminate() {
@@ -66,6 +66,11 @@ type OptionRouterLoggerWriter struct {
 	Writer io.Writer
 }
 
+type OptionModule struct {
+	OptionImpl
+	Module module.Module
+}
+
 func newServer(options []Option) *Server {
 	srv := NewServer()
 
@@ -75,7 +80,15 @@ func newServer(options []Option) *Server {
 			srv.LoggerWriter = option.Writer
 		case *OptionRouterLoggerWriter:
 			srv.LoggerWriter = option.Writer
+		case OptionModule:
+			srv.Module = option.Module
+		case *OptionModule:
+			srv.Module = option.Module
 		}
+	}
+
+	if srv.Module == nil {
+		srv.Module = make(module.Module)
 	}
 
 	if srv.LoggerWriter == nil {

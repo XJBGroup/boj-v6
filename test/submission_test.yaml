@@ -1,0 +1,152 @@
+version: V1
+# base-url: http://localhost:1080 # 基础url
+# test-type: local-mock # 测试类型
+selector: # 选择器
+  # 当一个case的header中包含Content-Type选项为application/json;...时，它可以被json-selector选中
+  - name: json-selector
+    case:
+      header:
+        Content-Type: /^application\/json/ # 正则
+default: # 为case赋默认值
+  # 如果method不是get方法，那么encoding为json
+  - $(.[!=(method, GET)]).encoding: json
+  # 
+  # - $(.[json-selector()]).encoding: json
+  # 分层赋初值
+  # get方法的encoding为query-string
+  - encoding: query-string
+# 
+package: # 包声明
+  # import std from 'std-assert';
+  - namespace: std
+    path: std-assert
+  # import json from 'json-assert';
+  - namespace: json
+    path: json-assert
+tests:
+  - name: ~suit
+    # using namespace json;
+    using:
+      $: json
+    cases:
+      - name: ~default # ~name表示它是个抽象测试用例，不需要被实例化
+      - name: ~success.default # success.default继承default (点符号继承方法)
+        script:
+          # json.Assert(code, 0), 因为using namespace json; 所以可以省略json.
+          # 相当于assert decode(response.body, 'json').code == 0
+          - [ Assert, code, 0 ]
+      - name: ~failed.default
+        script:
+          - [ AssertNEQ, code, 0 ]
+      - name: ~create_problem
+        cases:
+          - name: ~post
+            method: POST
+            url: /v1/problem
+            cases:
+              - name: ~success<post, success.suit>
+              - name: ~failed<post, failed.suit>
+              - name: s1.success
+                data: { title: t1, description: a }
+                script:
+                  - [ Assert, data.id, 1 ]
+                #   - [Assert, data.content, c1]
+              - name: s2.success
+                data: { title: t1, description: a233 }
+                script:
+                  - [ Assert, data.id, 2 ]
+      - name: ~submission
+        cases:
+          - name: ~post
+            method: POST
+            url: /v1/problem/1/submission
+            cases:
+              - name: ~success<post, success.suit>
+              - name: ~failed<post, failed.suit>
+              - name: s1.success
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
+                script:
+                  - [ Assert, data.id, 1 ]
+              - name: f1.failed
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
+          #     - name: s2.success
+          #       data: { title: t2, content: c2 }
+          #     - name: s3.success
+          #       data: { title: t3, content: c2 }
+          #     # - name: f1.failed
+          #     #   data: { title: t3, content: c2 }
+          #     - name: f2.failed
+          #       data: { title: c1 }
+          #     - name: f3.failed
+          #       data: { content: c1 }
+          - name: ~get
+            method: GET
+            url: /v1/submission/:sid
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                url: /v1/submission/1
+              - name: f1.failed
+                url: /v1/submission/3
+          # - name: ~list
+          #   method: GET
+          #   url: /v1/submission-list
+          #   cases:
+          #     - name: ~success<list, success.suit>
+          #     - name: ~failed<list, failed.suit>
+          #     - name: l1.success
+          #       data: { page: 1, page_size: 2 }
+          #       script:
+          #         # 相当于assert len(decode(response.body, 'json').data) == 2
+          #         - [Assert, len(data), 2]
+          #     - name: l2.success
+          #       data: { page: 2, page_size: 2 }
+          #       script:
+          #         - [Assert, len(data), 1]
+          #     - name: l3.success
+          #       data: { page: 1, page_size: 4 }
+          #       script:
+          #         - [Assert, len(data), 3]
+          - name: count
+            method: GET
+            url: /v1/submission-count
+            script:
+              - [ Assert, data, 1 ]
+          # - name: ~put
+          #   method: PUT
+          #   url: /v1/submission/:sid
+          #   cases:
+          #     - name: ~success<put, success.suit>
+          #     - name: ~failed<put, failed.suit>
+          #     - name: p1.success
+          #       url: /v1/submission/3
+          #       data: { title: t2 }
+          #     - name: g1.success
+          #       method: GET
+          #       url: /v1/submission/3
+          #       script:
+          #         - [Assert, data.title, t2]
+          #         - [Assert, data.content, c2]
+          #     - name: p2.success
+          #       url: /v1/submission/3
+          #       data: { title: t4, content: c3 }
+          #     - name: g2.success
+          #       method: GET
+          #       url: /v1/submission/3
+          #       script:
+          #         - [Assert, data.title, t4]
+          #         - [Assert, data.content, c3]
+          # - name: ~delete
+          #   method: DELETE
+          #   url: /v1/submission/:sid
+          #   cases:
+          #     - name: ~success<delete, success.suit>
+          #     - name: ~failed<delete, failed.suit>
+          #     - name: d1.success
+          #       url: /v1/submission/3
+          #     - name: g1.failed
+          #       method: GET
+          #       url: /v1/submission/3
+          #     - name: d2.failed
+          #       url: /v1/submission/3

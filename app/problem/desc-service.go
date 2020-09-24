@@ -10,14 +10,6 @@ import (
 	"net/http"
 )
 
-func doRollback(rollbacks []func()) {
-	var l = len(rollbacks)
-	for i := l - 1; i >= 0; i-- {
-		rollbacks[i]()
-	}
-	return
-}
-
 func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	var req = new(api.ChangeProblemDescriptionRefRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
@@ -53,7 +45,7 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	obj.Key = nil
 	e = svc.descDB.LoadDesc(obj)
 	if e != nil {
-		doRollback(rollbacks)
+		snippet.DoRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescLoadError,
 			ErrorS: e.Error(),
@@ -65,7 +57,7 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	obj.Key = nil
 	e = svc.descDB.SaveDesc(obj)
 	if e != nil {
-		doRollback(rollbacks)
+		snippet.DoRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescSaveError,
 			ErrorS: e.Error(),
@@ -86,7 +78,7 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	obj.Key = nil
 	e = svc.descDB.DeleteDesc(obj)
 	if e != nil {
-		doRollback(rollbacks)
+		snippet.DoRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescDeleteError,
 			ErrorS: e.Error(),
@@ -110,7 +102,7 @@ func (svc Service) PostProblemDesc(c controller.MContext) {
 	obj.ProblemID = id
 
 	a, e := svc.descDB.Create(obj)
-	if !snippet.CreateObj(c, a, e) {
+	if !snippet.CreateObj(c, svc.descDB.UnwrapError, a, e) {
 		return
 	}
 

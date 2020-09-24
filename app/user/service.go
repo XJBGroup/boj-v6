@@ -91,7 +91,7 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	// check default value
 	aff, err := svc.db.Create(usr)
 	if err != nil {
-		if snippet.CheckInsertError(c, err) {
+		if snippet.CheckInsertError(c, svc.db.UnwrapError, err) {
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{

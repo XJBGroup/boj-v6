@@ -76,7 +76,7 @@ func (svc *Service) PostComment(c controller.MContext) {
 	obj.LastUpdateUserID = cc.UID
 
 	a, e := svc.db.Create(obj)
-	if snippet.CreateObj(c, a, e) {
+	if snippet.CreateObj(c, svc.db.UnwrapError, a, e) {
 		c.JSON(http.StatusOK, api.SerializePostCommentReply(types.CodeOK, obj))
 	}
 }

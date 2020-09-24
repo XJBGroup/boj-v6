@@ -1,6 +1,10 @@
 package contest
 
+import "github.com/Myriad-Dreamin/boj-v6/abstract/db"
+
 type DB interface {
+	db.BasicDB
+
 	Create(a *Contest) (int64, error)
 	Update(a *Contest) (int64, error)
 	Delete(a *Contest) (int64, error)

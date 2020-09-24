@@ -154,7 +154,8 @@ func PrepareDatabase(mock bool) InitializeAction {
 			RegisterDatabase("ProblemDescDB", problem_desc.NewDB),
 			RegisterDatabase("ContestDB", contest.NewDB),
 			RegisterDatabase("GroupDB", group.NewDB),
-			RegisterDatabase("UserProblemRelationshipDB", user_problem.NewDB),
+			RegisterDatabase("UserTriedProblemRelationshipDB", user_problem.NewTriedDB),
+			RegisterDatabase("UserSolvedProblemRelationshipDB", user_problem.NewSolvedDB),
 		})
 	}
 }

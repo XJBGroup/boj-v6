@@ -78,7 +78,7 @@ func (svc Service) PostContest(c controller.MContext) {
 	con.AuthorID = cc.UID
 
 	aff, err := svc.db.Create(con)
-	if snippet.CreateObj(c, aff, err) {
+	if snippet.CreateObj(c, svc.db.UnwrapError, aff, err) {
 		c.JSON(http.StatusOK, api.SerializePostContestReply(types.CodeOK, con))
 	}
 }

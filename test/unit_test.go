@@ -16,6 +16,11 @@ func TestCRUDUnit(t *testing.T) {
 	runUnitTest(t, g.TestCases)
 }
 
+func TestSubmissionUnit(t *testing.T) {
+	g := unittest.Load("submission_test.yaml", false, unittest.V1Opt)
+	runUnitTest(t, g.TestCases)
+}
+
 func TestUnit(t *testing.T) {
 	g := unittest.Load("test.yaml", false, unittest.V1Opt)
 	runUnitTest(t, g.TestCases)

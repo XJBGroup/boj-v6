@@ -1,6 +1,10 @@
 package user
 
+import "github.com/Myriad-Dreamin/boj-v6/abstract/db"
+
 type DB interface {
+	db.BasicDB
+
 	Create(a *User) (int64, error)
 	Update(a *User) (int64, error)
 	Delete(a *User) (int64, error)

@@ -20,7 +20,7 @@ type DBImpl struct {
 
 func newDB(m module.Module) (db, error) {
 	return db{
-		GORMDBImpl: dao.NewGORMBasic(m.RequireImpl(new(*gorm.DB)).(*gorm.DB)),
+		GORMDBImpl: dao.NewGORMBasic(m.RequireImpl(new(*gorm.DB)).(*gorm.DB), m),
 	}, nil
 }
 

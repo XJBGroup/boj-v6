@@ -8,28 +8,28 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type TriedDBImpl struct {
+type SolvedDBImpl struct {
 	dao.GORMDBImpl
 
-	idleObject user_problem.UserTriedProblemRelationship
+	idleObject user_problem.UserSolvedProblemRelationship
 	tableName  string
 }
 
-func (D TriedDBImpl) Create(r *user_problem.UserTriedProblemRelationship) (int64, error) {
+func (D SolvedDBImpl) Create(r *user_problem.UserSolvedProblemRelationship) (int64, error) {
 	if r.ProblemID == 0 || r.UserID == 0 {
 		return 0, errors.New("invalid zero relationship")
 	}
 	return D.GORMDBImpl.Create(r)
 }
 
-func (D TriedDBImpl) Delete(r *user_problem.UserTriedProblemRelationship) (int64, error) {
+func (D SolvedDBImpl) Delete(r *user_problem.UserSolvedProblemRelationship) (int64, error) {
 	if r.ProblemID == 0 || r.UserID == 0 {
 		return 0, errors.New("invalid zero relationship")
 	}
 	return D.GORMDBImpl.Delete(r)
 }
 
-func (D TriedDBImpl) FindProblems(userID uint, page, pageSize int) (c []uint, err error) {
+func (D SolvedDBImpl) FindProblems(userID uint, page, pageSize int) (c []uint, err error) {
 	if userID == 0 {
 		return nil, errors.New("invalid zero value query")
 	}
@@ -38,7 +38,7 @@ func (D TriedDBImpl) FindProblems(userID uint, page, pageSize int) (c []uint, er
 	return
 }
 
-func (D TriedDBImpl) FindUsers(problemID uint, page, pageSize int) (c []uint, err error) {
+func (D SolvedDBImpl) FindUsers(problemID uint, page, pageSize int) (c []uint, err error) {
 	if problemID == 0 {
 		return nil, errors.New("invalid zero value query")
 	}
@@ -47,7 +47,7 @@ func (D TriedDBImpl) FindUsers(problemID uint, page, pageSize int) (c []uint, er
 	return
 }
 
-func (D TriedDBImpl) Count(r *user_problem.UserTriedProblemRelationship) (int64, error) {
+func (D SolvedDBImpl) Count(r *user_problem.UserSolvedProblemRelationship) (int64, error) {
 	if (r.ProblemID | r.UserID) == 0 {
 		return 0, errors.New("invalid zero value query")
 	}
@@ -61,17 +61,17 @@ func (D TriedDBImpl) Count(r *user_problem.UserTriedProblemRelationship) (int64,
 	}
 }
 
-func (D TriedDBImpl) Migrate() error {
+func (D SolvedDBImpl) Migrate() error {
 	e := D.GORMDBImpl.Migrate(&D.idleObject)
 	if e != nil {
 		return e
 	}
 	return D.GORMDBImpl.DB.Model(
-		D.idleObject).AddUniqueIndex("user_tried_problem_pk", "user_id", "problem_id").Error
+		D.idleObject).AddUniqueIndex("user_solved_problem_pk", "user_id", "problem_id").Error
 }
 
-func NewTriedDB(m module.Module) (*TriedDBImpl, error) {
-	return &TriedDBImpl{
+func NewSolvedDB(m module.Module) (*SolvedDBImpl, error) {
+	return &SolvedDBImpl{
 		GORMDBImpl: dao.NewGORMBasic(m.RequireImpl(new(*gorm.DB)).(*gorm.DB), m),
 	}, nil
 }

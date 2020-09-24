@@ -5,6 +5,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
+	user_problem2 "github.com/Myriad-Dreamin/boj-v6/abstract/user_problem"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/config"
@@ -18,13 +19,14 @@ import (
 )
 
 type Service struct {
-	db         submission.DB
-	problemDB  problem.DB
-	userDB     user.DB
-	logger     external.Logger
-	cfg        *config.ServerConfig
-	key        string
-	problemKey string
+	db                 submission.DB
+	problemDB          problem.DB
+	userDB             user.DB
+	userTriedProblemDB user_problem2.TriedDB
+	logger             external.Logger
+	cfg                *config.ServerConfig
+	key                string
+	problemKey         string
 
 	inner inner_control.InnerSubmissionService
 }
@@ -36,6 +38,7 @@ func NewService(m module.Module) (*Service, error) {
 	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
+	s.userTriedProblemDB = m.RequireImpl(new(user_problem2.TriedDB)).(user_problem2.TriedDB)
 	s.problemKey = "pid"
 	s.key = "sid"
 

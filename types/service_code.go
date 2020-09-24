@@ -14,12 +14,15 @@ const (
 	CodeInvalidParameters
 	// GetRawDataError tells some wrong data was in the request
 	CodeGetRawDataError
+
+	CodeNotRecognizedDatabaseError ServiceCode = 10000000
 )
 
 const (
 	// Generic Code -- Database
+	CodeDatabaseError ServiceCode = iota + 10000
 	// CodeInsertError occurs when insert object into database
-	CodeInsertError ServiceCode = iota + 100
+	CodeInsertError
 	// CodeSelectError occurs when select object from database
 	CodeSelectError
 	// CodeUpdateError occurs when update object to database
@@ -45,7 +48,7 @@ const (
 const (
 	// Generic Code -- Authentication
 	// CodeAuthGenerateTokenError occurs when insert object into database
-	CodeAuthGenerateTokenError ServiceCode = iota + 1000
+	CodeAuthGenerateTokenError ServiceCode = iota + 20000
 	CodeAuthenticatePasswordError
 	CodeAuthenticatePolicyError
 	CodeGeneratePasswordError
@@ -55,12 +58,12 @@ const (
 )
 
 const (
-	CodeUserIDMissing ServiceCode = iota + 10000
+	CodeUserIDMissing ServiceCode = iota + 30000
 	CodeUserWrongPassword
 )
 
 const (
-	CodeSubmissionUploaded ServiceCode = iota + 11000
+	CodeSubmissionUploaded ServiceCode = iota + 40000
 	CodeFSExecError
 	CodeUploadFileError
 	CodeConfigModifyError
@@ -71,7 +74,7 @@ const (
 )
 
 const (
-	CodeProblemErrors ServiceCode = iota + 12000
+	CodeProblemErrors ServiceCode = iota + 50000
 	CodeProblemDescSaveError
 	CodeProblemDescLoadError
 	CodeProblemDescDeleteError
