@@ -5,15 +5,15 @@ import (
 )
 
 type Contest struct {
-	ID          uint `gorm:"primary_key" json:"id"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   *time.Time `sql:"index"`
-	Title       string     `gorm:"type:varchar(128);column:title;default:'Untitled';not null" json:"title"`
-	Description string     `gorm:"column:description;type:text;not null" json:"description"`
-	//Author              User          `gorm:"ForeignKey:AuthorID;AssociationForeignKey:ID;preload:false"` // one to many created_Contests
-	AuthorID            uint          `gorm:"column:author_id;not null" json:"author_id"`                // author_id
-	LastUpdateUserID    uint          `gorm:"column:last_update_user_id;not null" json:"last_update_id"` // last_update_user_id
+	ID                  uint `gorm:"primary_key" json:"id"`
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	DeletedAt           *time.Time    `sql:"index"`
+	ContestType         string        `gorm:"column:contest_type;type:char(5);not null" json:"contest_type"`
+	Title               string        `gorm:"type:varchar(128);column:title;default:'Untitled';not null" json:"title"`
+	Description         string        `gorm:"column:description;type:text;not null" json:"description"`
+	AuthorID            uint          `gorm:"column:author_id;not null" json:"author_id"`
+	LastUpdateUserID    uint          `gorm:"column:last_update_user_id;not null" json:"last_update_id"`
 	StartAt             *time.Time    `gorm:"column:start_at;not null;default:CURRENT_TIMESTAMP;not null" json:"start_at"`
 	EndDuration         time.Duration `gorm:"column:end_duration;not null" json:"end_duration"`
 	BoardFrozenDuration time.Duration `gorm:"column:board_frozen_duration;not null" json:"board_frozen_duration"`

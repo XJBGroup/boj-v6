@@ -36,22 +36,22 @@ type PostProblemData struct {
 }
 
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type PostProblemDescRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `form:"content" json:"content"`
+	Name    string `binding:"required" json:"name" form:"name"`
+	Content string `json:"content" form:"content"`
 }
 
 type GetProblemDescRequest struct {
-	Name string `json:"name" form:"name"`
+	Name string `form:"name" json:"name"`
 }
 
 type GetProblemDescReply struct {
 	Code int    `json:"code" form:"code"`
-	Data string `json:"data" form:"data"`
+	Data string `form:"data" json:"data"`
 }
 
 type PutProblemDescRequest struct {
@@ -64,13 +64,13 @@ type DeleteProblemDescRequest struct {
 }
 
 type GetProblemReply struct {
-	Code int              `form:"code" json:"code"`
-	Data *problem.Problem `form:"data" json:"data"`
+	Code int              `json:"code" form:"code"`
+	Data *problem.Problem `json:"data" form:"data"`
 }
 
 type PutProblemRequest struct {
-	Title          string `form:"title" json:"title"`
-	Description    string `json:"description" form:"description"`
+	Title          string `json:"title" form:"title"`
+	Description    string `form:"description" json:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 

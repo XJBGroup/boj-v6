@@ -93,7 +93,8 @@ func (svc Service) GetContest(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeGetContestReply(types.CodeOK, obj))
+	c.JSON(http.StatusOK, api.SerializeGetContestReply(types.CodeOK,
+		api.SerializeGetContestInnerReply(obj)))
 }
 
 func (svc Service) Delete(c controller.MContext) {

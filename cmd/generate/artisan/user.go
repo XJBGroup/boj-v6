@@ -90,6 +90,9 @@ func DescribeUserService() artisan.ProposingService {
 				StdReply(artisan.Object(
 					"UserLoginData",
 					artisan.SnakeParam(&userModel.ID),
+					artisan.SnakeParam(&userModel.Email),
+					artisan.SnakeParam(&userModel.UserName),
+					artisan.SnakeParam(&userModel.NickName),
 					artisan.Param("refresh_token", artisan.String),
 					artisan.Param("token", artisan.String),
 					artisan.Param("identities", artisan.Strings),
@@ -111,8 +114,13 @@ func DescribeUserService() artisan.ProposingService {
 			Method(artisan.GET, "GetUser",
 				artisan.Reply(
 					codeField,
-					artisan.Param("data", &userModel),
-				)).
+					artisan.Param("data", artisan.Object("GetUserInnerReply",
+						artisan.SPsC(
+							&userModel.ID, &userModel.NickName,
+							&userModel.LastLogin, &userModel.Motto,
+							&userModel.Gender),
+					),
+					))).
 			Method(artisan.PUT, "PutUser",
 				artisan.Request(
 					artisan.SPsC(
@@ -137,7 +145,16 @@ func DescribeUserService() artisan.ProposingService {
 				Method(artisan.GET, "InspectUser",
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", &userModel),
+						artisan.Param("data", artisan.Object("InspectUserInnerReply",
+							artisan.SPsC(
+								&userModel.ID, &userModel.NickName, &userModel.UserName,
+								&userModel.LastLogin, &userModel.Email, &userModel.Motto,
+								&userModel.Gender),
+							artisan.Param("identities", artisan.Strings),
+							artisan.Param("success_problems", new([]uint)),
+							artisan.Param("tried_problems", new([]uint)),
+						),
+						),
 					)),
 			).
 			Method(artisan.DELETE, "Delete"),

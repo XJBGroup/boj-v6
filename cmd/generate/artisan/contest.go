@@ -61,13 +61,20 @@ func DescribeContestService() artisan.ProposingService {
 			Method(artisan.GET, "GetContest",
 				artisan.Reply(
 					codeField,
-					artisan.Param("data", &contestModel),
-				)).
+					artisan.Param("data", artisan.Object("GetContestInnerReply",
+						artisan.SPsC(
+							&contestModel.ID, &contestModel.Title, &contestModel.StartAt, &contestModel.CreatedAt,
+							&contestModel.BoardFrozenDuration, &contestModel.EndDuration, &contestModel.Description,
+							&contestModel.AuthorID, &contestModel.ContestType),
+					),
+					))).
 			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
 				Method(artisan.GET, "ListContestUsers",
 					artisan.Reply(
 						codeField,
-						artisan.ArrayParam(artisan.Param("data", new(user.User))))),
+						artisan.ArrayParam(artisan.Param("data", new(user.User))),
+					),
+				),
 			).
 			// todo: user management
 			Method(artisan.PUT, "PutContest", artisan.AuthMeta("~"),

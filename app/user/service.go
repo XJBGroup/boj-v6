@@ -86,6 +86,8 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 		})
 	}
 
+	// todo: bind email option
+
 	// check default value
 	aff, err := svc.db.Create(usr)
 	if err != nil {
@@ -129,6 +131,15 @@ func (svc *Service) RegisterAdmin(c controller.MContext) {
 	}
 }
 
+func (svc *Service) GetUserIdentities(id uint) (identities []string) {
+
+	// todo: all identities
+	if svc.enforcer.HasGroupingPolicy("user:"+strconv.Itoa(int(id)), "admin") {
+		identities = append(identities, "admin")
+	}
+	return
+}
+
 func (svc *Service) LoginUser(c controller.MContext) {
 	var req = new(api.LoginUserRequest)
 	if !snippet.BindRequest(c, req) {
@@ -169,19 +180,15 @@ func (svc *Service) LoginUser(c controller.MContext) {
 	} else {
 		usr.LastLogin = time.Now()
 
-		var identities []string
-		if svc.enforcer.HasGroupingPolicy("user:"+strconv.Itoa(int(usr.ID)), "admin") {
-			identities = append(identities, "admin")
-		}
-
 		c.JSON(http.StatusOK, api.LoginUserReply{
 			Code: types.CodeOK,
-			Data: api.SerializeUserLoginData(usr, refreshToken, token, identities),
+			Data: api.SerializeUserLoginData(usr, refreshToken, token,
+				svc.GetUserIdentities(usr.ID)),
 		})
 
 		aff, err := svc.db.UpdateFields(usr, []string{"last_login"})
 		if err != nil || aff == 0 {
-			svc.logger.Debug("update last login failed", "error", err, "affected", aff)
+			svc.logger.Debug("update last login failed", "error", snippet.ConvertErrorToString(err), "affected", aff)
 		}
 
 		return
@@ -211,6 +218,8 @@ func (svc *Service) BindEmail(c controller.MContext) {
 	var usr = new(user.User)
 	usr.ID = id
 	usr.Email = req.Email
+
+	// todo: send email
 
 	// check default value
 	_, err := svc.db.UpdateFields(usr, []string{"email"})
@@ -269,7 +278,13 @@ func (svc *Service) InspectUser(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, Data: obj})
+	// todo: find all user related problems
+	var successProblems []uint
+	var triedProblems []uint
+
+	c.JSON(http.StatusOK, api.SerializeInspectUserReply(types.CodeOK,
+		api.SerializeInspectUserInnerReply(
+			obj, svc.GetUserIdentities(obj.ID), successProblems, triedProblems)))
 }
 
 func (svc *Service) GetUser(c controller.MContext) {
@@ -282,7 +297,8 @@ func (svc *Service) GetUser(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, Data: obj})
+	c.JSON(http.StatusOK, api.SerializeGetUserReply(types.CodeOK,
+		api.SerializeGetUserInnerReply(obj)))
 }
 
 func (svc *Service) PutUser(c controller.MContext) {

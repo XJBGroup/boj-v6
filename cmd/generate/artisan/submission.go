@@ -83,7 +83,7 @@ func DescribeSubmissionService() artisan.ProposingService {
 			Method(artisan.GET, "GetSubmission",
 				artisan.Reply(
 					codeField,
-					artisan.Param("submission", artisan.Object("GetSubmissionInnerReply",
+					artisan.Param("data", artisan.Object("GetSubmissionInnerReply",
 						artisan.SPsC(
 							&submissionModel.ID, &submissionModel.CreatedAt, &submissionModel.ProblemID,
 							&submissionModel.UserID, &submissionModel.Score, &submissionModel.Status,

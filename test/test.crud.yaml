@@ -172,12 +172,27 @@ tests:
               - name: case1.success
                 url: /v1/user/2
                 script:
-                  - [ Assert, data.user_name, u1 ]
+                  - [ Assert, data.user_name, nil ]
                   - [ Assert, data.nick_name, n1 ]
-                  - [ Assert, data.solved_problems, 0 ]
-                  - [ Assert, data.tried_problems, 0 ]
+                  - [ Assert, data.solved_problems, nil ]
+                  - [ Assert, data.tried_problems, nil ]
               - name: case2.failed
                 url: /v1/user/4
+          - name: ~inspect
+            method: GET
+            url: /v1/user/:id/inspect
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                url: /v1/user/2/inspect
+                script:
+                  - [ Assert, data.user_name, u1 ]
+                  - [ Assert, data.nick_name, n1 ]
+                  - [ Assert, data.solved_problems, nil ]
+                  - [ Assert, data.tried_problems, nil ]
+              - name: case2.failed
+                url: /v1/user/4/inspect
           - name: ~login
             method: POST
             url: /v1/user/login
@@ -218,12 +233,6 @@ tests:
             cases:
               - name: ~success<put, success.suit>
               - name: ~failed<put, failed.suit>
-          - name: ~inspect
-            method: GET
-            url: /v1/user/:id
-            cases:
-              - name: ~success<inspect, success.suit>
-              - name: ~failed<inspect, failed.suit>
           - name: ~delete
             method: DELETE
             url: /v1/user/:id
@@ -600,3 +609,109 @@ tests:
                 url: /v1/group/3
               - name: d2.failed
                 url: /v1/group/3
+      - name: ~contest
+        cases:
+          - name: ~post
+            method: POST
+            url: /v1/contest
+            cases:
+              - name: ~success<post, success.suit>
+              - name: ~failed<post, failed.suit>
+              - name: s1.success
+                data: { title: contest, description: description, $start_at: date.now(),
+                        end_duration: 86400000000000, board_frozen_duration: 864000000000000 } # one day
+                script:
+                  - [ Assert, data.title, contest ]
+                  - [ Assert, data.description, description ]
+              - name: s2.success
+                data: { title: contest2, description: description2, $start_at: date.now(),
+                        end_duration: 86400000000000, board_frozen_duration: 864000000000000 }
+                script:
+                  - [ Assert, data.title, contest2 ]
+                  - [ Assert, data.description, description2 ]
+              - name: same_title.success
+                data: { title: contest2, description: description2, $start_at: date.now(),
+                        end_duration: 86400000000000, board_frozen_duration: 864000000000000 }
+                script:
+                  - [ Assert, data.title, contest2 ]
+                  - [ Assert, data.description, description2 ]
+              # - name: f1.failed
+              #   data: { title: t3, content: c2 }
+              - name: f2.failed
+                data: { title: c1 }
+              - name: f3.failed
+                data: { content: c1 }
+          - name: ~get
+            method: GET
+            url: /v1/contest/:cid
+            cases:
+              - name: ~success<get, success.suit>
+              - name: ~failed<get, failed.suit>
+              - name: case1.success
+                url: /v1/contest/3
+                script:
+                  - [ Assert, data.title, contest2 ]
+                  - [ Assert, data.description, description2 ]
+              - name: case2.failed
+                url: /v1/contest/4
+          - name: ~list
+            method: GET
+            url: /v1/contest-list
+            cases:
+              - name: ~success<list, success.suit>
+              - name: ~failed<list, failed.suit>
+              - name: l1.success
+                data: { page: 1, page_size: 2 }
+                script:
+                  # 相当于assert len(decode(response.body, 'json').data) == 2
+                  - [ Assert, len(data), 2 ]
+              - name: l2.success
+                data: { page: 2, page_size: 2 }
+                script:
+                  - [ Assert, len(data), 1 ]
+              - name: l3.success
+                data: { page: 1, page_size: 4 }
+                script:
+                  - [ Assert, len(data), 3 ]
+          - name: ~count
+            method: GET
+            url: /v1/contest-count
+            script:
+              - [ Assert, data, 3 ]
+          - name: ~put
+            method: PUT
+            url: /v1/contest/:cid
+            cases:
+              - name: ~success<put, success.suit>
+              - name: ~failed<put, failed.suit>
+              - name: p1.success
+                url: /v1/contest/3
+                data: { title: contest3 }
+              - name: g1.success
+                method: GET
+                url: /v1/contest/3
+                script:
+                  - [ Assert, data.title, contest3 ]
+                  - [ Assert, data.description, description2 ]
+              - name: p2.success
+                url: /v1/contest/3
+                data: { title: t4, description: description3 }
+              - name: g2.success
+                method: GET
+                url: /v1/contest/3
+                script:
+                  - [ Assert, data.title, t4 ]
+                  - [ Assert, data.description, description3 ]
+          - name: ~delete
+            method: DELETE
+            url: /v1/contest/:cid
+            cases:
+              - name: ~success<delete, success.suit>
+              - name: ~failed<delete, failed.suit>
+              - name: d1.success
+                url: /v1/contest/3
+              - name: g1.failed
+                method: GET
+                url: /v1/contest/3
+              - name: d2.failed
+                url: /v1/contest/3

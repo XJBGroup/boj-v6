@@ -262,7 +262,6 @@ func (svc Service) PostSubmission(c controller.MContext) {
 	c.Set("s", s)
 	c.Set("p", p)
 	c.Set("c", req.Code)
-
 }
 
 func (svc Service) GetContent(c controller.MContext) {
