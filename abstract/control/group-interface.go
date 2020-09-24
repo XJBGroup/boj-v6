@@ -6,7 +6,7 @@ import (
 
 type GroupService interface {
 	GroupServiceSignatureXXX() interface{}
-	ListGroups(c controller.MContext)
+	ListGroup(c controller.MContext)
 	CountGroup(c controller.MContext)
 	PostGroup(c controller.MContext)
 	PutGroupOwner(c controller.MContext)

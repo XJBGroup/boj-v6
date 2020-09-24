@@ -24,8 +24,8 @@ func DescribeGroupService() artisan.ProposingService {
 	svc := &GroupCategories{
 		List: artisan.Ink().
 			Path("group-list").
-			Method(artisan.GET, "ListGroups",
-				artisan.QT("ListGroupsRequest", mytraits.Filter{}),
+			Method(artisan.GET, "ListGroup",
+				artisan.QT("ListGroupRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", _groupModel)),
@@ -34,7 +34,7 @@ func DescribeGroupService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("group-count").
 			Method(artisan.GET, "CountGroup",
-				artisan.QT("CountGroupsRequest", mytraits.Filter{}),
+				artisan.QT("CountGroupRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),
@@ -59,6 +59,7 @@ func DescribeGroupService() artisan.ProposingService {
 			RuntimeRouterMeta: "group:gid",
 		}}).
 			Method(artisan.GET, "GetGroup",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", &groupModel),
@@ -67,21 +68,27 @@ func DescribeGroupService() artisan.ProposingService {
 				artisan.Request(
 					artisan.SnakeParam(&groupModel.Name),
 					artisan.SnakeParam(&groupModel.Description),
-				)).
-			Method(artisan.DELETE, "DeleteGroup").
+				),
+				artisan.Reply(codeField),
+			).
+			Method(artisan.DELETE, "DeleteGroup",
+				artisan.Request(),
+				artisan.Reply(codeField),
+			).
 			SubCate("/owner", artisan.Ink().WithName("Owner").
 				Method(artisan.PUT, "PutGroupOwner",
 					artisan.Request(
 						artisan.SnakeParam(&groupModel.OwnerID, required)),
+					artisan.Reply(codeField),
 				),
 			).
 			SubCate("/user-list", artisan.Ink().WithName("UserList").
 				Method(artisan.GET, "GetGroupMembers",
-					artisan.QT("GroupUserListRequest", mytraits.Filter{}),
+					artisan.QT("GetGroupMembersRequest", mytraits.Filter{}),
 					artisan.Reply(
 						codeField,
 						artisan.ArrayParam(artisan.Param("data",
-							artisan.Object("ListGroupUserReply", artisan.SPsC(
+							artisan.Object("GetGroupMembersInnerReply", artisan.SPsC(
 								&valueUserModel.ID,
 								&valueUserModel.Gender,
 								&valueUserModel.LastLogin,
@@ -99,8 +106,7 @@ func DescribeGroupService() artisan.ProposingService {
 				RuntimeRouterMeta: "user:id",
 			}}).Method(artisan.POST, "PostGroupMember",
 				artisan.Request(),
-				artisan.Reply(
-					codeField),
+				artisan.Reply(codeField),
 			)),
 		// todo: post user by name
 	}

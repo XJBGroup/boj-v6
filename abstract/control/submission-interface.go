@@ -6,10 +6,10 @@ import (
 
 type SubmissionService interface {
 	SubmissionServiceSignatureXXX() interface{}
-	ListSubmissions(c controller.MContext)
-	CountSubmissions(c controller.MContext)
+	ListSubmission(c controller.MContext)
+	CountSubmission(c controller.MContext)
 	PostSubmission(c controller.MContext)
 	GetContent(c controller.MContext)
 	GetSubmission(c controller.MContext)
-	Delete(c controller.MContext)
+	DeleteSubmission(c controller.MContext)
 }

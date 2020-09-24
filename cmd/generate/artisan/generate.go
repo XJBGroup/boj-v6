@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
+	"io/ioutil"
 )
 
 var codeField = artisan.Param("code", new(types.ServiceCode))
@@ -20,6 +22,25 @@ func (m *Meta) NeedAuth() *Meta {
 			NeedAuth:          true,
 		},
 	}
+}
+
+// todo move inner service generate
+func svcMethods(svc artisan.ServiceDescription) (res string) {
+	res = fmt.Sprintf("    %sSignatureXXX() interface{}\n", svc.GetName())
+	for _, cat := range svc.GetCategories() {
+		res += _svcMethods(cat)
+	}
+	return
+}
+
+func _svcMethods(svc artisan.CategoryDescription) (res string) {
+	for _, cat := range svc.GetCategories() {
+		res += _svcMethods(cat)
+	}
+	for _, method := range svc.GetMethods() {
+		res += "    " + method.GetName() + "(req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
+	}
+	return
 }
 
 func main() {
@@ -58,6 +79,18 @@ func main() {
 		sugar.HandlerError0(subSvc.SetFilePath(
 			"abstract/control/"+tsk.name+"-interface.go").PublishInterface(
 			"control", svc.Opts))
+
+		sugar.HandlerError0(ioutil.WriteFile(
+			"abstract/inner-control/"+tsk.name+"-inner-interface.go",
+			[]byte(fmt.Sprintf(`
+package inner_control
+
+import (
+	"github.com/Myriad-Dreamin/boj-v6/api"
+)
+
+type Inner%s interface {
+%s}`, subSvc.GetName(), svcMethods(subSvc))), 0644))
 	}
 
 	sugar.HandlerError0(svc.Publish())

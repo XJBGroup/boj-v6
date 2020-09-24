@@ -24,12 +24,12 @@ func DescribeAnnouncementService() artisan.ProposingService {
 	}
 
 	var announcementFilter = artisan.Object(
-		append(listParams, "AnnouncementFilter")...)
+		append(listParams, "ListAnnouncementRequest")...)
 
 	svc := &AnnouncementCategories{
 		List: artisan.Ink().
 			Path("announcement-list").
-			Method(artisan.GET, "ListAnnouncements",
+			Method(artisan.GET, "ListAnnouncement",
 				artisan.Request(announcementFilter),
 				artisan.Reply(
 					codeField,
@@ -39,6 +39,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("announcement-count").
 			Method(artisan.GET, "CountAnnouncement",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),
@@ -61,6 +62,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 			RuntimeRouterMeta: "announcement:aid",
 		}}).
 			Method(artisan.GET, "GetAnnouncement",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", &announcementModel),
@@ -68,8 +70,12 @@ func DescribeAnnouncementService() artisan.ProposingService {
 			Method(artisan.PUT, "PutAnnouncement", artisan.AuthMeta("~"),
 				artisan.Request(
 					artisan.SPsC(&announcementModel.Title, &announcementModel.Content),
-				)).
-			Method(artisan.DELETE, "Delete", artisan.AuthMeta("~")),
+				),
+				artisan.Reply(codeField),
+			).
+			Method(artisan.DELETE, "DeleteAnnouncement", artisan.AuthMeta("~"),
+				artisan.Request(), artisan.Reply(codeField),
+			),
 	}
 	svc.Name("AnnouncementService").
 		UseModel(artisan.Model(artisan.Name("announcement"), &announcementModel))

@@ -7,22 +7,22 @@ import (
 	"time"
 )
 
-type ListGroupsRequest = gorm_crud_dao.Filter
+type ListGroupRequest = gorm_crud_dao.Filter
 
-type ListGroupsReply struct {
-	Code int           `form:"code" json:"code"`
+type ListGroupReply struct {
+	Code int           `json:"code" form:"code"`
 	Data []group.Group `json:"data" form:"data"`
 }
 
-type CountGroupsRequest = gorm_crud_dao.Filter
+type CountGroupRequest = gorm_crud_dao.Filter
 
 type CountGroupReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
 type PostGroupRequest struct {
-	Name        string `json:"name" form:"name" binding:"required"`
+	Name        string `binding:"required" json:"name" form:"name"`
 	Description string `json:"description" form:"description" binding:"required"`
 	OwnerName   string `json:"owner_name" form:"owner_name"`
 	OwnerId     uint   `json:"owner_id" form:"owner_id"`
@@ -33,34 +33,41 @@ type PostGroupReply struct {
 	Data uint `json:"data" form:"data"`
 }
 
-type GroupUserListRequest = gorm_crud_dao.Filter
-
-type GetGroupMembersReply struct {
-	Code int                  `json:"code" form:"code"`
-	Data []ListGroupUserReply `json:"data" form:"data"`
+type PostGroupMemberRequest struct {
 }
 
-type ListGroupUserReply struct {
+type PostGroupMemberReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type PutGroupOwnerRequest struct {
+	OwnerId uint `json:"owner_id" form:"owner_id" binding:"required"`
+}
+
+type PutGroupOwnerReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type GetGroupMembersRequest = gorm_crud_dao.Filter
+
+type GetGroupMembersReply struct {
+	Code int                         `json:"code" form:"code"`
+	Data []GetGroupMembersInnerReply `form:"data" json:"data"`
+}
+
+type GetGroupMembersInnerReply struct {
 	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
-	Email               string    `json:"email" form:"email"`
+	Email               string    `form:"email" json:"email"`
 	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
+	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 
-type PostGroupMemberRequest struct {
-}
-
-type PostGroupMemberReply struct {
-	Code int `form:"code" json:"code"`
-}
-
-type PutGroupOwnerRequest struct {
-	OwnerId uint `binding:"required" json:"owner_id" form:"owner_id"`
+type GetGroupRequest struct {
 }
 
 type GetGroupReply struct {
@@ -73,30 +80,41 @@ type PutGroupRequest struct {
 	Description string `json:"description" form:"description"`
 }
 
-func PSerializeListGroupsReply(_code int, _data []group.Group) *ListGroupsReply {
+type PutGroupReply struct {
+	Code int `form:"code" json:"code"`
+}
 
-	return &ListGroupsReply{
+type DeleteGroupRequest struct {
+}
+
+type DeleteGroupReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+func PSerializeListGroupReply(_code int, _data []group.Group) *ListGroupReply {
+
+	return &ListGroupReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeListGroupsReply(_code int, _data []group.Group) ListGroupsReply {
+func SerializeListGroupReply(_code int, _data []group.Group) ListGroupReply {
 
-	return ListGroupsReply{
+	return ListGroupReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeListGroupsReply(_code int, _data []group.Group) ListGroupsReply {
+func _packSerializeListGroupReply(_code int, _data []group.Group) ListGroupReply {
 
-	return ListGroupsReply{
+	return ListGroupReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeListGroupsReply(_code []int, _data [][]group.Group) (pack []ListGroupsReply) {
+func PackSerializeListGroupReply(_code []int, _data [][]group.Group) (pack []ListGroupReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeListGroupsReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeListGroupReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -187,81 +205,6 @@ func PackSerializePostGroupReply(_code []int, group []*group.Group) (pack []Post
 	}
 	return
 }
-func PSerializeGetGroupMembersReply(_code int, _data []ListGroupUserReply) *GetGroupMembersReply {
-
-	return &GetGroupMembersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeGetGroupMembersReply(_code int, _data []ListGroupUserReply) GetGroupMembersReply {
-
-	return GetGroupMembersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeGetGroupMembersReply(_code int, _data []ListGroupUserReply) GetGroupMembersReply {
-
-	return GetGroupMembersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeGetGroupMembersReply(_code []int, _data [][]ListGroupUserReply) (pack []GetGroupMembersReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeGetGroupMembersReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeListGroupUserReply(valueUser user.User) *ListGroupUserReply {
-
-	return &ListGroupUserReply{
-		Id:                  valueUser.ID,
-		Gender:              valueUser.Gender,
-		LastLogin:           valueUser.LastLogin,
-		UserName:            valueUser.UserName,
-		NickName:            valueUser.NickName,
-		Email:               valueUser.Email,
-		Motto:               valueUser.Motto,
-		SolvedProblemsCount: valueUser.SolvedProblemsCount,
-		TriedProblemsCount:  valueUser.TriedProblemsCount,
-	}
-}
-func SerializeListGroupUserReply(valueUser user.User) ListGroupUserReply {
-
-	return ListGroupUserReply{
-		Id:                  valueUser.ID,
-		Gender:              valueUser.Gender,
-		LastLogin:           valueUser.LastLogin,
-		UserName:            valueUser.UserName,
-		NickName:            valueUser.NickName,
-		Email:               valueUser.Email,
-		Motto:               valueUser.Motto,
-		SolvedProblemsCount: valueUser.SolvedProblemsCount,
-		TriedProblemsCount:  valueUser.TriedProblemsCount,
-	}
-}
-func _packSerializeListGroupUserReply(valueUser user.User) ListGroupUserReply {
-
-	return ListGroupUserReply{
-		Id:                  valueUser.ID,
-		Gender:              valueUser.Gender,
-		LastLogin:           valueUser.LastLogin,
-		UserName:            valueUser.UserName,
-		NickName:            valueUser.NickName,
-		Email:               valueUser.Email,
-		Motto:               valueUser.Motto,
-		SolvedProblemsCount: valueUser.SolvedProblemsCount,
-		TriedProblemsCount:  valueUser.TriedProblemsCount,
-	}
-}
-func PackSerializeListGroupUserReply(valueUser []user.User) (pack []ListGroupUserReply) {
-	for i := range valueUser {
-		pack = append(pack, _packSerializeListGroupUserReply(valueUser[i]))
-	}
-	return
-}
 func PSerializePostGroupMemberRequest() *PostGroupMemberRequest {
 
 	return &PostGroupMemberRequest{}
@@ -325,6 +268,120 @@ func PackSerializePutGroupOwnerRequest(group []*group.Group) (pack []PutGroupOwn
 	}
 	return
 }
+func PSerializePutGroupOwnerReply(_code int) *PutGroupOwnerReply {
+
+	return &PutGroupOwnerReply{
+		Code: _code,
+	}
+}
+func SerializePutGroupOwnerReply(_code int) PutGroupOwnerReply {
+
+	return PutGroupOwnerReply{
+		Code: _code,
+	}
+}
+func _packSerializePutGroupOwnerReply(_code int) PutGroupOwnerReply {
+
+	return PutGroupOwnerReply{
+		Code: _code,
+	}
+}
+func PackSerializePutGroupOwnerReply(_code []int) (pack []PutGroupOwnerReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutGroupOwnerReply(_code[i]))
+	}
+	return
+}
+func PSerializeGetGroupMembersReply(_code int, _data []GetGroupMembersInnerReply) *GetGroupMembersReply {
+
+	return &GetGroupMembersReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeGetGroupMembersReply(_code int, _data []GetGroupMembersInnerReply) GetGroupMembersReply {
+
+	return GetGroupMembersReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeGetGroupMembersReply(_code int, _data []GetGroupMembersInnerReply) GetGroupMembersReply {
+
+	return GetGroupMembersReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeGetGroupMembersReply(_code []int, _data [][]GetGroupMembersInnerReply) (pack []GetGroupMembersReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeGetGroupMembersReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeGetGroupMembersInnerReply(valueUser user.User) *GetGroupMembersInnerReply {
+
+	return &GetGroupMembersInnerReply{
+		Id:                  valueUser.ID,
+		Gender:              valueUser.Gender,
+		LastLogin:           valueUser.LastLogin,
+		UserName:            valueUser.UserName,
+		NickName:            valueUser.NickName,
+		Email:               valueUser.Email,
+		Motto:               valueUser.Motto,
+		SolvedProblemsCount: valueUser.SolvedProblemsCount,
+		TriedProblemsCount:  valueUser.TriedProblemsCount,
+	}
+}
+func SerializeGetGroupMembersInnerReply(valueUser user.User) GetGroupMembersInnerReply {
+
+	return GetGroupMembersInnerReply{
+		Id:                  valueUser.ID,
+		Gender:              valueUser.Gender,
+		LastLogin:           valueUser.LastLogin,
+		UserName:            valueUser.UserName,
+		NickName:            valueUser.NickName,
+		Email:               valueUser.Email,
+		Motto:               valueUser.Motto,
+		SolvedProblemsCount: valueUser.SolvedProblemsCount,
+		TriedProblemsCount:  valueUser.TriedProblemsCount,
+	}
+}
+func _packSerializeGetGroupMembersInnerReply(valueUser user.User) GetGroupMembersInnerReply {
+
+	return GetGroupMembersInnerReply{
+		Id:                  valueUser.ID,
+		Gender:              valueUser.Gender,
+		LastLogin:           valueUser.LastLogin,
+		UserName:            valueUser.UserName,
+		NickName:            valueUser.NickName,
+		Email:               valueUser.Email,
+		Motto:               valueUser.Motto,
+		SolvedProblemsCount: valueUser.SolvedProblemsCount,
+		TriedProblemsCount:  valueUser.TriedProblemsCount,
+	}
+}
+func PackSerializeGetGroupMembersInnerReply(valueUser []user.User) (pack []GetGroupMembersInnerReply) {
+	for i := range valueUser {
+		pack = append(pack, _packSerializeGetGroupMembersInnerReply(valueUser[i]))
+	}
+	return
+}
+func PSerializeGetGroupRequest() *GetGroupRequest {
+
+	return &GetGroupRequest{}
+}
+func SerializeGetGroupRequest() GetGroupRequest {
+
+	return GetGroupRequest{}
+}
+func _packSerializeGetGroupRequest() GetGroupRequest {
+
+	return GetGroupRequest{}
+}
+func PackSerializeGetGroupRequest() (pack []GetGroupRequest) {
+	return
+}
 func PSerializeGetGroupReply(_code int, _data *group.Group) *GetGroupReply {
 
 	return &GetGroupReply{
@@ -376,6 +433,69 @@ func _packSerializePutGroupRequest(group *group.Group) PutGroupRequest {
 func PackSerializePutGroupRequest(group []*group.Group) (pack []PutGroupRequest) {
 	for i := range group {
 		pack = append(pack, _packSerializePutGroupRequest(group[i]))
+	}
+	return
+}
+func PSerializePutGroupReply(_code int) *PutGroupReply {
+
+	return &PutGroupReply{
+		Code: _code,
+	}
+}
+func SerializePutGroupReply(_code int) PutGroupReply {
+
+	return PutGroupReply{
+		Code: _code,
+	}
+}
+func _packSerializePutGroupReply(_code int) PutGroupReply {
+
+	return PutGroupReply{
+		Code: _code,
+	}
+}
+func PackSerializePutGroupReply(_code []int) (pack []PutGroupReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutGroupReply(_code[i]))
+	}
+	return
+}
+func PSerializeDeleteGroupRequest() *DeleteGroupRequest {
+
+	return &DeleteGroupRequest{}
+}
+func SerializeDeleteGroupRequest() DeleteGroupRequest {
+
+	return DeleteGroupRequest{}
+}
+func _packSerializeDeleteGroupRequest() DeleteGroupRequest {
+
+	return DeleteGroupRequest{}
+}
+func PackSerializeDeleteGroupRequest() (pack []DeleteGroupRequest) {
+	return
+}
+func PSerializeDeleteGroupReply(_code int) *DeleteGroupReply {
+
+	return &DeleteGroupReply{
+		Code: _code,
+	}
+}
+func SerializeDeleteGroupReply(_code int) DeleteGroupReply {
+
+	return DeleteGroupReply{
+		Code: _code,
+	}
+}
+func _packSerializeDeleteGroupReply(_code int) DeleteGroupReply {
+
+	return DeleteGroupReply{
+		Code: _code,
+	}
+}
+func PackSerializeDeleteGroupReply(_code []int) (pack []DeleteGroupReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeDeleteGroupReply(_code[i]))
 	}
 	return
 }

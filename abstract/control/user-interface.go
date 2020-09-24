@@ -6,7 +6,7 @@ import (
 
 type UserService interface {
 	UserServiceSignatureXXX() interface{}
-	ListUsers(c controller.MContext)
+	ListUser(c controller.MContext)
 	CountUser(c controller.MContext)
 	Register(c controller.MContext)
 	LoginUser(c controller.MContext)
@@ -16,5 +16,5 @@ type UserService interface {
 	InspectUser(c controller.MContext)
 	GetUser(c controller.MContext)
 	PutUser(c controller.MContext)
-	Delete(c controller.MContext)
+	DeleteUser(c controller.MContext)
 }

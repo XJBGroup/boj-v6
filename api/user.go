@@ -5,18 +5,18 @@ import (
 	"time"
 )
 
-type UserFilter struct {
+type ListUserRequest struct {
 	Page     int `json:"page" form:"page"`
 	PageSize int `json:"page_size" form:"page_size"`
 }
 
-type ListUsersReply struct {
-	Code int             `json:"code" form:"code"`
-	Data []ListUserReply `json:"data" form:"data"`
+type ListUserReply struct {
+	Code int                  `json:"code" form:"code"`
+	Data []ListUserInnerReply `json:"data" form:"data"`
 }
 
-type ListUserReply struct {
-	Id                  uint      `form:"id" json:"id"`
+type ListUserInnerReply struct {
+	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
@@ -27,16 +27,21 @@ type ListUserReply struct {
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 
+type CountUserRequest struct {
+	Page     int `json:"page" form:"page"`
+	PageSize int `json:"page_size" form:"page_size"`
+}
+
 type CountUserReply struct {
 	Code int   `json:"code" form:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
 type RegisterRequest struct {
-	UserName string `json:"user_name" form:"user_name" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-	NickName string `binding:"required" json:"nick_name" form:"nick_name"`
-	Gender   uint8  `json:"gender" form:"gender"`
+	UserName string `form:"user_name" binding:"required" json:"user_name"`
+	Password string `binding:"required" json:"password" form:"password"`
+	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
+	Gender   uint8  `form:"gender" json:"gender"`
 }
 
 type RegisterReply struct {
@@ -51,8 +56,8 @@ type UserRegisterData struct {
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
 	UserName string `json:"user_name" form:"user_name"`
-	Email    string `form:"email" json:"email"`
-	Password string `json:"password" form:"password" binding:"required"`
+	Email    string `json:"email" form:"email"`
+	Password string `form:"password" binding:"required" json:"password"`
 }
 
 type LoginUserReply struct {
@@ -64,10 +69,13 @@ type UserLoginData struct {
 	Id           uint     `json:"id" form:"id"`
 	Email        string   `json:"email" form:"email"`
 	UserName     string   `json:"user_name" form:"user_name"`
-	NickName     string   `form:"nick_name" json:"nick_name"`
+	NickName     string   `json:"nick_name" form:"nick_name"`
 	RefreshToken string   `json:"refresh_token" form:"refresh_token"`
-	Token        string   `form:"token" json:"token"`
+	Token        string   `json:"token" form:"token"`
 	Identities   []string `json:"identities" form:"identities"`
+}
+
+type RefreshTokenRequest struct {
 }
 
 type RefreshTokenReply struct {
@@ -80,12 +88,23 @@ type UserRefreshTokenData struct {
 }
 
 type BindEmailRequest struct {
-	Email string `form:"email" binding:"email" json:"email"`
+	Email string `json:"email" form:"email" binding:"email"`
+}
+
+type BindEmailReply struct {
+	Code int `json:"code" form:"code"`
 }
 
 type ChangePasswordRequest struct {
-	OldPassword string `json:"old_password" form:"old_password" binding:"required"`
+	OldPassword string `form:"old_password" binding:"required" json:"old_password"`
 	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
+}
+
+type ChangePasswordReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type InspectUserRequest struct {
 }
 
 type InspectUserReply struct {
@@ -96,14 +115,17 @@ type InspectUserReply struct {
 type InspectUserInnerReply struct {
 	Id              uint      `json:"id" form:"id"`
 	NickName        string    `json:"nick_name" form:"nick_name"`
-	UserName        string    `form:"user_name" json:"user_name"`
+	UserName        string    `json:"user_name" form:"user_name"`
 	LastLogin       time.Time `json:"last_login" form:"last_login"`
-	Email           string    `form:"email" json:"email"`
+	Email           string    `json:"email" form:"email"`
 	Motto           string    `json:"motto" form:"motto"`
 	Gender          uint8     `json:"gender" form:"gender"`
 	Identities      []string  `json:"identities" form:"identities"`
-	SuccessProblems []uint    `json:"success_problems" form:"success_problems"`
+	SuccessProblems []uint    `form:"success_problems" json:"success_problems"`
 	TriedProblems   []uint    `json:"tried_problems" form:"tried_problems"`
+}
+
+type GetUserRequest struct {
 }
 
 type GetUserReply struct {
@@ -113,103 +135,86 @@ type GetUserReply struct {
 
 type GetUserInnerReply struct {
 	Id        uint      `json:"id" form:"id"`
-	NickName  string    `json:"nick_name" form:"nick_name"`
+	NickName  string    `form:"nick_name" json:"nick_name"`
 	LastLogin time.Time `json:"last_login" form:"last_login"`
 	Motto     string    `json:"motto" form:"motto"`
 	Gender    uint8     `json:"gender" form:"gender"`
 }
 
 type PutUserRequest struct {
-	Gender   uint8  `json:"gender" form:"gender"`
+	Gender   uint8  `form:"gender" json:"gender"`
 	NickName string `json:"nick_name" form:"nick_name"`
 	Motto    string `json:"motto" form:"motto"`
 }
 
-func PSerializeUserFilter(_page int, _pageSize int) *UserFilter {
+type PutUserReply struct {
+	Code int `json:"code" form:"code"`
+}
 
-	return &UserFilter{
+type DeleteUserRequest struct {
+}
+
+type DeleteUserReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+func PSerializeListUserRequest(_page int, _pageSize int) *ListUserRequest {
+
+	return &ListUserRequest{
 		Page:     _page,
 		PageSize: _pageSize,
 	}
 }
-func SerializeUserFilter(_page int, _pageSize int) UserFilter {
+func SerializeListUserRequest(_page int, _pageSize int) ListUserRequest {
 
-	return UserFilter{
+	return ListUserRequest{
 		Page:     _page,
 		PageSize: _pageSize,
 	}
 }
-func _packSerializeUserFilter(_page int, _pageSize int) UserFilter {
+func _packSerializeListUserRequest(_page int, _pageSize int) ListUserRequest {
 
-	return UserFilter{
+	return ListUserRequest{
 		Page:     _page,
 		PageSize: _pageSize,
 	}
 }
-func PackSerializeUserFilter(_page []int, _pageSize []int) (pack []UserFilter) {
+func PackSerializeListUserRequest(_page []int, _pageSize []int) (pack []ListUserRequest) {
 	for i := range _page {
-		pack = append(pack, _packSerializeUserFilter(_page[i], _pageSize[i]))
+		pack = append(pack, _packSerializeListUserRequest(_page[i], _pageSize[i]))
 	}
 	return
 }
-func PSerializeListUsersReply(_code int, _data []ListUserReply) *ListUsersReply {
-
-	return &ListUsersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeListUsersReply(_code int, _data []ListUserReply) ListUsersReply {
-
-	return ListUsersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeListUsersReply(_code int, _data []ListUserReply) ListUsersReply {
-
-	return ListUsersReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeListUsersReply(_code []int, _data [][]ListUserReply) (pack []ListUsersReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeListUsersReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeListUserReply(valueUser user.User) *ListUserReply {
+func PSerializeListUserReply(_code int, _data []ListUserInnerReply) *ListUserReply {
 
 	return &ListUserReply{
-		Id:                  valueUser.ID,
-		Gender:              valueUser.Gender,
-		LastLogin:           valueUser.LastLogin,
-		UserName:            valueUser.UserName,
-		NickName:            valueUser.NickName,
-		Email:               valueUser.Email,
-		Motto:               valueUser.Motto,
-		SolvedProblemsCount: valueUser.SolvedProblemsCount,
-		TriedProblemsCount:  valueUser.TriedProblemsCount,
+		Code: _code,
+		Data: _data,
 	}
 }
-func SerializeListUserReply(valueUser user.User) ListUserReply {
+func SerializeListUserReply(_code int, _data []ListUserInnerReply) ListUserReply {
 
 	return ListUserReply{
-		Id:                  valueUser.ID,
-		Gender:              valueUser.Gender,
-		LastLogin:           valueUser.LastLogin,
-		UserName:            valueUser.UserName,
-		NickName:            valueUser.NickName,
-		Email:               valueUser.Email,
-		Motto:               valueUser.Motto,
-		SolvedProblemsCount: valueUser.SolvedProblemsCount,
-		TriedProblemsCount:  valueUser.TriedProblemsCount,
+		Code: _code,
+		Data: _data,
 	}
 }
-func _packSerializeListUserReply(valueUser user.User) ListUserReply {
+func _packSerializeListUserReply(_code int, _data []ListUserInnerReply) ListUserReply {
 
 	return ListUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeListUserReply(_code []int, _data [][]ListUserInnerReply) (pack []ListUserReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeListUserReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeListUserInnerReply(valueUser user.User) *ListUserInnerReply {
+
+	return &ListUserInnerReply{
 		Id:                  valueUser.ID,
 		Gender:              valueUser.Gender,
 		LastLogin:           valueUser.LastLogin,
@@ -221,9 +226,64 @@ func _packSerializeListUserReply(valueUser user.User) ListUserReply {
 		TriedProblemsCount:  valueUser.TriedProblemsCount,
 	}
 }
-func PackSerializeListUserReply(valueUser []user.User) (pack []ListUserReply) {
+func SerializeListUserInnerReply(valueUser user.User) ListUserInnerReply {
+
+	return ListUserInnerReply{
+		Id:                  valueUser.ID,
+		Gender:              valueUser.Gender,
+		LastLogin:           valueUser.LastLogin,
+		UserName:            valueUser.UserName,
+		NickName:            valueUser.NickName,
+		Email:               valueUser.Email,
+		Motto:               valueUser.Motto,
+		SolvedProblemsCount: valueUser.SolvedProblemsCount,
+		TriedProblemsCount:  valueUser.TriedProblemsCount,
+	}
+}
+func _packSerializeListUserInnerReply(valueUser user.User) ListUserInnerReply {
+
+	return ListUserInnerReply{
+		Id:                  valueUser.ID,
+		Gender:              valueUser.Gender,
+		LastLogin:           valueUser.LastLogin,
+		UserName:            valueUser.UserName,
+		NickName:            valueUser.NickName,
+		Email:               valueUser.Email,
+		Motto:               valueUser.Motto,
+		SolvedProblemsCount: valueUser.SolvedProblemsCount,
+		TriedProblemsCount:  valueUser.TriedProblemsCount,
+	}
+}
+func PackSerializeListUserInnerReply(valueUser []user.User) (pack []ListUserInnerReply) {
 	for i := range valueUser {
-		pack = append(pack, _packSerializeListUserReply(valueUser[i]))
+		pack = append(pack, _packSerializeListUserInnerReply(valueUser[i]))
+	}
+	return
+}
+func PSerializeCountUserRequest(_page int, _pageSize int) *CountUserRequest {
+
+	return &CountUserRequest{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func SerializeCountUserRequest(_page int, _pageSize int) CountUserRequest {
+
+	return CountUserRequest{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func _packSerializeCountUserRequest(_page int, _pageSize int) CountUserRequest {
+
+	return CountUserRequest{
+		Page:     _page,
+		PageSize: _pageSize,
+	}
+}
+func PackSerializeCountUserRequest(_page []int, _pageSize []int) (pack []CountUserRequest) {
+	for i := range _page {
+		pack = append(pack, _packSerializeCountUserRequest(_page[i], _pageSize[i]))
 	}
 	return
 }
@@ -440,6 +500,21 @@ func PackSerializeUserLoginData(user []*user.User, _refreshToken []string, _toke
 	}
 	return
 }
+func PSerializeRefreshTokenRequest() *RefreshTokenRequest {
+
+	return &RefreshTokenRequest{}
+}
+func SerializeRefreshTokenRequest() RefreshTokenRequest {
+
+	return RefreshTokenRequest{}
+}
+func _packSerializeRefreshTokenRequest() RefreshTokenRequest {
+
+	return RefreshTokenRequest{}
+}
+func PackSerializeRefreshTokenRequest() (pack []RefreshTokenRequest) {
+	return
+}
 func PSerializeRefreshTokenReply(_code int, _data UserRefreshTokenData) *RefreshTokenReply {
 
 	return &RefreshTokenReply{
@@ -515,6 +590,30 @@ func PackSerializeBindEmailRequest(user []*user.User) (pack []BindEmailRequest) 
 	}
 	return
 }
+func PSerializeBindEmailReply(_code int) *BindEmailReply {
+
+	return &BindEmailReply{
+		Code: _code,
+	}
+}
+func SerializeBindEmailReply(_code int) BindEmailReply {
+
+	return BindEmailReply{
+		Code: _code,
+	}
+}
+func _packSerializeBindEmailReply(_code int) BindEmailReply {
+
+	return BindEmailReply{
+		Code: _code,
+	}
+}
+func PackSerializeBindEmailReply(_code []int) (pack []BindEmailReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeBindEmailReply(_code[i]))
+	}
+	return
+}
 func PSerializeChangePasswordRequest(_oldPassword string, _newPassword string) *ChangePasswordRequest {
 
 	return &ChangePasswordRequest{
@@ -540,6 +639,45 @@ func PackSerializeChangePasswordRequest(_oldPassword []string, _newPassword []st
 	for i := range _oldPassword {
 		pack = append(pack, _packSerializeChangePasswordRequest(_oldPassword[i], _newPassword[i]))
 	}
+	return
+}
+func PSerializeChangePasswordReply(_code int) *ChangePasswordReply {
+
+	return &ChangePasswordReply{
+		Code: _code,
+	}
+}
+func SerializeChangePasswordReply(_code int) ChangePasswordReply {
+
+	return ChangePasswordReply{
+		Code: _code,
+	}
+}
+func _packSerializeChangePasswordReply(_code int) ChangePasswordReply {
+
+	return ChangePasswordReply{
+		Code: _code,
+	}
+}
+func PackSerializeChangePasswordReply(_code []int) (pack []ChangePasswordReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeChangePasswordReply(_code[i]))
+	}
+	return
+}
+func PSerializeInspectUserRequest() *InspectUserRequest {
+
+	return &InspectUserRequest{}
+}
+func SerializeInspectUserRequest() InspectUserRequest {
+
+	return InspectUserRequest{}
+}
+func _packSerializeInspectUserRequest() InspectUserRequest {
+
+	return InspectUserRequest{}
+}
+func PackSerializeInspectUserRequest() (pack []InspectUserRequest) {
 	return
 }
 func PSerializeInspectUserReply(_code int, _data InspectUserInnerReply) *InspectUserReply {
@@ -618,6 +756,21 @@ func PackSerializeInspectUserInnerReply(user []*user.User, _identities [][]strin
 	for i := range user {
 		pack = append(pack, _packSerializeInspectUserInnerReply(user[i], _identities[i], _successProblems[i], _triedProblems[i]))
 	}
+	return
+}
+func PSerializeGetUserRequest() *GetUserRequest {
+
+	return &GetUserRequest{}
+}
+func SerializeGetUserRequest() GetUserRequest {
+
+	return GetUserRequest{}
+}
+func _packSerializeGetUserRequest() GetUserRequest {
+
+	return GetUserRequest{}
+}
+func PackSerializeGetUserRequest() (pack []GetUserRequest) {
 	return
 }
 func PSerializeGetUserReply(_code int, _data GetUserInnerReply) *GetUserReply {
@@ -710,6 +863,69 @@ func _packSerializePutUserRequest(user *user.User) PutUserRequest {
 func PackSerializePutUserRequest(user []*user.User) (pack []PutUserRequest) {
 	for i := range user {
 		pack = append(pack, _packSerializePutUserRequest(user[i]))
+	}
+	return
+}
+func PSerializePutUserReply(_code int) *PutUserReply {
+
+	return &PutUserReply{
+		Code: _code,
+	}
+}
+func SerializePutUserReply(_code int) PutUserReply {
+
+	return PutUserReply{
+		Code: _code,
+	}
+}
+func _packSerializePutUserReply(_code int) PutUserReply {
+
+	return PutUserReply{
+		Code: _code,
+	}
+}
+func PackSerializePutUserReply(_code []int) (pack []PutUserReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutUserReply(_code[i]))
+	}
+	return
+}
+func PSerializeDeleteUserRequest() *DeleteUserRequest {
+
+	return &DeleteUserRequest{}
+}
+func SerializeDeleteUserRequest() DeleteUserRequest {
+
+	return DeleteUserRequest{}
+}
+func _packSerializeDeleteUserRequest() DeleteUserRequest {
+
+	return DeleteUserRequest{}
+}
+func PackSerializeDeleteUserRequest() (pack []DeleteUserRequest) {
+	return
+}
+func PSerializeDeleteUserReply(_code int) *DeleteUserReply {
+
+	return &DeleteUserReply{
+		Code: _code,
+	}
+}
+func SerializeDeleteUserReply(_code int) DeleteUserReply {
+
+	return DeleteUserReply{
+		Code: _code,
+	}
+}
+func _packSerializeDeleteUserReply(_code int) DeleteUserReply {
+
+	return DeleteUserReply{
+		Code: _code,
+	}
+}
+func PackSerializeDeleteUserReply(_code []int) (pack []DeleteUserReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeDeleteUserReply(_code[i]))
 	}
 	return
 }

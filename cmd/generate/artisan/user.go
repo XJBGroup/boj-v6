@@ -27,18 +27,20 @@ func DescribeUserService() artisan.ProposingService {
 		artisan.Param("page_size", artisan.Int),
 	}
 
-	var userFilter = artisan.Object(
-		append(listParams, "UserFilter")...)
+	var userFilter = func(name string) artisan.SerializeObject {
+		return artisan.Object(
+			append(listParams, name)...)
+	}
 
 	svc := &UserCategories{
 		List: artisan.Ink().
 			Path("user-list").
-			Method(artisan.GET, "ListUsers",
-				artisan.Request(userFilter),
+			Method(artisan.GET, "ListUser",
+				artisan.Request(userFilter("ListUserRequest")),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data",
-						artisan.Object("ListUserReply", artisan.SPsC(
+						artisan.Object("ListUserInnerReply", artisan.SPsC(
 							&_valueUserModel.ID,
 							&_valueUserModel.Gender,
 							&_valueUserModel.LastLogin,
@@ -54,7 +56,7 @@ func DescribeUserService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("user-count").
 			Method(artisan.GET, "CountUser",
-				artisan.Request(userFilter),
+				artisan.Request(userFilter("CountUserRequest")),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),
@@ -101,6 +103,7 @@ func DescribeUserService() artisan.ProposingService {
 		RefreshToken: artisan.Ink().
 			Path("user-token").
 			Method(artisan.GET, "RefreshToken",
+				artisan.Request(),
 				StdReply(artisan.Object(
 					"UserRefreshTokenData",
 					artisan.Param("token", artisan.String),
@@ -112,6 +115,7 @@ func DescribeUserService() artisan.ProposingService {
 			RuntimeRouterMeta: "user:id",
 		}}).
 			Method(artisan.GET, "GetUser",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Object("GetUserInnerReply",
@@ -125,12 +129,16 @@ func DescribeUserService() artisan.ProposingService {
 				artisan.Request(
 					artisan.SPsC(
 						// Gender: 0表示保密, 1表示女, 2表示男, 255表示不修改
-						&userModel.Gender, &userModel.NickName, &userModel.Motto))).
+						&userModel.Gender, &userModel.NickName, &userModel.Motto)),
+				artisan.Reply(codeField),
+			).
 			SubCate("/email", artisan.Ink().WithName("Email").
 				Method(artisan.PUT, "BindEmail",
 					artisan.Request(
 						// Email: 邮箱
-						artisan.SnakeParam(&userModel.Email, artisan.Tag("binding", "email")))),
+						artisan.SnakeParam(&userModel.Email, artisan.Tag("binding", "email"))),
+					artisan.Reply(codeField),
+				),
 			).
 			SubCate("/password", artisan.Ink().WithName("ChangePassword").
 				Method(artisan.PUT, "ChangePassword",
@@ -139,10 +147,13 @@ func DescribeUserService() artisan.ProposingService {
 						artisan.Param("old_password", artisan.String, required),
 						// New Password: 新密码
 						artisan.Param("new_password", artisan.String, required),
-					)),
+					),
+					artisan.Reply(codeField),
+				),
 			).
 			SubCate("/inspect", artisan.Ink().WithName("Inspect").
 				Method(artisan.GET, "InspectUser",
+					artisan.Request(),
 					artisan.Reply(
 						codeField,
 						artisan.Param("data", artisan.Object("InspectUserInnerReply",
@@ -157,7 +168,10 @@ func DescribeUserService() artisan.ProposingService {
 						),
 					)),
 			).
-			Method(artisan.DELETE, "Delete"),
+			Method(artisan.DELETE, "DeleteUser",
+				artisan.Request(),
+				artisan.Reply(codeField),
+			),
 	}
 	svc.Name("UserService").
 		UseModel(artisan.Model(artisan.Name("user"), &userModel),

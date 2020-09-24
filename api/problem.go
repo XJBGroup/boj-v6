@@ -6,17 +6,17 @@ import (
 	"github.com/Myriad-Dreamin/go-model-traits/gorm-crud-dao"
 )
 
-type ListProblemsRequest = gorm_crud_dao.Filter
+type ListProblemRequest = gorm_crud_dao.Filter
 
-type ListProblemsReply struct {
-	Code int               `json:"code" form:"code"`
+type ListProblemReply struct {
+	Code int               `form:"code" json:"code"`
 	Data []problem.Problem `json:"data" form:"data"`
 }
 
-type CountProblemsRequest = gorm_crud_dao.Filter
+type CountProblemRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
@@ -40,9 +40,17 @@ type ChangeProblemDescriptionRefRequest struct {
 	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
+type ChangeProblemDescriptionRefReply struct {
+	Code int `form:"code" json:"code"`
+}
+
 type PostProblemDescRequest struct {
-	Name    string `binding:"required" json:"name" form:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	Content string `json:"content" form:"content"`
+}
+
+type PostProblemDescReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type GetProblemDescRequest struct {
@@ -51,7 +59,7 @@ type GetProblemDescRequest struct {
 
 type GetProblemDescReply struct {
 	Code int    `json:"code" form:"code"`
-	Data string `form:"data" json:"data"`
+	Data string `json:"data" form:"data"`
 }
 
 type PutProblemDescRequest struct {
@@ -59,8 +67,19 @@ type PutProblemDescRequest struct {
 	Content string `json:"content" form:"content"`
 }
 
+type PutProblemDescReply struct {
+	Code int `json:"code" form:"code"`
+}
+
 type DeleteProblemDescRequest struct {
 	Name string `json:"name" form:"name"`
+}
+
+type DeleteProblemDescReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type GetProblemRequest struct {
 }
 
 type GetProblemReply struct {
@@ -70,34 +89,45 @@ type GetProblemReply struct {
 
 type PutProblemRequest struct {
 	Title          string `json:"title" form:"title"`
-	Description    string `form:"description" json:"description"`
+	Description    string `json:"description" form:"description"`
 	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 
-func PSerializeListProblemsReply(_code int, _data []problem.Problem) *ListProblemsReply {
+type PutProblemReply struct {
+	Code int `json:"code" form:"code"`
+}
 
-	return &ListProblemsReply{
+type DeleteProblemRequest struct {
+}
+
+type DeleteProblemReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+func PSerializeListProblemReply(_code int, _data []problem.Problem) *ListProblemReply {
+
+	return &ListProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeListProblemsReply(_code int, _data []problem.Problem) ListProblemsReply {
+func SerializeListProblemReply(_code int, _data []problem.Problem) ListProblemReply {
 
-	return ListProblemsReply{
+	return ListProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeListProblemsReply(_code int, _data []problem.Problem) ListProblemsReply {
+func _packSerializeListProblemReply(_code int, _data []problem.Problem) ListProblemReply {
 
-	return ListProblemsReply{
+	return ListProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeListProblemsReply(_code []int, _data [][]problem.Problem) (pack []ListProblemsReply) {
+func PackSerializeListProblemReply(_code []int, _data [][]problem.Problem) (pack []ListProblemReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeListProblemsReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeListProblemReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -236,6 +266,30 @@ func PackSerializeChangeProblemDescriptionRefRequest(_name []string, _newName []
 	}
 	return
 }
+func PSerializeChangeProblemDescriptionRefReply(_code int) *ChangeProblemDescriptionRefReply {
+
+	return &ChangeProblemDescriptionRefReply{
+		Code: _code,
+	}
+}
+func SerializeChangeProblemDescriptionRefReply(_code int) ChangeProblemDescriptionRefReply {
+
+	return ChangeProblemDescriptionRefReply{
+		Code: _code,
+	}
+}
+func _packSerializeChangeProblemDescriptionRefReply(_code int) ChangeProblemDescriptionRefReply {
+
+	return ChangeProblemDescriptionRefReply{
+		Code: _code,
+	}
+}
+func PackSerializeChangeProblemDescriptionRefReply(_code []int) (pack []ChangeProblemDescriptionRefReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeChangeProblemDescriptionRefReply(_code[i]))
+	}
+	return
+}
 func PSerializePostProblemDescRequest(_name string, _content string) *PostProblemDescRequest {
 
 	return &PostProblemDescRequest{
@@ -260,6 +314,30 @@ func _packSerializePostProblemDescRequest(_name string, _content string) PostPro
 func PackSerializePostProblemDescRequest(_name []string, _content []string) (pack []PostProblemDescRequest) {
 	for i := range _name {
 		pack = append(pack, _packSerializePostProblemDescRequest(_name[i], _content[i]))
+	}
+	return
+}
+func PSerializePostProblemDescReply(_code int) *PostProblemDescReply {
+
+	return &PostProblemDescReply{
+		Code: _code,
+	}
+}
+func SerializePostProblemDescReply(_code int) PostProblemDescReply {
+
+	return PostProblemDescReply{
+		Code: _code,
+	}
+}
+func _packSerializePostProblemDescReply(_code int) PostProblemDescReply {
+
+	return PostProblemDescReply{
+		Code: _code,
+	}
+}
+func PackSerializePostProblemDescReply(_code []int) (pack []PostProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePostProblemDescReply(_code[i]))
 	}
 	return
 }
@@ -341,6 +419,30 @@ func PackSerializePutProblemDescRequest(_name []string, _content []string) (pack
 	}
 	return
 }
+func PSerializePutProblemDescReply(_code int) *PutProblemDescReply {
+
+	return &PutProblemDescReply{
+		Code: _code,
+	}
+}
+func SerializePutProblemDescReply(_code int) PutProblemDescReply {
+
+	return PutProblemDescReply{
+		Code: _code,
+	}
+}
+func _packSerializePutProblemDescReply(_code int) PutProblemDescReply {
+
+	return PutProblemDescReply{
+		Code: _code,
+	}
+}
+func PackSerializePutProblemDescReply(_code []int) (pack []PutProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutProblemDescReply(_code[i]))
+	}
+	return
+}
 func PSerializeDeleteProblemDescRequest(_name string) *DeleteProblemDescRequest {
 
 	return &DeleteProblemDescRequest{
@@ -363,6 +465,45 @@ func PackSerializeDeleteProblemDescRequest(_name []string) (pack []DeleteProblem
 	for i := range _name {
 		pack = append(pack, _packSerializeDeleteProblemDescRequest(_name[i]))
 	}
+	return
+}
+func PSerializeDeleteProblemDescReply(_code int) *DeleteProblemDescReply {
+
+	return &DeleteProblemDescReply{
+		Code: _code,
+	}
+}
+func SerializeDeleteProblemDescReply(_code int) DeleteProblemDescReply {
+
+	return DeleteProblemDescReply{
+		Code: _code,
+	}
+}
+func _packSerializeDeleteProblemDescReply(_code int) DeleteProblemDescReply {
+
+	return DeleteProblemDescReply{
+		Code: _code,
+	}
+}
+func PackSerializeDeleteProblemDescReply(_code []int) (pack []DeleteProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeDeleteProblemDescReply(_code[i]))
+	}
+	return
+}
+func PSerializeGetProblemRequest() *GetProblemRequest {
+
+	return &GetProblemRequest{}
+}
+func SerializeGetProblemRequest() GetProblemRequest {
+
+	return GetProblemRequest{}
+}
+func _packSerializeGetProblemRequest() GetProblemRequest {
+
+	return GetProblemRequest{}
+}
+func PackSerializeGetProblemRequest() (pack []GetProblemRequest) {
 	return
 }
 func PSerializeGetProblemReply(_code int, _data *problem.Problem) *GetProblemReply {
@@ -419,6 +560,69 @@ func _packSerializePutProblemRequest(problem *problem.Problem) PutProblemRequest
 func PackSerializePutProblemRequest(problem []*problem.Problem) (pack []PutProblemRequest) {
 	for i := range problem {
 		pack = append(pack, _packSerializePutProblemRequest(problem[i]))
+	}
+	return
+}
+func PSerializePutProblemReply(_code int) *PutProblemReply {
+
+	return &PutProblemReply{
+		Code: _code,
+	}
+}
+func SerializePutProblemReply(_code int) PutProblemReply {
+
+	return PutProblemReply{
+		Code: _code,
+	}
+}
+func _packSerializePutProblemReply(_code int) PutProblemReply {
+
+	return PutProblemReply{
+		Code: _code,
+	}
+}
+func PackSerializePutProblemReply(_code []int) (pack []PutProblemReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutProblemReply(_code[i]))
+	}
+	return
+}
+func PSerializeDeleteProblemRequest() *DeleteProblemRequest {
+
+	return &DeleteProblemRequest{}
+}
+func SerializeDeleteProblemRequest() DeleteProblemRequest {
+
+	return DeleteProblemRequest{}
+}
+func _packSerializeDeleteProblemRequest() DeleteProblemRequest {
+
+	return DeleteProblemRequest{}
+}
+func PackSerializeDeleteProblemRequest() (pack []DeleteProblemRequest) {
+	return
+}
+func PSerializeDeleteProblemReply(_code int) *DeleteProblemReply {
+
+	return &DeleteProblemReply{
+		Code: _code,
+	}
+}
+func SerializeDeleteProblemReply(_code int) DeleteProblemReply {
+
+	return DeleteProblemReply{
+		Code: _code,
+	}
+}
+func _packSerializeDeleteProblemReply(_code int) DeleteProblemReply {
+
+	return DeleteProblemReply{
+		Code: _code,
+	}
+}
+func PackSerializeDeleteProblemReply(_code []int) (pack []DeleteProblemReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeDeleteProblemReply(_code[i]))
 	}
 	return
 }

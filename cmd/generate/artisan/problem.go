@@ -22,8 +22,8 @@ var _problemModel = new(problem.Problem)
 func getListProblemCate(prefix string) artisan.Category {
 	return artisan.Ink().
 		Path("problem-list").
-		Method(artisan.GET, "List"+prefix+"Problems",
-			artisan.QT("List"+prefix+"ProblemsRequest", mytraits.Filter{}),
+		Method(artisan.GET, "List"+prefix+"Problem",
+			artisan.QT("List"+prefix+"ProblemRequest", mytraits.Filter{}),
 			artisan.Reply(
 				codeField,
 				artisan.ArrayParam(artisan.Param("data", _problemModel)),
@@ -35,7 +35,7 @@ func getCountProblemCate(prefix string) artisan.Category {
 	return artisan.Ink().
 		Path("problem-count").
 		Method(artisan.GET, "Count"+prefix+"Problem",
-			artisan.QT("Count"+prefix+"ProblemsRequest", mytraits.Filter{}),
+			artisan.QT("Count"+prefix+"ProblemRequest", mytraits.Filter{}),
 			artisan.Reply(
 				codeField,
 				artisan.ArrayParam(artisan.Param("data", new(int))),
@@ -75,6 +75,7 @@ func getProblemIDCate(prefix string) artisan.Category {
 		RuntimeRouterMeta: "problem:pid",
 	}}).
 		Method(artisan.GET, "Get"+prefix+"Problem",
+			artisan.Request(),
 			artisan.Reply(
 				codeField,
 				artisan.Param("data", &problemModel),
@@ -82,10 +83,16 @@ func getProblemIDCate(prefix string) artisan.Category {
 		Method(artisan.PUT, "Put"+prefix+"Problem",
 			artisan.Request(
 				artisan.SPsC(&problemModel.Title, &problemModel.Description, &problemModel.DescriptionRef),
-			)).
-		Method(artisan.DELETE, "Delete"+prefix+"Problem").
+			),
+			artisan.Reply(codeField),
+		).
+		Method(artisan.DELETE, "Delete"+prefix+"Problem",
+			artisan.Request(),
+			artisan.Reply(codeField),
+		).
 		SubCate("/desc-list", artisan.Ink().WithName("ProblemDesc").
 			Method(artisan.GET, "List"+prefix+"ProblemDescs",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
@@ -96,7 +103,9 @@ func getProblemIDCate(prefix string) artisan.Category {
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
-				)).
+				),
+				artisan.Reply(codeField),
+			).
 			Method(artisan.GET, "Get"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String),
@@ -109,18 +118,24 @@ func getProblemIDCate(prefix string) artisan.Category {
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
-				)).
+				),
+				artisan.Reply(codeField),
+			).
 			SubCate("/ref", artisan.Ink().WithName("ProblemDesc").
 				Method(artisan.POST, "Change"+prefix+"ProblemDescriptionRef",
 					artisan.Request(
 						artisan.Param("name", artisan.String, required),
 						artisan.Param("new_name", artisan.String, required),
-					)),
+					),
+					artisan.Reply(codeField),
+				),
 			).
 			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String),
-				)),
+				),
+				artisan.Reply(codeField),
+			),
 		)
 }
 

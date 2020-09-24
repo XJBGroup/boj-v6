@@ -44,7 +44,7 @@ func (svc Service) ProblemServiceSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc Service) ListProblems(c controller.MContext) {
+func (svc Service) ListProblem(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -55,7 +55,7 @@ func (svc Service) ListProblems(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListProblemsReply(types.CodeOK, problems))
+	c.JSON(http.StatusOK, api.SerializeListProblemReply(types.CodeOK, problems))
 }
 
 func (svc Service) CountProblem(c controller.MContext) {
@@ -64,7 +64,7 @@ func (svc Service) CountProblem(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.CountSubmissionsReply{
+	c.JSON(http.StatusOK, api.CountSubmissionReply{
 		Code: types.CodeOK,
 		Data: cnt,
 	})

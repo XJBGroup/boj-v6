@@ -34,7 +34,7 @@ func (svc Service) DeleteContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 
-func (svc Service) ListContestProblems(c controller.MContext) {
+func (svc Service) ListContestProblem(c controller.MContext) {
 	panic("implement me")
 }
 

@@ -32,7 +32,7 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) ListContests(c controller.MContext) {
+func (svc Service) ListContest(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -43,7 +43,7 @@ func (svc Service) ListContests(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListContestsReply(types.CodeOK, contests))
+	c.JSON(http.StatusOK, api.SerializeListContestReply(types.CodeOK, contests))
 	return
 }
 
@@ -97,7 +97,7 @@ func (svc Service) GetContest(c controller.MContext) {
 		api.SerializeGetContestInnerReply(obj)))
 }
 
-func (svc Service) Delete(c controller.MContext) {
+func (svc Service) DeleteContest(c controller.MContext) {
 	obj := new(contest.Contest)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)
@@ -132,7 +132,7 @@ func (svc Service) PutContest(c controller.MContext) {
 	}
 }
 
-func (srv *Service) FillPutFields(contest *contest.Contest, req *api.PutContestRequest) (fields []string) {
+func (svc *Service) FillPutFields(contest *contest.Contest, req *api.PutContestRequest) (fields []string) {
 	if len(req.Title) != 0 {
 		contest.Title = req.Title
 		fields = append(fields, "title")

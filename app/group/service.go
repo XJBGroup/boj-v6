@@ -36,7 +36,7 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) ListGroups(c controller.MContext) {
+func (svc Service) ListGroup(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -47,7 +47,7 @@ func (svc Service) ListGroups(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListGroupsReply(types.CodeOK, groups))
+	c.JSON(http.StatusOK, api.SerializeListGroupReply(types.CodeOK, groups))
 }
 
 func (svc Service) CountGroup(c controller.MContext) {

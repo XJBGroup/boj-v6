@@ -32,7 +32,7 @@ func (rt routerTraits) ApplyAuth(r *api.RootRouter) {
 		as.Post.GetAuth().AdminOnly())
 	asi := as.IdGroup
 	asi.PutAnnouncement.Use(asi.GetAuth().AdminOnly())
-	asi.Delete.Use(asi.GetAuth().AdminOnly())
+	asi.DeleteAnnouncement.Use(asi.GetAuth().AdminOnly())
 }
 
 func (rt routerTraits) ApplyAuthOnMethod(r *api.LeafRouter, authMeta string) *api.LeafRouter {

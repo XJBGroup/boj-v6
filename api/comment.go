@@ -4,28 +4,31 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 )
 
-type ListCommentsRequest = comment.Filter
+type ListCommentRequest = comment.Filter
 
-type ListCommentsReply struct {
+type ListCommentReply struct {
 	Code int               `json:"code" form:"code"`
 	Data []comment.Comment `json:"data" form:"data"`
 }
 
-type CountCommentsRequest = comment.Filter
+type CountCommentRequest = comment.Filter
 
 type CountCommentReply struct {
-	Code int   `json:"code" form:"code"`
-	Data int64 `form:"data" json:"data"`
+	Code int   `form:"code" json:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type PostCommentRequest struct {
-	Title   string `json:"title" form:"title"`
+	Title   string `form:"title" json:"title"`
 	Content string `json:"content" form:"content"`
 }
 
 type PostCommentReply struct {
 	Code    int              `json:"code" form:"code"`
-	Comment *comment.Comment `json:"comment" form:"comment"`
+	Comment *comment.Comment `form:"comment" json:"comment"`
+}
+
+type GetCommentRequest struct {
 }
 
 type GetCommentReply struct {
@@ -34,34 +37,45 @@ type GetCommentReply struct {
 }
 
 type PutCommentRequest struct {
-	Title   string `form:"title" json:"title"`
+	Title   string `json:"title" form:"title"`
 	Content string `json:"content" form:"content"`
 }
 
-func PSerializeListCommentsReply(_code int, _data []comment.Comment) *ListCommentsReply {
+type PutCommentReply struct {
+	Code int `json:"code" form:"code"`
+}
 
-	return &ListCommentsReply{
+type DeleteCommentRequest struct {
+}
+
+type DeleteCommentReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+func PSerializeListCommentReply(_code int, _data []comment.Comment) *ListCommentReply {
+
+	return &ListCommentReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeListCommentsReply(_code int, _data []comment.Comment) ListCommentsReply {
+func SerializeListCommentReply(_code int, _data []comment.Comment) ListCommentReply {
 
-	return ListCommentsReply{
+	return ListCommentReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeListCommentsReply(_code int, _data []comment.Comment) ListCommentsReply {
+func _packSerializeListCommentReply(_code int, _data []comment.Comment) ListCommentReply {
 
-	return ListCommentsReply{
+	return ListCommentReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeListCommentsReply(_code []int, _data [][]comment.Comment) (pack []ListCommentsReply) {
+func PackSerializeListCommentReply(_code []int, _data [][]comment.Comment) (pack []ListCommentReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeListCommentsReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeListCommentReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -146,6 +160,21 @@ func PackSerializePostCommentReply(_code []int, _comment []*comment.Comment) (pa
 	}
 	return
 }
+func PSerializeGetCommentRequest() *GetCommentRequest {
+
+	return &GetCommentRequest{}
+}
+func SerializeGetCommentRequest() GetCommentRequest {
+
+	return GetCommentRequest{}
+}
+func _packSerializeGetCommentRequest() GetCommentRequest {
+
+	return GetCommentRequest{}
+}
+func PackSerializeGetCommentRequest() (pack []GetCommentRequest) {
+	return
+}
 func PSerializeGetCommentReply(_code int, _data *comment.Comment) *GetCommentReply {
 
 	return &GetCommentReply{
@@ -197,6 +226,69 @@ func _packSerializePutCommentRequest(comment *comment.Comment) PutCommentRequest
 func PackSerializePutCommentRequest(comment []*comment.Comment) (pack []PutCommentRequest) {
 	for i := range comment {
 		pack = append(pack, _packSerializePutCommentRequest(comment[i]))
+	}
+	return
+}
+func PSerializePutCommentReply(_code int) *PutCommentReply {
+
+	return &PutCommentReply{
+		Code: _code,
+	}
+}
+func SerializePutCommentReply(_code int) PutCommentReply {
+
+	return PutCommentReply{
+		Code: _code,
+	}
+}
+func _packSerializePutCommentReply(_code int) PutCommentReply {
+
+	return PutCommentReply{
+		Code: _code,
+	}
+}
+func PackSerializePutCommentReply(_code []int) (pack []PutCommentReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializePutCommentReply(_code[i]))
+	}
+	return
+}
+func PSerializeDeleteCommentRequest() *DeleteCommentRequest {
+
+	return &DeleteCommentRequest{}
+}
+func SerializeDeleteCommentRequest() DeleteCommentRequest {
+
+	return DeleteCommentRequest{}
+}
+func _packSerializeDeleteCommentRequest() DeleteCommentRequest {
+
+	return DeleteCommentRequest{}
+}
+func PackSerializeDeleteCommentRequest() (pack []DeleteCommentRequest) {
+	return
+}
+func PSerializeDeleteCommentReply(_code int) *DeleteCommentReply {
+
+	return &DeleteCommentReply{
+		Code: _code,
+	}
+}
+func SerializeDeleteCommentReply(_code int) DeleteCommentReply {
+
+	return DeleteCommentReply{
+		Code: _code,
+	}
+}
+func _packSerializeDeleteCommentReply(_code int) DeleteCommentReply {
+
+	return DeleteCommentReply{
+		Code: _code,
+	}
+}
+func PackSerializeDeleteCommentReply(_code []int) (pack []DeleteCommentReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeDeleteCommentReply(_code[i]))
 	}
 	return
 }

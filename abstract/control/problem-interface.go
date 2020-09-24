@@ -6,7 +6,7 @@ import (
 
 type ProblemService interface {
 	ProblemServiceSignatureXXX() interface{}
-	ListProblems(c controller.MContext)
+	ListProblem(c controller.MContext)
 	CountProblem(c controller.MContext)
 	PostProblem(c controller.MContext)
 	ChangeProblemDescriptionRef(c controller.MContext)

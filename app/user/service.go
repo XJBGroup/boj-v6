@@ -39,7 +39,7 @@ func (svc *Service) UserServiceSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc *Service) ListUsers(c controller.MContext) {
+func (svc *Service) ListUser(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -50,8 +50,8 @@ func (svc *Service) ListUsers(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListUsersReply(types.CodeOK,
-		api.PackSerializeListUserReply(users)))
+	c.JSON(http.StatusOK, api.SerializeListUserReply(types.CodeOK,
+		api.PackSerializeListUserInnerReply(users)))
 	return
 }
 
@@ -319,7 +319,7 @@ func (svc *Service) PutUser(c controller.MContext) {
 	}
 }
 
-func (svc *Service) Delete(c controller.MContext) {
+func (svc *Service) DeleteUser(c controller.MContext) {
 	obj := new(user.User)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)

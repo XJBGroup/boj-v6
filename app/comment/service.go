@@ -27,8 +27,8 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc *Service) ListComments(c controller.MContext) {
-	var req = new(api.ListCommentsRequest)
+func (svc *Service) ListComment(c controller.MContext) {
+	var req = new(api.ListCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
 	}
@@ -38,14 +38,14 @@ func (svc *Service) ListComments(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListCommentsReply(types.CodeOK, ss))
+	c.JSON(http.StatusOK, api.SerializeListCommentReply(types.CodeOK, ss))
 	// api.PackSerializeListCommentReply(ss)))
 
 	return
 }
 
 func (svc *Service) CountComment(c controller.MContext) {
-	var req = new(api.CountCommentsRequest)
+	var req = new(api.CountCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
 	}
@@ -104,7 +104,7 @@ func (svc *Service) GetComment(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetCommentReply(types.CodeOK, obj)) // api.AnnouncementToGetReply(obj, author, luu))
 }
 
-func (svc *Service) Delete(c controller.MContext) {
+func (svc *Service) DeleteComment(c controller.MContext) {
 	obj := new(comment.Comment)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)

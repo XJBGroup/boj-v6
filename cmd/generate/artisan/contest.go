@@ -23,8 +23,8 @@ func DescribeContestService() artisan.ProposingService {
 	svc := &ContestCategories{
 		List: artisan.Ink().
 			Path("contest-list").
-			Method(artisan.GET, "ListContests",
-				artisan.QT("ListContestsRequest", mytraits.Filter{}),
+			Method(artisan.GET, "ListContest",
+				artisan.QT("ListContestRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", _contestModel)),
@@ -33,7 +33,7 @@ func DescribeContestService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("contest-count").
 			Method(artisan.GET, "CountContest",
-				artisan.QT("CountContestsRequest", mytraits.Filter{}),
+				artisan.QT("CountContestRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", new(int))),
@@ -59,6 +59,7 @@ func DescribeContestService() artisan.ProposingService {
 			RuntimeRouterMeta: "contest:cid",
 		}}).
 			Method(artisan.GET, "GetContest",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Object("GetContestInnerReply",
@@ -70,6 +71,7 @@ func DescribeContestService() artisan.ProposingService {
 					))).
 			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
 				Method(artisan.GET, "ListContestUsers",
+					artisan.Request(),
 					artisan.Reply(
 						codeField,
 						artisan.ArrayParam(artisan.Param("data", new(user.User))),
@@ -87,8 +89,12 @@ func DescribeContestService() artisan.ProposingService {
 					artisan.SnakeParam(&contestModel.ConfigPath),
 					artisan.SnakeParam(&contestModel.RolePath),
 				),
+				artisan.Reply(codeField),
 			).
-			Method(artisan.DELETE, "Delete"),
+			Method(artisan.DELETE, "DeleteContest",
+				artisan.Request(),
+				artisan.Reply(codeField),
+			),
 	}
 
 	svc.IdGroup = DescribeProblemCategory(svc.IdGroup, "Contest")

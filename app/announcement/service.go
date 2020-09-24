@@ -31,7 +31,7 @@ func (svc *Service) AnnouncementServiceSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc *Service) ListAnnouncements(c controller.MContext) {
+func (svc *Service) ListAnnouncement(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -42,7 +42,7 @@ func (svc *Service) ListAnnouncements(c controller.MContext) {
 		return
 	}
 
-	c.JSON(http.StatusOK, api.SerializeListAnnouncementsReply(types.CodeOK, announcements))
+	c.JSON(http.StatusOK, api.SerializeListAnnouncementReply(types.CodeOK, announcements))
 	return
 }
 
@@ -137,7 +137,7 @@ func (svc *Service) PutAnnouncement(c controller.MContext) {
 DeleteAnnouncement v1/announcement/:aid DELETE
 requiring the aiming announcement's write privilege
 */
-func (svc *Service) Delete(c controller.MContext) {
+func (svc *Service) DeleteAnnouncement(c controller.MContext) {
 	obj := new(announcement.Announcement)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)

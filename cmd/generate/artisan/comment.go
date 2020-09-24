@@ -30,8 +30,8 @@ func DescribeCommentService() artisan.ProposingService {
 	svc := &CommentCategories{
 		List: artisan.Ink().
 			Path("comment-list").
-			Method(artisan.GET, "ListComments",
-				artisan.QT("ListCommentsRequest", comment.Filter{}),
+			Method(artisan.GET, "ListComment",
+				artisan.QT("ListCommentRequest", comment.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", _commentModel)),
@@ -40,7 +40,7 @@ func DescribeCommentService() artisan.ProposingService {
 		Count: artisan.Ink().
 			Path("comment-count").
 			Method(artisan.GET, "CountComment",
-				artisan.QT("CountCommentsRequest", comment.Filter{}),
+				artisan.QT("CountCommentRequest", comment.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),
@@ -62,6 +62,7 @@ func DescribeCommentService() artisan.ProposingService {
 			RuntimeRouterMeta: "comment:cmid",
 		}}).
 			Method(artisan.GET, "GetComment",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", &commentModel),
@@ -69,8 +70,13 @@ func DescribeCommentService() artisan.ProposingService {
 			Method(artisan.PUT, "PutComment",
 				artisan.Request(
 					artisan.SPsC(&commentModel.Title, &commentModel.Content),
-				)).
-			Method(artisan.DELETE, "Delete"),
+				),
+				artisan.Reply(codeField),
+			).
+			Method(artisan.DELETE, "DeleteComment",
+				artisan.Request(),
+				artisan.Reply(codeField),
+			),
 	}
 	svc.Name("CommentService").
 		UseModel(artisan.Model(artisan.Name("comment"), &commentModel))

@@ -30,18 +30,20 @@ func DescribeSubmissionService() artisan.ProposingService {
 		artisan.Param("has_status", artisan.Int64),
 	}
 
-	var submissionFilter = artisan.Object(
-		append(listParams, "SubmissionFilter")...)
+	var submissionFilter = func(name string) artisan.SerializeObject {
+		return artisan.Object(
+			append(listParams, name)...)
+	}
 
 	svc := &SubmissionCategories{
 		List: artisan.Ink().
 			Path("submission-list").
-			Method(artisan.GET, "ListSubmissions",
-				artisan.Request(submissionFilter),
+			Method(artisan.GET, "ListSubmission",
+				artisan.Request(submissionFilter("ListSubmissionRequest")),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", artisan.Object(
-						"ListSubmissionReply",
+						"ListSubmissionInnerReply",
 						artisan.SPsC(
 							&valueSubmissionModel.ID, &valueSubmissionModel.CreatedAt, &valueSubmissionModel.ProblemID,
 							&valueSubmissionModel.UserID, &valueSubmissionModel.Score, &valueSubmissionModel.Status,
@@ -51,8 +53,8 @@ func DescribeSubmissionService() artisan.ProposingService {
 			),
 		Count: artisan.Ink().
 			Path("submission-count").
-			Method(artisan.GET, "CountSubmissions",
-				artisan.Request(submissionFilter),
+			Method(artisan.GET, "CountSubmission",
+				artisan.Request(submissionFilter("CountSubmissionRequest")),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Int64),
@@ -81,6 +83,7 @@ func DescribeSubmissionService() artisan.ProposingService {
 			RuntimeRouterMeta: "submission:sid",
 		}}).
 			Method(artisan.GET, "GetSubmission",
+				artisan.Request(),
 				artisan.Reply(
 					codeField,
 					artisan.Param("data", artisan.Object("GetSubmissionInnerReply",
@@ -92,9 +95,15 @@ func DescribeSubmissionService() artisan.ProposingService {
 					),
 				)).
 			SubCate("/content", artisan.Ink().WithName("GetContent").
-				Method(artisan.GET, "GetContent"),
+				Method(artisan.GET, "GetContent",
+					artisan.Request(),
+					artisan.Reply(codeField),
+				),
 			).
-			Method(artisan.DELETE, "Delete"),
+			Method(artisan.DELETE, "DeleteSubmission",
+				artisan.Request(),
+				artisan.Reply(codeField),
+			),
 	}
 	svc.Name("SubmissionService").
 		UseModel(artisan.Model(artisan.Name("submission"), &submissionModel),
