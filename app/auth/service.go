@@ -38,8 +38,8 @@ func (svc Service) AddPolicy(c controller.MContext) {
 
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, api.AddPolicyReply{Code: types.CodeOK, Data: added})
@@ -58,8 +58,8 @@ func (svc Service) RemovePolicy(c controller.MContext) {
 
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeDeleteError,
-			Error: err.Error(),
+			Code:   types.CodeDeleteError,
+			ErrorS: err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, api.RemovePolicyReply{Code: types.CodeOK, Data: deleted})
@@ -88,8 +88,8 @@ func (svc Service) AddGroupingPolicy(c controller.MContext) {
 
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, api.AddGroupingPolicyReply{Code: types.CodeOK, Data: added})
@@ -106,8 +106,8 @@ func (svc Service) RemoveGroupingPolicy(c controller.MContext) {
 
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeDeleteError,
-			Error: err.Error(),
+			Code:   types.CodeDeleteError,
+			ErrorS: err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, api.RemoveGroupingPolicyReply{Code: types.CodeOK, Data: deleted})

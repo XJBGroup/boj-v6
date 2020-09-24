@@ -2,7 +2,7 @@ package api
 
 type AddPolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
-	Object  string `form:"object" binding:"required" json:"object"`
+	Object  string `json:"object" form:"object" binding:"required"`
 	Action  string `json:"action" form:"action" binding:"required"`
 }
 
@@ -12,9 +12,9 @@ type AddPolicyReply struct {
 }
 
 type RemovePolicyRequest struct {
-	Subject string `form:"subject" binding:"required" json:"subject"`
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `form:"action" binding:"required" json:"action"`
+	Action  string `json:"action" form:"action" binding:"required"`
 }
 
 type RemovePolicyReply struct {
@@ -23,9 +23,9 @@ type RemovePolicyReply struct {
 }
 
 type HasPolicyRequest struct {
-	Subject string `binding:"required" json:"subject" form:"subject"`
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `binding:"required" json:"action" form:"action"`
+	Action  string `json:"action" form:"action" binding:"required"`
 }
 
 type HasPolicyReply struct {
@@ -34,18 +34,18 @@ type HasPolicyReply struct {
 }
 
 type AddGroupingPolicyRequest struct {
-	Subject string `json:"subject" form:"subject" binding:"required"`
-	Group   string `binding:"required" json:"group" form:"group"`
+	Subject string `binding:"required" json:"subject" form:"subject"`
+	Group   string `json:"group" form:"group" binding:"required"`
 }
 
 type AddGroupingPolicyReply struct {
 	Code int  `json:"code" form:"code"`
-	Data bool `form:"data" json:"data"`
+	Data bool `json:"data" form:"data"`
 }
 
 type RemoveGroupingPolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
-	Group   string `binding:"required" json:"group" form:"group"`
+	Group   string `json:"group" form:"group" binding:"required"`
 }
 
 type RemoveGroupingPolicyReply struct {
@@ -54,7 +54,7 @@ type RemoveGroupingPolicyReply struct {
 }
 
 type HasGroupingPolicyRequest struct {
-	Subject string `json:"subject" form:"subject" binding:"required"`
+	Subject string `form:"subject" binding:"required" json:"subject"`
 	Group   string `json:"group" form:"group" binding:"required"`
 }
 

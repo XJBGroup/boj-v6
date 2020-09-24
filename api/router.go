@@ -47,14 +47,14 @@ type GenerateRouterTraits interface {
 type RootRouter struct {
 	H
 	Root                *Router
+	AnnouncementService *AnnouncementServiceRouter
+	CommentService      *CommentServiceRouter
 	SubmissionService   *SubmissionServiceRouter
 	ProblemService      *ProblemServiceRouter
 	ContestService      *ContestServiceRouter
 	GroupService        *GroupServiceRouter
 	UserService         *UserServiceRouter
 	AuthService         *AuthServiceRouter
-	AnnouncementService *AnnouncementServiceRouter
-	CommentService      *CommentServiceRouter
 	Ping                *LeafRouter
 	//Images   *LeafRouter
 	//Musics   *LeafRouter
@@ -85,17 +85,238 @@ func NewRootRouter(traits GenerateRouterTraits) (r *RootRouter) {
 
 	r.Ping = r.Root.GET("/ping", PingFunc)
 
+	r.AnnouncementService = NewAnnouncementServiceRouter(traits, r.H)
+	r.CommentService = NewCommentServiceRouter(traits, r.H)
 	r.SubmissionService = NewSubmissionServiceRouter(traits, r.H)
 	r.ProblemService = NewProblemServiceRouter(traits, r.H)
 	r.ContestService = NewContestServiceRouter(traits, r.H)
 	r.GroupService = NewGroupServiceRouter(traits, r.H)
 	r.UserService = NewUserServiceRouter(traits, r.H)
 	r.AuthService = NewAuthServiceRouter(traits, r.H)
-	r.AnnouncementService = NewAnnouncementServiceRouter(traits, r.H)
-	r.CommentService = NewCommentServiceRouter(traits, r.H)
 
 	traits.AfterBuild(r)
 	traits.ApplyAuth(r)
+	return
+}
+
+type AnnouncementServiceRouter struct {
+	H
+	List    *AnnouncementServiceListRouter
+	Count   *AnnouncementServiceCountRouter
+	Post    *AnnouncementServicePostRouter
+	IdGroup *AnnouncementServiceIdGroupRouter
+}
+
+func NewAnnouncementServiceRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceRouter) {
+	r = &AnnouncementServiceRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Extend("AnnouncementService"),
+			AuthRouter: h.GetAuthRouter().Extend("AnnouncementService"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.List = NewAnnouncementServiceListRouter(traits, r.H)
+	r.Count = NewAnnouncementServiceCountRouter(traits, r.H)
+	r.Post = NewAnnouncementServicePostRouter(traits, r.H)
+	r.IdGroup = NewAnnouncementServiceIdGroupRouter(traits, r.H)
+
+	return
+}
+
+type AnnouncementServiceListRouter struct {
+	H
+
+	ListAnnouncement *LeafRouter
+}
+
+func NewAnnouncementServiceListRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceListRouter) {
+	r = &AnnouncementServiceListRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("announcement-list"),
+			AuthRouter: h.GetAuthRouter().Group("announcement-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).ListAnnouncement)
+
+	return
+}
+
+type AnnouncementServiceCountRouter struct {
+	H
+
+	CountAnnouncement *LeafRouter
+}
+
+func NewAnnouncementServiceCountRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceCountRouter) {
+	r = &AnnouncementServiceCountRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("announcement-count"),
+			AuthRouter: h.GetAuthRouter().Group("announcement-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).CountAnnouncement)
+
+	return
+}
+
+type AnnouncementServicePostRouter struct {
+	H
+
+	PostAnnouncement *LeafRouter
+}
+
+func NewAnnouncementServicePostRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServicePostRouter) {
+	r = &AnnouncementServicePostRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("announcement"),
+			AuthRouter: h.GetAuthRouter().Group("announcement"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.PostAnnouncement = r.GetAuthRouter().POST("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).PostAnnouncement)
+	r.PostAnnouncement = traits.ApplyAuthOnMethod(r.PostAnnouncement, "~")
+
+	return
+}
+
+type AnnouncementServiceIdGroupRouter struct {
+	H
+
+	GetAnnouncement    *LeafRouter
+	PutAnnouncement    *LeafRouter
+	DeleteAnnouncement *LeafRouter
+}
+
+func NewAnnouncementServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceIdGroupRouter) {
+	r = &AnnouncementServiceIdGroupRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("announcement/:aid"),
+			AuthRouter: h.GetAuthRouter().Group("announcement/:aid"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "announcement:aid"),
+		},
+	}
+
+	r.GetAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).GetAnnouncement)
+	r.PutAnnouncement = r.GetAuthRouter().PUT("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).PutAnnouncement)
+	r.PutAnnouncement = traits.ApplyAuthOnMethod(r.PutAnnouncement, "~")
+	r.DeleteAnnouncement = r.GetAuthRouter().DELETE("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).DeleteAnnouncement)
+	r.DeleteAnnouncement = traits.ApplyAuthOnMethod(r.DeleteAnnouncement, "~")
+
+	return
+}
+
+type CommentServiceRouter struct {
+	H
+	List    *CommentServiceListRouter
+	Count   *CommentServiceCountRouter
+	Post    *CommentServicePostRouter
+	IdGroup *CommentServiceIdGroupRouter
+}
+
+func NewCommentServiceRouter(traits GenerateRouterTraits, h H) (r *CommentServiceRouter) {
+	r = &CommentServiceRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Extend("CommentService"),
+			AuthRouter: h.GetAuthRouter().Extend("CommentService"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.List = NewCommentServiceListRouter(traits, r.H)
+	r.Count = NewCommentServiceCountRouter(traits, r.H)
+	r.Post = NewCommentServicePostRouter(traits, r.H)
+	r.IdGroup = NewCommentServiceIdGroupRouter(traits, r.H)
+
+	return
+}
+
+type CommentServiceListRouter struct {
+	H
+
+	ListComment *LeafRouter
+}
+
+func NewCommentServiceListRouter(traits GenerateRouterTraits, h H) (r *CommentServiceListRouter) {
+	r = &CommentServiceListRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment-list"),
+			AuthRouter: h.GetAuthRouter().Group("comment-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).ListComment)
+
+	return
+}
+
+type CommentServiceCountRouter struct {
+	H
+
+	CountComment *LeafRouter
+}
+
+func NewCommentServiceCountRouter(traits GenerateRouterTraits, h H) (r *CommentServiceCountRouter) {
+	r = &CommentServiceCountRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment-count"),
+			AuthRouter: h.GetAuthRouter().Group("comment-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).CountComment)
+
+	return
+}
+
+type CommentServicePostRouter struct {
+	H
+
+	PostComment *LeafRouter
+}
+
+func NewCommentServicePostRouter(traits GenerateRouterTraits, h H) (r *CommentServicePostRouter) {
+	r = &CommentServicePostRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment"),
+			AuthRouter: h.GetAuthRouter().Group("comment"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.PostComment = r.GetRouter().POST("", traits.GetServiceInstance("CommentService").(CommentService).PostComment)
+
+	return
+}
+
+type CommentServiceIdGroupRouter struct {
+	H
+
+	GetComment    *LeafRouter
+	PutComment    *LeafRouter
+	DeleteComment *LeafRouter
+}
+
+func NewCommentServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *CommentServiceIdGroupRouter) {
+	r = &CommentServiceIdGroupRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment/:cmid"),
+			AuthRouter: h.GetAuthRouter().Group("comment/:cmid"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "comment:cmid"),
+		},
+	}
+
+	r.GetComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).GetComment)
+	r.PutComment = r.GetRouter().PUT("", traits.GetServiceInstance("CommentService").(CommentService).PutComment)
+	r.DeleteComment = r.GetRouter().DELETE("", traits.GetServiceInstance("CommentService").(CommentService).DeleteComment)
+
 	return
 }
 
@@ -1133,227 +1354,6 @@ func NewAuthServiceGroupingPolicyRouter(traits GenerateRouterTraits, h H) (r *Au
 	r.AddGroupingPolicy = r.GetRouter().POST("", traits.GetServiceInstance("AuthService").(AuthService).AddGroupingPolicy)
 	r.RemoveGroupingPolicy = r.GetRouter().DELETE("", traits.GetServiceInstance("AuthService").(AuthService).RemoveGroupingPolicy)
 	r.HasGroupingPolicy = r.GetRouter().GET("", traits.GetServiceInstance("AuthService").(AuthService).HasGroupingPolicy)
-
-	return
-}
-
-type AnnouncementServiceRouter struct {
-	H
-	List    *AnnouncementServiceListRouter
-	Count   *AnnouncementServiceCountRouter
-	Post    *AnnouncementServicePostRouter
-	IdGroup *AnnouncementServiceIdGroupRouter
-}
-
-func NewAnnouncementServiceRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceRouter) {
-	r = &AnnouncementServiceRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Extend("AnnouncementService"),
-			AuthRouter: h.GetAuthRouter().Extend("AnnouncementService"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.List = NewAnnouncementServiceListRouter(traits, r.H)
-	r.Count = NewAnnouncementServiceCountRouter(traits, r.H)
-	r.Post = NewAnnouncementServicePostRouter(traits, r.H)
-	r.IdGroup = NewAnnouncementServiceIdGroupRouter(traits, r.H)
-
-	return
-}
-
-type AnnouncementServiceListRouter struct {
-	H
-
-	ListAnnouncement *LeafRouter
-}
-
-func NewAnnouncementServiceListRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceListRouter) {
-	r = &AnnouncementServiceListRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("announcement-list"),
-			AuthRouter: h.GetAuthRouter().Group("announcement-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).ListAnnouncement)
-
-	return
-}
-
-type AnnouncementServiceCountRouter struct {
-	H
-
-	CountAnnouncement *LeafRouter
-}
-
-func NewAnnouncementServiceCountRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceCountRouter) {
-	r = &AnnouncementServiceCountRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("announcement-count"),
-			AuthRouter: h.GetAuthRouter().Group("announcement-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).CountAnnouncement)
-
-	return
-}
-
-type AnnouncementServicePostRouter struct {
-	H
-
-	PostAnnouncement *LeafRouter
-}
-
-func NewAnnouncementServicePostRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServicePostRouter) {
-	r = &AnnouncementServicePostRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("announcement"),
-			AuthRouter: h.GetAuthRouter().Group("announcement"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.PostAnnouncement = r.GetAuthRouter().POST("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).PostAnnouncement)
-	r.PostAnnouncement = traits.ApplyAuthOnMethod(r.PostAnnouncement, "~")
-
-	return
-}
-
-type AnnouncementServiceIdGroupRouter struct {
-	H
-
-	GetAnnouncement    *LeafRouter
-	PutAnnouncement    *LeafRouter
-	DeleteAnnouncement *LeafRouter
-}
-
-func NewAnnouncementServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *AnnouncementServiceIdGroupRouter) {
-	r = &AnnouncementServiceIdGroupRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("announcement/:aid"),
-			AuthRouter: h.GetAuthRouter().Group("announcement/:aid"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "announcement:aid"),
-		},
-	}
-
-	r.GetAnnouncement = r.GetRouter().GET("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).GetAnnouncement)
-	r.PutAnnouncement = r.GetAuthRouter().PUT("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).PutAnnouncement)
-	r.PutAnnouncement = traits.ApplyAuthOnMethod(r.PutAnnouncement, "~")
-	r.DeleteAnnouncement = r.GetAuthRouter().DELETE("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).DeleteAnnouncement)
-	r.DeleteAnnouncement = traits.ApplyAuthOnMethod(r.DeleteAnnouncement, "~")
-
-	return
-}
-
-type CommentServiceRouter struct {
-	H
-	List    *CommentServiceListRouter
-	Count   *CommentServiceCountRouter
-	Post    *CommentServicePostRouter
-	IdGroup *CommentServiceIdGroupRouter
-}
-
-func NewCommentServiceRouter(traits GenerateRouterTraits, h H) (r *CommentServiceRouter) {
-	r = &CommentServiceRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Extend("CommentService"),
-			AuthRouter: h.GetAuthRouter().Extend("CommentService"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.List = NewCommentServiceListRouter(traits, r.H)
-	r.Count = NewCommentServiceCountRouter(traits, r.H)
-	r.Post = NewCommentServicePostRouter(traits, r.H)
-	r.IdGroup = NewCommentServiceIdGroupRouter(traits, r.H)
-
-	return
-}
-
-type CommentServiceListRouter struct {
-	H
-
-	ListComment *LeafRouter
-}
-
-func NewCommentServiceListRouter(traits GenerateRouterTraits, h H) (r *CommentServiceListRouter) {
-	r = &CommentServiceListRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment-list"),
-			AuthRouter: h.GetAuthRouter().Group("comment-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).ListComment)
-
-	return
-}
-
-type CommentServiceCountRouter struct {
-	H
-
-	CountComment *LeafRouter
-}
-
-func NewCommentServiceCountRouter(traits GenerateRouterTraits, h H) (r *CommentServiceCountRouter) {
-	r = &CommentServiceCountRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment-count"),
-			AuthRouter: h.GetAuthRouter().Group("comment-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).CountComment)
-
-	return
-}
-
-type CommentServicePostRouter struct {
-	H
-
-	PostComment *LeafRouter
-}
-
-func NewCommentServicePostRouter(traits GenerateRouterTraits, h H) (r *CommentServicePostRouter) {
-	r = &CommentServicePostRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment"),
-			AuthRouter: h.GetAuthRouter().Group("comment"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.PostComment = r.GetRouter().POST("", traits.GetServiceInstance("CommentService").(CommentService).PostComment)
-
-	return
-}
-
-type CommentServiceIdGroupRouter struct {
-	H
-
-	GetComment    *LeafRouter
-	PutComment    *LeafRouter
-	DeleteComment *LeafRouter
-}
-
-func NewCommentServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *CommentServiceIdGroupRouter) {
-	r = &CommentServiceIdGroupRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment/:cmid"),
-			AuthRouter: h.GetAuthRouter().Group("comment/:cmid"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "comment:cmid"),
-		},
-	}
-
-	r.GetComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).GetComment)
-	r.PutComment = r.GetRouter().PUT("", traits.GetServiceInstance("CommentService").(CommentService).PutComment)
-	r.DeleteComment = r.GetRouter().DELETE("", traits.GetServiceInstance("CommentService").(CommentService).DeleteComment)
 
 	return
 }

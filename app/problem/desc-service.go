@@ -55,8 +55,8 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	if e != nil {
 		doRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeProblemDescLoadError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescLoadError,
+			ErrorS: e.Error(),
 		})
 		return
 	}
@@ -67,8 +67,8 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	if e != nil {
 		doRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeProblemDescSaveError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescSaveError,
+			ErrorS: e.Error(),
 		})
 		return
 	}
@@ -88,8 +88,8 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	if e != nil {
 		doRollback(rollbacks)
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeProblemDescDeleteError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescDeleteError,
+			ErrorS: e.Error(),
 		})
 		return
 	}
@@ -122,8 +122,8 @@ func (svc Service) PostProblemDesc(c controller.MContext) {
 				snippet.ConvertErrorToString(err), "affect", aff)
 		}
 		c.JSON(http.StatusOK, serial.ErrorSerializer{
-			Code:  types.CodeProblemDescSaveError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescSaveError,
+			ErrorS: e.Error(),
 		})
 		return
 	}
@@ -149,8 +149,8 @@ func (svc Service) GetProblemDesc(c controller.MContext) {
 	err := svc.descDB.LoadDesc(obj)
 	if err != nil {
 		c.JSON(http.StatusOK, serial.ErrorSerializer{
-			Code:  types.CodeProblemDescLoadError,
-			Error: err.Error(),
+			Code:   types.CodeProblemDescLoadError,
+			ErrorS: err.Error(),
 		})
 		return
 	}
@@ -186,8 +186,8 @@ func (svc Service) PutProblemDesc(c controller.MContext) {
 	e = svc.descDB.SaveDesc(obj)
 	if e != nil {
 		c.JSON(http.StatusOK, serial.ErrorSerializer{
-			Code:  types.CodeProblemDescSaveError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescSaveError,
+			ErrorS: e.Error(),
 		})
 		return
 	}
@@ -218,8 +218,8 @@ func (svc Service) DeleteProblemDesc(c controller.MContext) {
 	e = svc.descDB.DeleteDesc(obj)
 	if e != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeProblemDescDeleteError,
-			Error: e.Error(),
+			Code:   types.CodeProblemDescDeleteError,
+			ErrorS: e.Error(),
 		})
 		return
 	}

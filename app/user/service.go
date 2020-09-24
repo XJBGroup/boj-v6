@@ -81,8 +81,8 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	err := svc.db.RecalculatePassword(usr, req.Password)
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeGeneratePasswordError,
-			Error: err.Error(),
+			Code:   types.CodeGeneratePasswordError,
+			ErrorS: err.Error(),
 		})
 	}
 
@@ -95,14 +95,14 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: err.Error(),
 		})
 		return
 	} else if aff == 0 {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: "existed",
+			Code:   types.CodeInsertError,
+			ErrorS: "existed",
 		})
 		return
 	}
@@ -173,8 +173,8 @@ func (svc *Service) LoginUser(c controller.MContext) {
 
 	if token, refreshToken, err := svc.middleware.GenerateTokenWithRefreshToken(&types.CustomFields{UID: usr.ID}); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeAuthGenerateTokenError,
-			Error: err.Error(),
+			Code:   types.CodeAuthGenerateTokenError,
+			ErrorS: err.Error(),
 		})
 		return
 	} else {
@@ -225,8 +225,8 @@ func (svc *Service) BindEmail(c controller.MContext) {
 	_, err := svc.db.UpdateFields(usr, []string{"email"})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeUpdateError,
-			Error: err.Error(),
+			Code:   types.CodeUpdateError,
+			ErrorS: err.Error(),
 		})
 		return
 	}
@@ -251,8 +251,8 @@ func (svc *Service) ChangePassword(c controller.MContext) {
 	err = svc.db.RecalculatePassword(usr, req.NewPassword)
 	if err != nil {
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeGeneratePasswordError,
-			Error: err.Error(),
+			Code:   types.CodeGeneratePasswordError,
+			ErrorS: err.Error(),
 		})
 	}
 
@@ -260,8 +260,8 @@ func (svc *Service) ChangePassword(c controller.MContext) {
 	_, err = svc.db.UpdateFields(usr, []string{"password"})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeUpdateError,
-			Error: err.Error(),
+			Code:   types.CodeUpdateError,
+			ErrorS: err.Error(),
 		})
 		return
 	}

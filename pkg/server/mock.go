@@ -438,8 +438,8 @@ func (mocker *Mocker) NoErr(resp mock.ResponseI) bool {
 		mocker.contextHelper.Error(err)
 		return false
 	}
-	if len(obj.Error) != 0 || obj.Code != 0 {
-		mocker.contextHelper.Errorf("Code, Error (%v, %v)", obj.Code, obj.Error)
+	if len(obj.ErrorS) != 0 || obj.Code != 0 {
+		mocker.contextHelper.Errorf("Code, Error (%v, %v)", obj.Code, obj.ErrorS)
 		return false
 	}
 	return true

@@ -1,6 +1,7 @@
 package submission
 
 import (
+	inner_control "github.com/Myriad-Dreamin/boj-v6/abstract/inner-control"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
@@ -24,6 +25,8 @@ type Service struct {
 	cfg        *config.ServerConfig
 	key        string
 	problemKey string
+
+	inner inner_control.InnerSubmissionService
 }
 
 func NewService(m module.Module) (*Service, error) {
@@ -35,6 +38,8 @@ func NewService(m module.Module) (*Service, error) {
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
 	s.problemKey = "pid"
 	s.key = "sid"
+
+	s.inner = m.RequireImpl(new(inner_control.InnerSubmissionService)).(inner_control.InnerSubmissionService)
 	return s, nil
 }
 

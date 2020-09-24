@@ -24,7 +24,7 @@ type ListUserInnerReply struct {
 	Email               string    `json:"email" form:"email"`
 	Motto               string    `json:"motto" form:"motto"`
 	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
-	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
+	TriedProblemsCount  int64     `form:"tried_problems_count" json:"tried_problems_count"`
 }
 
 type CountUserRequest struct {
@@ -38,10 +38,10 @@ type CountUserReply struct {
 }
 
 type RegisterRequest struct {
-	UserName string `form:"user_name" binding:"required" json:"user_name"`
-	Password string `binding:"required" json:"password" form:"password"`
+	UserName string `json:"user_name" form:"user_name" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
 	NickName string `json:"nick_name" form:"nick_name" binding:"required"`
-	Gender   uint8  `form:"gender" json:"gender"`
+	Gender   uint8  `json:"gender" form:"gender"`
 }
 
 type RegisterReply struct {
@@ -56,8 +56,8 @@ type UserRegisterData struct {
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
 	UserName string `json:"user_name" form:"user_name"`
-	Email    string `json:"email" form:"email"`
-	Password string `form:"password" binding:"required" json:"password"`
+	Email    string `form:"email" json:"email"`
+	Password string `json:"password" form:"password" binding:"required"`
 }
 
 type LoginUserReply struct {
@@ -66,7 +66,7 @@ type LoginUserReply struct {
 }
 
 type UserLoginData struct {
-	Id           uint     `json:"id" form:"id"`
+	Id           uint     `form:"id" json:"id"`
 	Email        string   `json:"email" form:"email"`
 	UserName     string   `json:"user_name" form:"user_name"`
 	NickName     string   `json:"nick_name" form:"nick_name"`
@@ -96,7 +96,7 @@ type BindEmailReply struct {
 }
 
 type ChangePasswordRequest struct {
-	OldPassword string `form:"old_password" binding:"required" json:"old_password"`
+	OldPassword string `json:"old_password" form:"old_password" binding:"required"`
 	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
 }
 
@@ -121,7 +121,7 @@ type InspectUserInnerReply struct {
 	Motto           string    `json:"motto" form:"motto"`
 	Gender          uint8     `json:"gender" form:"gender"`
 	Identities      []string  `json:"identities" form:"identities"`
-	SuccessProblems []uint    `form:"success_problems" json:"success_problems"`
+	SuccessProblems []uint    `json:"success_problems" form:"success_problems"`
 	TriedProblems   []uint    `json:"tried_problems" form:"tried_problems"`
 }
 
@@ -130,25 +130,25 @@ type GetUserRequest struct {
 
 type GetUserReply struct {
 	Code int               `json:"code" form:"code"`
-	Data GetUserInnerReply `json:"data" form:"data"`
+	Data GetUserInnerReply `form:"data" json:"data"`
 }
 
 type GetUserInnerReply struct {
 	Id        uint      `json:"id" form:"id"`
-	NickName  string    `form:"nick_name" json:"nick_name"`
+	NickName  string    `json:"nick_name" form:"nick_name"`
 	LastLogin time.Time `json:"last_login" form:"last_login"`
 	Motto     string    `json:"motto" form:"motto"`
-	Gender    uint8     `json:"gender" form:"gender"`
+	Gender    uint8     `form:"gender" json:"gender"`
 }
 
 type PutUserRequest struct {
-	Gender   uint8  `form:"gender" json:"gender"`
+	Gender   uint8  `json:"gender" form:"gender"`
 	NickName string `json:"nick_name" form:"nick_name"`
 	Motto    string `json:"motto" form:"motto"`
 }
 
 type PutUserReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type DeleteUserRequest struct {

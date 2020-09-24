@@ -420,11 +420,11 @@ tests:
               - name: ~success<post, success.suit>
               - name: ~failed<post, failed.suit>
               - name: s1.success
-                data: { language: 1, code: "#include <cstdio>\n int main() { return 0; }" }
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
                 script:
                   - [ Assert, data.id, 1 ]
               - name: f1.failed
-                data: { language: 1, code: "#include <cstdio>\n int main() { return 0; }" }
+                data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }" }
           #     - name: s2.success
           #       data: { title: t2, content: c2 }
           #     - name: s3.success

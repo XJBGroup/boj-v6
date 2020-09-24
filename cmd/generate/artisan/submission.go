@@ -66,8 +66,9 @@ func DescribeSubmissionService() artisan.ProposingService {
 		}}).
 			Method(artisan.POST, "PostSubmission", artisan.AuthMeta("~"),
 				artisan.Request(
+					artisan.Param("pid", artisan.Uint, routeParam),
 					artisan.SPsC(&submissionModel.Information, &submissionModel.Shared),
-					artisan.SnakeParam(&submissionModel.Language, required),
+					artisan.Param("language", artisan.String, required),
 					artisan.Param("code", artisan.String, required),
 				),
 				artisan.Reply(

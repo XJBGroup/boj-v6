@@ -98,8 +98,8 @@ func (svc Service) PostProblem(c controller.MContext) {
 
 	if err := svc.descDB.SaveDesc(pd); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: err.Error(),
 		})
 	}
 
@@ -113,8 +113,8 @@ func (svc Service) PostProblem(c controller.MContext) {
 			}
 		} else {
 			c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
-				Code:  types.CodeFSExecError,
-				Error: err.Error(),
+				Code:   types.CodeFSExecError,
+				ErrorS: err.Error(),
 			})
 			return
 		}
@@ -162,8 +162,8 @@ func (svc Service) GetProblem(c controller.MContext) {
 		err = svc.descDB.LoadDesc(pd)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
-				Code:  types.CodeSelectError,
-				Error: err.Error(),
+				Code:   types.CodeSelectError,
+				ErrorS: err.Error(),
 			})
 			return
 		}
@@ -172,8 +172,8 @@ func (svc Service) GetProblem(c controller.MContext) {
 		err = svc.descDB.ReleaseDesc(pd)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
-				Code:  types.CodeSelectError,
-				Error: err.Error(),
+				Code:   types.CodeSelectError,
+				ErrorS: err.Error(),
 			})
 			return
 		}
@@ -217,16 +217,16 @@ func (svc Service) DeleteProblem(c controller.MContext) {
 		err = svc.descDB.DeleteDesc(&ds[i])
 		if err != nil {
 			c.JSON(http.StatusOK, serial.ErrorSerializer{
-				Code:  types.CodeDeleteError,
-				Error: strconv.FormatInt(int64(i), 10) + " oss : " + err.Error(),
+				Code:   types.CodeDeleteError,
+				ErrorS: strconv.FormatInt(int64(i), 10) + " oss : " + err.Error(),
 			})
 		}
 
 		aff, err := svc.descDB.Delete(&ds[i])
 		if !snippet.DeleteObj(c, aff, err) {
 			c.JSON(http.StatusOK, serial.ErrorSerializer{
-				Code:  types.CodeDeleteError,
-				Error: strconv.FormatInt(int64(i), 10) + " rel : " + err.Error(),
+				Code:   types.CodeDeleteError,
+				ErrorS: strconv.FormatInt(int64(i), 10) + " rel : " + err.Error(),
 			})
 		}
 	}

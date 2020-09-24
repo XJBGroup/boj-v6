@@ -16,7 +16,7 @@ var ResponseOK = serial.Response{Code: types.CodeOK}
 
 func CheckInsertError(c controller.MContext, err error) bool {
 	if code, errs := errorc.CheckInsertError(err); code != types.CodeOK {
-		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{Code: code, Error: errs})
+		c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{Code: code, ErrorS: errs})
 		return true
 	}
 	return false
@@ -24,15 +24,15 @@ func CheckInsertError(c controller.MContext, err error) bool {
 
 func MissID(c controller.MContext) {
 	c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-		Code:  types.CodeInvalidParameters,
-		Error: "id missing in the path",
+		Code:   types.CodeInvalidParameters,
+		ErrorS: "id missing in the path",
 	})
 }
 
 func AuthFailed(c controller.MContext, errorString string) {
 	c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-		Code:  types.CodeAuthenticatePolicyError,
-		Error: errorString,
+		Code:   types.CodeAuthenticatePolicyError,
+		ErrorS: errorString,
 	})
 }
 
@@ -40,15 +40,15 @@ func ParseUint(c controller.MContext, key string) (uint, bool) {
 	id, err := strconv.Atoi(c.Param(key))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: err.Error(),
+			Code:   types.CodeInvalidParameters,
+			ErrorS: err.Error(),
 		})
 		return 0, false
 	}
 	if id < 0 {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "bad negative id",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "bad negative id",
 		})
 		return 0, false
 	}
@@ -58,8 +58,8 @@ func ParseUint(c controller.MContext, key string) (uint, bool) {
 func BindRequest(c controller.MContext, req interface{}) bool {
 	if err := c.ShouldBind(req); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: err.Error(),
+			Code:   types.CodeInvalidParameters,
+			ErrorS: err.Error(),
 		})
 		return false
 	}
@@ -69,8 +69,8 @@ func BindRequest(c controller.MContext, req interface{}) bool {
 func RawJson(c controller.MContext) (gjson.Result, bool) {
 	if b, err := c.GetRawData(); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: err.Error(),
+			Code:   types.CodeInvalidParameters,
+			ErrorS: err.Error(),
 		})
 		return gjson.Result{}, false
 	} else {
@@ -82,22 +82,22 @@ func ParseUintAndBind(c controller.MContext, key string, req interface{}) (uint,
 	id, err := strconv.Atoi(c.Param(key))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: err.Error(),
+			Code:   types.CodeInvalidParameters,
+			ErrorS: err.Error(),
 		})
 		return 0, false
 	}
 	if id < 0 {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "bad negative id",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "bad negative id",
 		})
 		return 0, false
 	}
 	if err := c.ShouldBind(req); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: err.Error(),
+			Code:   types.CodeInvalidParameters,
+			ErrorS: err.Error(),
 		})
 		return 0, false
 	}
@@ -108,39 +108,39 @@ func RosolvePageVariable(c controller.MContext) (int, int, bool) {
 	spage, ok := c.GetQuery("page")
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "missing page number",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "missing page number",
 		})
 		return 0, 0, false
 	}
 	page, err := strconv.Atoi(spage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeUnserializeDataError,
-			Error: "can not convert page number to integer",
+			Code:   types.CodeUnserializeDataError,
+			ErrorS: "can not convert page number to integer",
 		})
 		return 0, 0, false
 	}
 	spageSize, ok := c.GetQuery("page_size")
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "missing page size",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "missing page size",
 		})
 		return 0, 0, false
 	}
 	pageSize, err := strconv.Atoi(spageSize)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeUnserializeDataError,
-			Error: "can not convert page size to integer",
+			Code:   types.CodeUnserializeDataError,
+			ErrorS: "can not convert page size to integer",
 		})
 		return 0, 0, false
 	}
 	if page <= 0 || pageSize <= 0 {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "bad negative params",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "bad negative params",
 		})
 		return 0, 0, false
 	}
@@ -150,8 +150,8 @@ func RosolvePageVariable(c controller.MContext) (int, int, bool) {
 func MaybeGetRawDataError(c controller.MContext, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeGetRawDataError,
-			Error: err.Error(),
+			Code:   types.CodeGetRawDataError,
+			ErrorS: err.Error(),
 		})
 		return true
 	}
@@ -161,8 +161,8 @@ func MaybeGetRawDataError(c controller.MContext, err error) bool {
 func MaybeCountError(c controller.MContext, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeSelectError,
-			Error: err.Error(),
+			Code:   types.CodeSelectError,
+			ErrorS: err.Error(),
 		})
 		return true
 	}
@@ -175,8 +175,8 @@ type applyContext struct{ controller.MContext }
 func (ctx applyContext) applyError(code errorc.Code, errs string) bool {
 	if code != types.CodeOK {
 		ctx.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
-			Code:  code,
-			Error: errs,
+			Code:   code,
+			ErrorS: errs,
 		})
 		return true
 	}
@@ -191,30 +191,45 @@ func MaybeQueryExistenceError(c controller.MContext, exists bool, err error) boo
 	return applyContext{c}.applyError(errorc.MaybeQueryExistenceError(exists, err))
 }
 
-func MaybeSelectErrorWithTip(c controller.MContext, anyObj interface{}, err error, missError string) bool {
+func DoReport(c controller.MContext, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeSelectError,
-			Error: err.Error(),
-		})
-		return true
+		if _, ok := err.(*serial.ErrorSerializer); !ok {
+			if _, ok = err.(*serial.Response); !ok {
+				panic(err)
+			}
+		}
+
+		c.AbortWithStatusJSON(http.StatusOK, err)
+	}
+	return err != nil
+}
+
+func MaybeSelectErrorWithTip_(anyObj interface{}, err error, missError string) error {
+	if err != nil {
+		return &serial.ErrorSerializer{
+			Code:   types.CodeSelectError,
+			ErrorS: err.Error(),
+		}
 	}
 	if reflect.ValueOf(anyObj).IsNil() {
-		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeNotFound,
-			Error: missError,
-		})
-		return true
+		return &serial.ErrorSerializer{
+			Code:   types.CodeNotFound,
+			ErrorS: missError,
+		}
 	}
 
-	return false
+	return nil
+}
+
+func MaybeSelectErrorWithTip(c controller.MContext, anyObj interface{}, err error, missError string) bool {
+	return DoReport(c, MaybeSelectErrorWithTip_(anyObj, err, missError))
 }
 
 func MaybeMissingError(c controller.MContext, has bool, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeSelectError,
-			Error: err.Error(),
+			Code:   types.CodeSelectError,
+			ErrorS: err.Error(),
 		})
 		return true
 	}
@@ -231,15 +246,15 @@ func MaybeMissingError(c controller.MContext, has bool, err error) bool {
 func MaybeMissingErrorWithTip(c controller.MContext, has bool, err error, missError string) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeSelectError,
-			Error: err.Error(),
+			Code:   types.CodeSelectError,
+			ErrorS: err.Error(),
 		})
 		return true
 	}
 	if !has {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeNotFound,
-			Error: missError,
+			Code:   types.CodeNotFound,
+			ErrorS: missError,
 		})
 		return true
 	}
@@ -249,8 +264,8 @@ func MaybeMissingErrorWithTip(c controller.MContext, has bool, err error, missEr
 func MaybeOnlySelectError(c controller.MContext, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeSelectError,
-			Error: err.Error(),
+			Code:   types.CodeSelectError,
+			ErrorS: err.Error(),
 		})
 		return true
 	}
@@ -265,8 +280,8 @@ type Deletable interface {
 func DeleteObj(c controller.MContext, affected int64, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeDeleteError,
-			Error: err.Error(),
+			Code:   types.CodeDeleteError,
+			ErrorS: err.Error(),
 		})
 		return false
 	} else if affected == 0 {
@@ -284,8 +299,8 @@ func CreateObj(c controller.MContext, affected int64, err error) bool {
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: err.Error(),
 		})
 		return false
 	} else if affected == 0 {
@@ -303,14 +318,14 @@ func CreateObjWithTip(c controller.MContext, affected int64, err error, tip stri
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: "create " + tip + " failed: " + err.Error(),
+			Code:   types.CodeInsertError,
+			ErrorS: "create " + tip + " failed: " + err.Error(),
 		})
 		return false
 	} else if affected == 0 {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeInsertError,
-			Error: "create " + tip + " has no effect",
+			Code:   types.CodeInsertError,
+			ErrorS: "create " + tip + " has no effect",
 		})
 		return false
 	}
@@ -329,8 +344,8 @@ func UpdateObj(c controller.MContext, updateObj Updatable) bool {
 			return false
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeUpdateError,
-			Error: err.Error(),
+			Code:   types.CodeUpdateError,
+			ErrorS: err.Error(),
 		})
 		return false
 	} else if affected == 0 {
@@ -345,8 +360,8 @@ func UpdateObj(c controller.MContext, updateObj Updatable) bool {
 func UpdateFields(c controller.MContext, err error) bool {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
-			Code:  types.CodeUpdateError,
-			Error: err.Error(),
+			Code:   types.CodeUpdateError,
+			ErrorS: err.Error(),
 		})
 		return false
 	}

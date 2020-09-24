@@ -10,6 +10,7 @@ import (
 
 var codeField = artisan.Param("code", new(types.ServiceCode))
 var required = artisan.Tag("binding", "required")
+var routeParam = artisan.Tag("route-param", "-")
 
 type Meta struct {
 	artisan.RouterMeta
@@ -38,7 +39,7 @@ func _svcMethods(svc artisan.CategoryDescription) (res string) {
 		res += _svcMethods(cat)
 	}
 	for _, method := range svc.GetMethods() {
-		res += "    " + method.GetName() + "(req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
+		res += "    " + method.GetName() + "(c controller.MContext, req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
 	}
 	return
 }
@@ -87,6 +88,7 @@ package inner_control
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/api"
+    "github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
 type Inner%s interface {

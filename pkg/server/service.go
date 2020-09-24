@@ -22,6 +22,24 @@ type serviceResult struct {
 
 func (srv *Server) PrepareService() bool {
 	for _, serviceResult := range []serviceResult{
+
+		{"InnerSubmissionService", new(*submission.InnerService),
+			functional.Decay(submission.NewInnerService(srv.Module))},
+	} {
+		// build Router failed when requesting service with database, report and return
+		if serviceResult.Err != nil {
+			srv.Logger.Debug(fmt.Sprintf("get %T service error", serviceResult.First), "error", serviceResult.Err)
+			return false
+		}
+		err := srv.Module.ProvideNamedImpl(
+			path.Join("minimum", serviceResult.serviceName), serviceResult.proto, serviceResult.First)
+		if err != nil {
+			srv.Logger.Debug("provide service error", "name", serviceResult.First)
+			return false
+		}
+	}
+
+	for _, serviceResult := range []serviceResult{
 		{"AuthService", new(*auth.Service),
 			functional.Decay(auth.NewService(srv.Module))},
 		{"AnnouncementService", new(*announcement.Service),

@@ -65,6 +65,9 @@ const (
 	CodeUploadFileError
 	CodeConfigModifyError
 	CodeStatError
+	CodeSubmissionComputeCodeHashError
+	CodeSubmissionSaveCodeError
+	CodeSubmissionCodeTypeUnknownError
 )
 
 const (

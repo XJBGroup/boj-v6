@@ -84,8 +84,8 @@ func (svc Service) PostGroup(c controller.MContext) {
 		u, err = svc.userDB.QueryUserName(req.OwnerName)
 	} else {
 		c.JSON(http.StatusOK, serial.ErrorSerializer{
-			Code:  types.CodeInvalidParameters,
-			Error: "miss the id or name of group's owner",
+			Code:   types.CodeInvalidParameters,
+			ErrorS: "miss the id or name of group's owner",
 		})
 	}
 
@@ -105,8 +105,8 @@ func (svc Service) PostGroup(c controller.MContext) {
 				"affected", aff, "error", snippet.ConvertErrorToString(err))
 		}
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
-			Code:  types.CodeGroupCreateError,
-			Error: err.Error(),
+			Code:   types.CodeGroupCreateError,
+			ErrorS: err.Error(),
 		})
 		return
 	}
