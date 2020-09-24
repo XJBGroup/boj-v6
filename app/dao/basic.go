@@ -91,7 +91,13 @@ func (db *GORMDBImpl) Delete(obj interface{}) (int64, error) {
 }
 
 func (db *GORMDBImpl) UpdateFields(obj interface{}, fields []string) (int64, error) {
-	rdb := db.DB.Debug().Model(obj).Select(fields).Updates(obj)
+	rdb := db.DB.Model(obj).Debug().Select(fields).Updates(obj)
+	return rdb.RowsAffected, rdb.Error
+}
+
+func (db *GORMDBImpl) UpdateFieldsCond(obj interface{}, fields []string,
+	cond string, args ...interface{}) (int64, error) {
+	rdb := db.DB.Model(obj).Where(cond, args...).Select(fields).Updates(obj)
 	return rdb.RowsAffected, rdb.Error
 }
 

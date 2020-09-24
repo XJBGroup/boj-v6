@@ -9,6 +9,8 @@ type ProblemService interface {
 	ListProblem(c controller.MContext)
 	CountProblem(c controller.MContext)
 	PostProblem(c controller.MContext)
+	ListProblemDesc(c controller.MContext)
+	CountProblemDesc(c controller.MContext)
 	ChangeProblemDescriptionRef(c controller.MContext)
 	PostProblemDesc(c controller.MContext)
 	GetProblemDesc(c controller.MContext)

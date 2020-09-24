@@ -100,7 +100,11 @@ func DescribeContestService() artisan.ProposingService {
 	svc.IdGroup = DescribeProblemCategory(svc.IdGroup, "Contest")
 
 	svc.Name("ContestService").
-		UseModel(artisan.Model(artisan.Name("contest"), &contestModel),
-			artisan.Model(artisan.Name("problem"), &problemModel))
+		UseModel(
+			artisan.Model(artisan.Name("contest"), &contestModel),
+			artisan.Model(artisan.Name("problem"), &problemModel),
+			artisan.Model(artisan.Name("problemUser"), &problemUserModel),
+			artisan.Model(artisan.Name("problemDesc"), &problemDescModel),
+		)
 	return svc
 }

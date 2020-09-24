@@ -10,19 +10,15 @@ import (
 	"net/http"
 )
 
-func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
+func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	var req = new(api.ChangeProblemDescriptionRefRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
 	if !ok {
 		return
 	}
 
-	var obj = new(problem_desc.ProblemDesc)
-	obj.Name = req.Name
-	obj.ProblemID = id
-
-	a, e := svc.descDB.QueryExistenceByKey(obj.ProblemID, obj.Name)
-	if snippet.MaybeQueryExistenceError(c, a, e) {
+	var obj, e = svc.descDB.QueryByKey(id, req.Name)
+	if snippet.MaybeSelectError(c, obj, e) {
 		return
 	}
 
@@ -89,7 +85,7 @@ func (svc Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	c.JSON(http.StatusOK, snippet.ResponseOK)
 }
 
-func (svc Service) PostProblemDesc(c controller.MContext) {
+func (svc *Service) PostProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
 	if !ok {
@@ -127,7 +123,7 @@ func (svc Service) PostProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc Service) GetProblemDesc(c controller.MContext) {
+func (svc *Service) GetProblemDesc(c controller.MContext) {
 	var req = new(api.GetProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
 	if !ok {
@@ -158,7 +154,7 @@ func (svc Service) GetProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc Service) PutProblemDesc(c controller.MContext) {
+func (svc *Service) PutProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
 	if !ok {
@@ -171,7 +167,7 @@ func (svc Service) PutProblemDesc(c controller.MContext) {
 	obj.ProblemID = id
 
 	a, e := svc.descDB.QueryExistenceByKey(obj.ProblemID, obj.Name)
-	if !snippet.MaybeQueryExistenceError(c, a, e) {
+	if snippet.MaybeQueryExistenceError(c, a, e) {
 		return
 	}
 
@@ -191,30 +187,68 @@ func (svc Service) PutProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc Service) DeleteProblemDesc(c controller.MContext) {
+func (svc *Service) DeleteProblemDesc(c controller.MContext) {
 	var req = new(api.DeleteProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, "pid", req)
 	if !ok {
 		return
 	}
 
-	var obj = new(problem_desc.ProblemDesc)
-	obj.Name = req.Name
-	obj.ProblemID = id
-
-	a, e := svc.descDB.QueryExistenceByKey(obj.ProblemID, obj.Name)
-	if snippet.MaybeQueryExistenceError(c, a, e) {
+	var obj, err = svc.descDB.QueryByKey(id, req.Name)
+	if snippet.MaybeSelectError(c, obj, err) {
 		return
 	}
 
-	e = svc.descDB.DeleteDesc(obj)
-	if e != nil {
+	aff, err := svc.descDB.Delete(obj)
+	if !snippet.DeleteObj(c, aff, err) {
+		return
+	}
+
+	err = svc.descDB.DeleteDesc(obj)
+	if err != nil {
+		aff2, err2 := svc.descDB.Create(obj)
+		if aff2 == 0 || err2 != nil {
+			svc.logger.Error("recreate error",
+				"affect", aff2, "error", snippet.ConvertErrorToString(err2))
+		}
+
 		c.JSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescDeleteError,
-			ErrorS: e.Error(),
+			ErrorS: err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, snippet.ResponseOK)
+}
+
+func (svc *Service) ListProblemDesc(c controller.MContext) {
+	var req = new(api.ListProblemDescRequest)
+	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	if !ok {
+		return
+	}
+
+	ss, err := svc.descDB.Find(id, req.Page, req.PageSize)
+	if snippet.MaybeSelectError(c, ss, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.SerializeListProblemDescReply(types.CodeOK,
+		api.PackSerializeProblemDescData(ss)))
+}
+
+func (svc *Service) CountProblemDesc(c controller.MContext) {
+	var req = new(api.ListProblemDescRequest)
+	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	if !ok {
+		return
+	}
+
+	ss, err := svc.descDB.Count(id)
+	if snippet.MaybeCountError(c, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.SerializeCountProblemDescReply(types.CodeOK, ss))
 }

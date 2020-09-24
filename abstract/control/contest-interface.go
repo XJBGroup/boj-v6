@@ -18,6 +18,8 @@ type ContestService interface {
 	GetContestProblemDesc(c controller.MContext)
 	PutContestProblemDesc(c controller.MContext)
 	DeleteContestProblemDesc(c controller.MContext)
+	ListContestProblemDesc(c controller.MContext)
+	CountContestProblemDesc(c controller.MContext)
 	GetContestProblem(c controller.MContext)
 	PutContestProblem(c controller.MContext)
 	DeleteContestProblem(c controller.MContext)

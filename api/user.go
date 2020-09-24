@@ -19,12 +19,12 @@ type ListUserInnerReply struct {
 	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
-	UserName            string    `json:"user_name" form:"user_name"`
+	UserName            string    `form:"user_name" json:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
 	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
-	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
+	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
+	TriedProblemsCount  int64     `form:"tried_problems_count" json:"tried_problems_count"`
 }
 
 type CountUserRequest struct {
@@ -39,13 +39,13 @@ type CountUserReply struct {
 
 type RegisterRequest struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
+	Password string `form:"password" binding:"required" json:"password"`
 	NickName string `binding:"required" json:"nick_name" form:"nick_name"`
-	Gender   uint8  `json:"gender" form:"gender"`
+	Gender   uint8  `form:"gender" json:"gender"`
 }
 
 type RegisterReply struct {
-	Code int              `form:"code" json:"code"`
+	Code int              `json:"code" form:"code"`
 	Data UserRegisterData `json:"data" form:"data"`
 }
 
@@ -55,7 +55,7 @@ type UserRegisterData struct {
 
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
-	UserName string `json:"user_name" form:"user_name"`
+	UserName string `form:"user_name" json:"user_name"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
@@ -84,7 +84,16 @@ type RefreshTokenReply struct {
 }
 
 type UserRefreshTokenData struct {
-	Token string `json:"token" form:"token"`
+	Token string `form:"token" json:"token"`
+}
+
+type ChangePasswordRequest struct {
+	OldPassword string `json:"old_password" form:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
+}
+
+type ChangePasswordReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type InspectUserRequest struct {
@@ -98,14 +107,14 @@ type InspectUserReply struct {
 type InspectUserInnerReply struct {
 	Id              uint      `json:"id" form:"id"`
 	NickName        string    `json:"nick_name" form:"nick_name"`
-	UserName        string    `json:"user_name" form:"user_name"`
+	UserName        string    `form:"user_name" json:"user_name"`
 	LastLogin       time.Time `json:"last_login" form:"last_login"`
-	Email           string    `form:"email" json:"email"`
-	Motto           string    `form:"motto" json:"motto"`
+	Email           string    `json:"email" form:"email"`
+	Motto           string    `json:"motto" form:"motto"`
 	Gender          uint8     `json:"gender" form:"gender"`
 	Identities      []string  `json:"identities" form:"identities"`
 	SuccessProblems []uint    `json:"success_problems" form:"success_problems"`
-	TriedProblems   []uint    `form:"tried_problems" json:"tried_problems"`
+	TriedProblems   []uint    `json:"tried_problems" form:"tried_problems"`
 }
 
 type BindEmailRequest struct {
@@ -116,20 +125,11 @@ type BindEmailReply struct {
 	Code int `json:"code" form:"code"`
 }
 
-type ChangePasswordRequest struct {
-	OldPassword string `form:"old_password" binding:"required" json:"old_password"`
-	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
-}
-
-type ChangePasswordReply struct {
-	Code int `json:"code" form:"code"`
-}
-
 type GetUserRequest struct {
 }
 
 type GetUserReply struct {
-	Code int               `form:"code" json:"code"`
+	Code int               `json:"code" form:"code"`
 	Data GetUserInnerReply `json:"data" form:"data"`
 }
 
@@ -137,7 +137,7 @@ type GetUserInnerReply struct {
 	Id        uint      `json:"id" form:"id"`
 	NickName  string    `json:"nick_name" form:"nick_name"`
 	LastLogin time.Time `json:"last_login" form:"last_login"`
-	Motto     string    `form:"motto" json:"motto"`
+	Motto     string    `json:"motto" form:"motto"`
 	Gender    uint8     `json:"gender" form:"gender"`
 }
 
@@ -155,7 +155,7 @@ type DeleteUserRequest struct {
 }
 
 type DeleteUserReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 func PSerializeListUserRequest(_page int, _pageSize int) *ListUserRequest {
@@ -566,6 +566,57 @@ func PackSerializeUserRefreshTokenData(_token []string) (pack []UserRefreshToken
 	}
 	return
 }
+func PSerializeChangePasswordRequest(_oldPassword string, _newPassword string) *ChangePasswordRequest {
+
+	return &ChangePasswordRequest{
+		OldPassword: _oldPassword,
+		NewPassword: _newPassword,
+	}
+}
+func SerializeChangePasswordRequest(_oldPassword string, _newPassword string) ChangePasswordRequest {
+
+	return ChangePasswordRequest{
+		OldPassword: _oldPassword,
+		NewPassword: _newPassword,
+	}
+}
+func _packSerializeChangePasswordRequest(_oldPassword string, _newPassword string) ChangePasswordRequest {
+
+	return ChangePasswordRequest{
+		OldPassword: _oldPassword,
+		NewPassword: _newPassword,
+	}
+}
+func PackSerializeChangePasswordRequest(_oldPassword []string, _newPassword []string) (pack []ChangePasswordRequest) {
+	for i := range _oldPassword {
+		pack = append(pack, _packSerializeChangePasswordRequest(_oldPassword[i], _newPassword[i]))
+	}
+	return
+}
+func PSerializeChangePasswordReply(_code int) *ChangePasswordReply {
+
+	return &ChangePasswordReply{
+		Code: _code,
+	}
+}
+func SerializeChangePasswordReply(_code int) ChangePasswordReply {
+
+	return ChangePasswordReply{
+		Code: _code,
+	}
+}
+func _packSerializeChangePasswordReply(_code int) ChangePasswordReply {
+
+	return ChangePasswordReply{
+		Code: _code,
+	}
+}
+func PackSerializeChangePasswordReply(_code []int) (pack []ChangePasswordReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeChangePasswordReply(_code[i]))
+	}
+	return
+}
 func PSerializeInspectUserRequest() *InspectUserRequest {
 
 	return &InspectUserRequest{}
@@ -704,57 +755,6 @@ func _packSerializeBindEmailReply(_code int) BindEmailReply {
 func PackSerializeBindEmailReply(_code []int) (pack []BindEmailReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeBindEmailReply(_code[i]))
-	}
-	return
-}
-func PSerializeChangePasswordRequest(_oldPassword string, _newPassword string) *ChangePasswordRequest {
-
-	return &ChangePasswordRequest{
-		OldPassword: _oldPassword,
-		NewPassword: _newPassword,
-	}
-}
-func SerializeChangePasswordRequest(_oldPassword string, _newPassword string) ChangePasswordRequest {
-
-	return ChangePasswordRequest{
-		OldPassword: _oldPassword,
-		NewPassword: _newPassword,
-	}
-}
-func _packSerializeChangePasswordRequest(_oldPassword string, _newPassword string) ChangePasswordRequest {
-
-	return ChangePasswordRequest{
-		OldPassword: _oldPassword,
-		NewPassword: _newPassword,
-	}
-}
-func PackSerializeChangePasswordRequest(_oldPassword []string, _newPassword []string) (pack []ChangePasswordRequest) {
-	for i := range _oldPassword {
-		pack = append(pack, _packSerializeChangePasswordRequest(_oldPassword[i], _newPassword[i]))
-	}
-	return
-}
-func PSerializeChangePasswordReply(_code int) *ChangePasswordReply {
-
-	return &ChangePasswordReply{
-		Code: _code,
-	}
-}
-func SerializeChangePasswordReply(_code int) ChangePasswordReply {
-
-	return ChangePasswordReply{
-		Code: _code,
-	}
-}
-func _packSerializeChangePasswordReply(_code int) ChangePasswordReply {
-
-	return ChangePasswordReply{
-		Code: _code,
-	}
-}
-func PackSerializeChangePasswordReply(_code []int) (pack []ChangePasswordReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeChangePasswordReply(_code[i]))
 	}
 	return
 }

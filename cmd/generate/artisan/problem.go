@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
+	problem_desc "github.com/Myriad-Dreamin/boj-v6/abstract/problem-desc"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	problemconfig "github.com/Myriad-Dreamin/boj-v6/types/problem-config"
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
@@ -18,6 +20,8 @@ type ProblemCategories struct {
 
 var problemModel = new(problem.Problem)
 var _problemModel = new(problem.Problem)
+var problemUserModel = new(user.User)
+var problemDescModel problem_desc.ProblemDesc
 
 func getListProblemCate(prefix string) artisan.Category {
 	return artisan.Ink().
@@ -64,9 +68,9 @@ func getPostProblemCate(prefix string) artisan.Category {
 
 func getProblemIDCate(prefix string) artisan.Category {
 
-	var problemDescObject = artisan.Object(prefix+"ProblemDesc",
-		artisan.Param("name", artisan.String),
-		artisan.Param("content", artisan.String),
+	var problemDescObject = artisan.Object(prefix+"ProblemDescData",
+		artisan.SnakeParam(&problemDescModel.Name),
+		artisan.SnakeParam(&problemDescModel.UpdatedAt),
 	)
 
 	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
@@ -76,10 +80,27 @@ func getProblemIDCate(prefix string) artisan.Category {
 	}}).
 		Method(artisan.GET, "Get"+prefix+"Problem",
 			artisan.Request(),
-			artisan.Reply(
-				codeField,
-				artisan.Param("data", &problemModel),
-			)).
+			StdReply(artisan.Object(
+				"Get"+prefix+"ProblemData",
+				artisan.SnakeParam(&problemModel.ID),
+				artisan.SnakeParam(&problemModel.CreatedAt),
+				artisan.SnakeParam(&problemModel.UpdatedAt),
+				artisan.SnakeParam(&problemModel.IsSpj),
+				artisan.SnakeParam(&problemModel.Title),
+				artisan.SnakeParam(&problemModel.Description),
+				artisan.SnakeParam(&problemModel.DescriptionRef),
+				artisan.SnakeParam(&problemModel.TimeLimit),
+				artisan.SnakeParam(&problemModel.MemoryLimit),
+				artisan.SnakeParam(&problemModel.CodeLengthLimit),
+				artisan.Param("author",
+					artisan.Object(
+						"Get"+prefix+"ProblemAuthorData",
+						artisan.SnakeParam(&problemUserModel.ID),
+						artisan.SnakeParam(&problemUserModel.NickName),
+					),
+				),
+			)),
+		).
 		Method(artisan.PUT, "Put"+prefix+"Problem",
 			artisan.Request(
 				artisan.SPsC(&problemModel.Title, &problemModel.Description, &problemModel.DescriptionRef),
@@ -90,12 +111,20 @@ func getProblemIDCate(prefix string) artisan.Category {
 			artisan.Request(),
 			artisan.Reply(codeField),
 		).
-		SubCate("/desc-list", artisan.Ink().WithName("ProblemDesc").
-			Method(artisan.GET, "List"+prefix+"ProblemDescs",
-				artisan.Request(),
+		SubCate("/desc-list", artisan.Ink().WithName("List"+prefix+"ProblemDesc").
+			Method(artisan.GET, "List"+prefix+"ProblemDesc",
+				artisan.QT("List"+prefix+"ProblemDescRequest", mytraits.Filter{}),
 				artisan.Reply(
 					codeField,
 					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
+			),
+		).
+		SubCate("/desc-count", artisan.Ink().WithName("Count"+prefix+"ProblemDesc").
+			Method(artisan.GET, "Count"+prefix+"ProblemDesc",
+				artisan.QT("Count"+prefix+"ProblemDescRequest", mytraits.Filter{}),
+				artisan.Reply(
+					codeField,
+					artisan.Param("data", artisan.Int64)),
 			),
 		).
 		SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
@@ -148,7 +177,11 @@ func DescribeProblemService() artisan.ProposingService {
 		IdGroup: getProblemIDCate(""),
 	}
 	svc.Name("ProblemService").
-		UseModel(artisan.Model(artisan.Name("problem"), &problemModel))
+		UseModel(
+			artisan.Model(artisan.Name("problem"), &problemModel),
+			artisan.Model(artisan.Name("problemUser"), &problemUserModel),
+			artisan.Model(artisan.Name("problemDesc"), &problemDescModel),
+		)
 	return svc
 }
 

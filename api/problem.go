@@ -2,8 +2,11 @@ package api
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/problem-desc"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/boj-v6/types/problem-config"
 	"github.com/Myriad-Dreamin/go-model-traits/gorm-crud-dao"
+	"time"
 )
 
 type ListProblemRequest = gorm_crud_dao.Filter
@@ -16,7 +19,7 @@ type ListProblemReply struct {
 type CountProblemRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
@@ -35,9 +38,16 @@ type PostProblemData struct {
 	Id uint `json:"id" form:"id"`
 }
 
+type CountProblemDescRequest = gorm_crud_dao.Filter
+
+type CountProblemDescReply struct {
+	Code int   `json:"code" form:"code"`
+	Data int64 `json:"data" form:"data"`
+}
+
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `json:"name" form:"name" binding:"required"`
-	NewName string `json:"new_name" form:"new_name" binding:"required"`
+	Name    string `form:"name" binding:"required" json:"name"`
+	NewName string `binding:"required" json:"new_name" form:"new_name"`
 }
 
 type ChangeProblemDescriptionRefReply struct {
@@ -46,11 +56,11 @@ type ChangeProblemDescriptionRefReply struct {
 
 type PostProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PostProblemDescReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type GetProblemDescRequest struct {
@@ -64,7 +74,7 @@ type GetProblemDescReply struct {
 
 type PutProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 type PutProblemDescReply struct {
@@ -72,25 +82,56 @@ type PutProblemDescReply struct {
 }
 
 type DeleteProblemDescRequest struct {
-	Name string `json:"name" form:"name"`
+	Name string `form:"name" json:"name"`
 }
 
 type DeleteProblemDescReply struct {
 	Code int `json:"code" form:"code"`
 }
 
+type ListProblemDescRequest = gorm_crud_dao.Filter
+
+type ListProblemDescReply struct {
+	Code int               `json:"code" form:"code"`
+	Data []ProblemDescData `json:"data" form:"data"`
+}
+
+type ProblemDescData struct {
+	Name      string    `json:"name" form:"name"`
+	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
+}
+
 type GetProblemRequest struct {
 }
 
 type GetProblemReply struct {
-	Code int              `json:"code" form:"code"`
-	Data *problem.Problem `json:"data" form:"data"`
+	Code int            `form:"code" json:"code"`
+	Data GetProblemData `json:"data" form:"data"`
+}
+
+type GetProblemData struct {
+	Id              uint                 `form:"id" json:"id"`
+	CreatedAt       time.Time            `json:"created_at" form:"created_at"`
+	UpdatedAt       time.Time            `json:"updated_at" form:"updated_at"`
+	IsSpj           bool                 `json:"is_spj" form:"is_spj"`
+	Title           string               `form:"title" json:"title"`
+	Description     string               `json:"description" form:"description"`
+	DescriptionRef  string               `json:"description_ref" form:"description_ref"`
+	TimeLimit       int64                `form:"time_limit" json:"time_limit"`
+	MemoryLimit     int64                `json:"memory_limit" form:"memory_limit"`
+	CodeLengthLimit int64                `json:"code_length_limit" form:"code_length_limit"`
+	Author          GetProblemAuthorData `json:"author" form:"author"`
+}
+
+type GetProblemAuthorData struct {
+	Id       uint   `json:"id" form:"id"`
+	NickName string `form:"nick_name" json:"nick_name"`
 }
 
 type PutProblemRequest struct {
 	Title          string `json:"title" form:"title"`
 	Description    string `json:"description" form:"description"`
-	DescriptionRef string `form:"description_ref" json:"description_ref"`
+	DescriptionRef string `json:"description_ref" form:"description_ref"`
 }
 
 type PutProblemReply struct {
@@ -101,7 +142,7 @@ type DeleteProblemRequest struct {
 }
 
 type DeleteProblemReply struct {
-	Code int `form:"code" json:"code"`
+	Code int `json:"code" form:"code"`
 }
 
 func PSerializeListProblemReply(_code int, _data []problem.Problem) *ListProblemReply {
@@ -236,6 +277,33 @@ func _packSerializePostProblemData(problem *problem.Problem) PostProblemData {
 func PackSerializePostProblemData(problem []*problem.Problem) (pack []PostProblemData) {
 	for i := range problem {
 		pack = append(pack, _packSerializePostProblemData(problem[i]))
+	}
+	return
+}
+func PSerializeCountProblemDescReply(_code int, _data int64) *CountProblemDescReply {
+
+	return &CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+
+	return CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+
+	return CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeCountProblemDescReply(_code []int, _data []int64) (pack []CountProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeCountProblemDescReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -491,6 +559,60 @@ func PackSerializeDeleteProblemDescReply(_code []int) (pack []DeleteProblemDescR
 	}
 	return
 }
+func PSerializeListProblemDescReply(_code int, _data []ProblemDescData) *ListProblemDescReply {
+
+	return &ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+
+	return ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+
+	return ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeListProblemDescReply(_code []int, _data [][]ProblemDescData) (pack []ListProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeListProblemDescReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) *ProblemDescData {
+
+	return &ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func SerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+
+	return ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func _packSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+
+	return ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func PackSerializeProblemDescData(problemDesc []problem_desc.ProblemDesc) (pack []ProblemDescData) {
+	for i := range problemDesc {
+		pack = append(pack, _packSerializeProblemDescData(problemDesc[i]))
+	}
+	return
+}
 func PSerializeGetProblemRequest() *GetProblemRequest {
 
 	return &GetProblemRequest{}
@@ -506,30 +628,111 @@ func _packSerializeGetProblemRequest() GetProblemRequest {
 func PackSerializeGetProblemRequest() (pack []GetProblemRequest) {
 	return
 }
-func PSerializeGetProblemReply(_code int, _data *problem.Problem) *GetProblemReply {
+func PSerializeGetProblemReply(_code int, _data GetProblemData) *GetProblemReply {
 
 	return &GetProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeGetProblemReply(_code int, _data *problem.Problem) GetProblemReply {
+func SerializeGetProblemReply(_code int, _data GetProblemData) GetProblemReply {
 
 	return GetProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeGetProblemReply(_code int, _data *problem.Problem) GetProblemReply {
+func _packSerializeGetProblemReply(_code int, _data GetProblemData) GetProblemReply {
 
 	return GetProblemReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeGetProblemReply(_code []int, _data []*problem.Problem) (pack []GetProblemReply) {
+func PackSerializeGetProblemReply(_code []int, _data []GetProblemData) (pack []GetProblemReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeGetProblemReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeGetProblemData(problem *problem.Problem, _author GetProblemAuthorData) *GetProblemData {
+
+	return &GetProblemData{
+		Id:              problem.ID,
+		CreatedAt:       problem.CreatedAt,
+		UpdatedAt:       problem.UpdatedAt,
+		IsSpj:           problem.IsSpj,
+		Title:           problem.Title,
+		Description:     problem.Description,
+		DescriptionRef:  problem.DescriptionRef,
+		TimeLimit:       problem.TimeLimit,
+		MemoryLimit:     problem.MemoryLimit,
+		CodeLengthLimit: problem.CodeLengthLimit,
+		Author:          _author,
+	}
+}
+func SerializeGetProblemData(problem *problem.Problem, _author GetProblemAuthorData) GetProblemData {
+
+	return GetProblemData{
+		Id:              problem.ID,
+		CreatedAt:       problem.CreatedAt,
+		UpdatedAt:       problem.UpdatedAt,
+		IsSpj:           problem.IsSpj,
+		Title:           problem.Title,
+		Description:     problem.Description,
+		DescriptionRef:  problem.DescriptionRef,
+		TimeLimit:       problem.TimeLimit,
+		MemoryLimit:     problem.MemoryLimit,
+		CodeLengthLimit: problem.CodeLengthLimit,
+		Author:          _author,
+	}
+}
+func _packSerializeGetProblemData(problem *problem.Problem, _author GetProblemAuthorData) GetProblemData {
+
+	return GetProblemData{
+		Id:              problem.ID,
+		CreatedAt:       problem.CreatedAt,
+		UpdatedAt:       problem.UpdatedAt,
+		IsSpj:           problem.IsSpj,
+		Title:           problem.Title,
+		Description:     problem.Description,
+		DescriptionRef:  problem.DescriptionRef,
+		TimeLimit:       problem.TimeLimit,
+		MemoryLimit:     problem.MemoryLimit,
+		CodeLengthLimit: problem.CodeLengthLimit,
+		Author:          _author,
+	}
+}
+func PackSerializeGetProblemData(problem []*problem.Problem, _author []GetProblemAuthorData) (pack []GetProblemData) {
+	for i := range problem {
+		pack = append(pack, _packSerializeGetProblemData(problem[i], _author[i]))
+	}
+	return
+}
+func PSerializeGetProblemAuthorData(problemUser *user.User) *GetProblemAuthorData {
+
+	return &GetProblemAuthorData{
+		Id:       problemUser.ID,
+		NickName: problemUser.NickName,
+	}
+}
+func SerializeGetProblemAuthorData(problemUser *user.User) GetProblemAuthorData {
+
+	return GetProblemAuthorData{
+		Id:       problemUser.ID,
+		NickName: problemUser.NickName,
+	}
+}
+func _packSerializeGetProblemAuthorData(problemUser *user.User) GetProblemAuthorData {
+
+	return GetProblemAuthorData{
+		Id:       problemUser.ID,
+		NickName: problemUser.NickName,
+	}
+}
+func PackSerializeGetProblemAuthorData(problemUser []*user.User) (pack []GetProblemAuthorData) {
+	for i := range problemUser {
+		pack = append(pack, _packSerializeGetProblemAuthorData(problemUser[i]))
 	}
 	return
 }
