@@ -6,26 +6,26 @@ import (
 
 type AnnouncementFilter struct {
 	Page     int `json:"page" form:"page"`
-	PageSize int `form:"page_size" json:"page_size"`
+	PageSize int `json:"page_size" form:"page_size"`
 }
 
 type ListAnnouncementsReply struct {
-	Code int                         `json:"code" form:"code"`
+	Code int                         `form:"code" json:"code"`
 	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
 type CountAnnouncementReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `form:"title" binding:"required" json:"title"`
+	Title   string `json:"title" form:"title" binding:"required"`
 	Content string `json:"content" form:"content" binding:"required"`
 }
 
 type PostAnnouncementReply struct {
-	Code int                        `json:"code" form:"code"`
+	Code int                        `form:"code" json:"code"`
 	Data *announcement.Announcement `json:"data" form:"data"`
 }
 

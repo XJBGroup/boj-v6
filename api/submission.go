@@ -8,7 +8,7 @@ import (
 type SubmissionFilter struct {
 	Page         int   `json:"page" form:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
-	MemOrder     *bool `form:"mem_order" json:"mem_order"`
+	MemOrder     *bool `json:"mem_order" form:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
@@ -27,8 +27,8 @@ type ListSubmissionReply struct {
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
-	Score      int64     `form:"score" json:"score"`
-	Status     int64     `json:"status" form:"status"`
+	Score      int64     `json:"score" form:"score"`
+	Status     int64     `form:"status" json:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
@@ -49,7 +49,7 @@ type PostSubmissionRequest struct {
 }
 
 type PostSubmissionReply struct {
-	Code int                `json:"code" form:"code"`
+	Code int                `form:"code" json:"code"`
 	Data PostSubmissionData `json:"data" form:"data"`
 }
 
@@ -59,7 +59,7 @@ type PostSubmissionData struct {
 
 type GetSubmissionReply struct {
 	Code       int                     `json:"code" form:"code"`
-	Submission GetSubmissionInnerReply `form:"submission" json:"submission"`
+	Submission GetSubmissionInnerReply `json:"submission" form:"submission"`
 }
 
 type GetSubmissionInnerReply struct {
@@ -67,7 +67,7 @@ type GetSubmissionInnerReply struct {
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `form:"user_id" json:"user_id"`
-	Score      int64     `json:"score" form:"score"`
+	Score      int64     `form:"score" json:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`

@@ -46,9 +46,8 @@ func DescribeGroupService() artisan.ProposingService {
 				artisan.Request(
 					artisan.SnakeParam(&groupModel.Name, required),
 					artisan.SnakeParam(&groupModel.Description, required),
-
-					// todo: add owner name convenience
-					artisan.SnakeParam(&groupModel.OwnerID, required),
+					artisan.Param("owner_name", artisan.String),
+					artisan.SnakeParam(&groupModel.OwnerID),
 				),
 				artisan.Reply(
 					codeField,
@@ -62,7 +61,7 @@ func DescribeGroupService() artisan.ProposingService {
 			Method(artisan.GET, "GetGroup",
 				artisan.Reply(
 					codeField,
-					artisan.Param("group", &groupModel),
+					artisan.Param("data", &groupModel),
 				)).
 			Method(artisan.PUT, "PutGroup",
 				artisan.Request(

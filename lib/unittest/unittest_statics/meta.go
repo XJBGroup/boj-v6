@@ -75,6 +75,7 @@ func (p DataBodyPropertyParser) GetTargetProperty() string {
 }
 
 func (p DataBodyPropertyParser) ParseMeta(v interface{}) (parsedValue interface{}, err error) {
+
 	switch d := v.(type) {
 	case map[string]interface{}:
 		return inner.ToDataBody(d).(map[string]interface{}), nil

@@ -51,7 +51,7 @@ func DescribeContestService() artisan.ProposingService {
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("contest", &contestModel),
+					artisan.Param("data", &contestModel),
 				),
 			),
 		IdGroup: artisan.Ink().
@@ -61,9 +61,8 @@ func DescribeContestService() artisan.ProposingService {
 			Method(artisan.GET, "GetContest",
 				artisan.Reply(
 					codeField,
-					artisan.Param("contest", &contestModel),
+					artisan.Param("data", &contestModel),
 				)).
-			// todo: problem management
 			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
 				Method(artisan.GET, "ListContestUsers",
 					artisan.Reply(
@@ -71,7 +70,7 @@ func DescribeContestService() artisan.ProposingService {
 						artisan.ArrayParam(artisan.Param("data", new(user.User))))),
 			).
 			// todo: user management
-			Method(artisan.PUT, "PutContest",
+			Method(artisan.PUT, "PutContest", artisan.AuthMeta("~"),
 				artisan.Request(
 					artisan.SnakeParam(&contestModel.Title),
 					artisan.SnakeParam(&contestModel.Description),

@@ -6,6 +6,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/external"
+	"github.com/Myriad-Dreamin/boj-v6/lib/serial"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
@@ -61,6 +62,10 @@ func (svc Service) CountGroup(c controller.MContext) {
 	})
 }
 
+func (svc Service) OnGroupCreate(id uint, id2 uint) error {
+	return nil
+}
+
 func (svc Service) PostGroup(c controller.MContext) {
 	var req = new(api.PostGroupRequest)
 	if !snippet.BindRequest(c, req) {
@@ -73,35 +78,43 @@ func (svc Service) PostGroup(c controller.MContext) {
 
 	var u *user.User
 	var err error
-	//if req.OwnerId != 0 {
-	u, err = svc.userDB.ID(req.OwnerId)
-	//} else if len(req.OwnerName) != 0 {
-	//	u, err = svc.userDB.QueryUserName(req.OwnerName)
-	//}
+	if req.OwnerId != 0 {
+		u, err = svc.userDB.ID(req.OwnerId)
+	} else if len(req.OwnerName) != 0 {
+		u, err = svc.userDB.QueryUserName(req.OwnerName)
+	} else {
+		c.JSON(http.StatusOK, serial.ErrorSerializer{
+			Code:  types.CodeInvalidParameters,
+			Error: "miss the id or name of group's owner",
+		})
+	}
+
 	if snippet.MaybeSelectError(c, u, err) {
 		return
 	}
 	g.OwnerID = u.ID
 
 	aff, err := svc.db.Create(g)
-	if snippet.CreateObj(c, aff, err) {
-
-		// todo: group created hook
-		//if err := svc.ReportGroupCreated(g.ID, u.ID); err != nil {
-		//	c.JSON(http.StatusOK, &snippet.ErrorSerializer{
-		//		Code:  types.CodeGroupCreateError,
-		//		Error: err.Error(),
-		//	})
-		//	if aff, err := g.Delete(); aff == 0 || err != nil {
-		//		srv.logger.Debug("g error delete...", "affected", aff, "error", err)
-		//	}
-		//	return
-		//}
-		c.JSON(http.StatusOK, &api.PostGroupReply{
-			Code: types.CodeOK,
-			Data: g.ID,
-		})
+	if !snippet.CreateObj(c, aff, err) {
+		return
 	}
+
+	if err := svc.OnGroupCreate(g.ID, u.ID); err != nil {
+		if aff, err := svc.db.Delete(g); aff == 0 || err != nil {
+			svc.logger.Debug("group create failed, and delete error...",
+				"affected", aff, "error", snippet.ConvertErrorToString(err))
+		}
+		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeGroupCreateError,
+			Error: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &api.PostGroupReply{
+		Code: types.CodeOK,
+		Data: g.ID,
+	})
 }
 
 func (svc Service) GetGroup(c controller.MContext) {

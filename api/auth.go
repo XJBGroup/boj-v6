@@ -14,7 +14,7 @@ type AddPolicyReply struct {
 type RemovePolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `form:"action" binding:"required" json:"action"`
+	Action  string `json:"action" form:"action" binding:"required"`
 }
 
 type RemovePolicyReply struct {
@@ -29,32 +29,32 @@ type HasPolicyRequest struct {
 }
 
 type HasPolicyReply struct {
-	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
-}
-
-type AddGroupingPolicyRequest struct {
-	Subject string `binding:"required" json:"subject" form:"subject"`
-	Group   string `binding:"required" json:"group" form:"group"`
-}
-
-type AddGroupingPolicyReply struct {
-	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
-}
-
-type RemoveGroupingPolicyRequest struct {
-	Subject string `json:"subject" form:"subject" binding:"required"`
-	Group   string `json:"group" form:"group" binding:"required"`
-}
-
-type RemoveGroupingPolicyReply struct {
 	Code int  `form:"code" json:"code"`
 	Data bool `json:"data" form:"data"`
 }
 
-type HasGroupingPolicyRequest struct {
+type AddGroupingPolicyRequest struct {
+	Subject string `json:"subject" form:"subject" binding:"required"`
+	Group   string `json:"group" form:"group" binding:"required"`
+}
+
+type AddGroupingPolicyReply struct {
+	Code int  `json:"code" form:"code"`
+	Data bool `form:"data" json:"data"`
+}
+
+type RemoveGroupingPolicyRequest struct {
 	Subject string `binding:"required" json:"subject" form:"subject"`
+	Group   string `binding:"required" json:"group" form:"group"`
+}
+
+type RemoveGroupingPolicyReply struct {
+	Code int  `json:"code" form:"code"`
+	Data bool `json:"data" form:"data"`
+}
+
+type HasGroupingPolicyRequest struct {
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Group   string `json:"group" form:"group" binding:"required"`
 }
 

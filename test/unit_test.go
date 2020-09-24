@@ -11,6 +11,11 @@ import (
 	"testing"
 )
 
+func TestCRUDUnit(t *testing.T) {
+	g := unittest.Load("test.crud.yaml", false, unittest.V1Opt)
+	runUnitTest(t, g.TestCases)
+}
+
 func TestUnit(t *testing.T) {
 	g := unittest.Load("test.yaml", false, unittest.V1Opt)
 	runUnitTest(t, g.TestCases)

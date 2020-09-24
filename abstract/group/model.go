@@ -10,7 +10,7 @@ type Group struct {
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time `sql:"index"`
 	Name        string     `gorm:"type:varchar(128);column:name;default:'anonymous group';unique;not null" json:"name"`
-	Description string     `gorm:"column:description;type:text;not null"`
+	Description string     `gorm:"column:description;type:text;not null" json:"description"`
 	//Owner       User   `gorm:"ForeignKey:OwnerID;AssociationForeignKey:ID"`
 	OwnerID uint `gorm:"column:owner_id;not null" json:"owner_id"`
 	//UsersBuffer []User `gorm:"many2many:group_members;association_foreignkey:ID;foreignkey:ID;preload:false"`
