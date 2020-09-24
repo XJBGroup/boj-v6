@@ -10,6 +10,7 @@ import (
 	problem_desc "github.com/Myriad-Dreamin/boj-v6/app/problem-desc"
 	"github.com/Myriad-Dreamin/boj-v6/app/submission"
 	"github.com/Myriad-Dreamin/boj-v6/app/user"
+	"github.com/Myriad-Dreamin/boj-v6/app/user_problem"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/boj-v6/deployment/oss"
 	"github.com/Myriad-Dreamin/boj-v6/external"
@@ -153,6 +154,7 @@ func PrepareDatabase(mock bool) InitializeAction {
 			RegisterDatabase("ProblemDescDB", problem_desc.NewDB),
 			RegisterDatabase("ContestDB", contest.NewDB),
 			RegisterDatabase("GroupDB", group.NewDB),
+			RegisterDatabase("UserProblemRelationshipDB", user_problem.NewDB),
 		})
 	}
 }

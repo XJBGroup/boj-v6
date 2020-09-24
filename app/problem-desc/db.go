@@ -131,6 +131,12 @@ func (db DBImpl) QueryByKey(pid uint, pdName string) (pd *problem_desc.ProblemDe
 	return pd, db.GORMDBImpl.Query(pd, "pid = ? and name = ?", pid, pdName)
 }
 
+func (db DBImpl) QueryExistenceByKey(pid uint, pdName string) (exists bool, err error) {
+	pd := new(problem_desc.ProblemDesc)
+	err = db.GORMDBImpl.Query(pd, "pid = ? and name = ?", pid, pdName)
+	return pd.ID != 0, err
+}
+
 func (db DBImpl) QueryByPID(pid uint) (pd []problem_desc.ProblemDesc, err error) {
 	return pd, db.GORMDBImpl.Query(&pd, "pid = ?", pid)
 }

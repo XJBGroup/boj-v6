@@ -48,6 +48,7 @@ const (
 	CodeAuthGenerateTokenError ServiceCode = iota + 1000
 	CodeAuthenticatePasswordError
 	CodeAuthenticatePolicyError
+	CodeGeneratePasswordError
 
 	CodeChangeOwnerError
 	CodeGroupCreateError
@@ -64,4 +65,11 @@ const (
 	CodeUploadFileError
 	CodeConfigModifyError
 	CodeStatError
+)
+
+const (
+	CodeProblemErrors ServiceCode = iota + 12000
+	CodeProblemDescSaveError
+	CodeProblemDescLoadError
+	CodeProblemDescDeleteError
 )

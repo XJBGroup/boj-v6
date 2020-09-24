@@ -103,6 +103,7 @@ func DescribeGroupService() artisan.ProposingService {
 				artisan.Reply(
 					codeField),
 			)),
+		// todo: post user by name
 	}
 	svc.Name("GroupService").
 		UseModel(artisan.Model(artisan.Name("group"), &groupModel),

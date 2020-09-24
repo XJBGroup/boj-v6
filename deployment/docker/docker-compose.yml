@@ -1,0 +1,61 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "23379:6379"
+    command: redis-server --requirepass 12345678
+    networks:
+      boj-server:
+        ipv4_address: 10.233.233.4
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "23306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: oj
+      BIND_ADDRESS: 0.0.0.0
+    volumes:
+      - /home/rinne/sql/conf/:/etc/mysql/conf.d
+      - /home/rinne/sql/logs/:/logs
+      - /home/rinne/sql/data3/:/var/lib/mysql
+    networks:
+      boj-server:
+        ipv4_address: 10.233.233.2
+
+  server:
+    image: myriaddreamin/boj-server:latest
+    depends_on:
+      - redis
+      - mysql
+    ports:
+      - "23337:23336"
+    configs:
+      - source: server_config
+        target: /.config.toml
+        uid: '0'
+        gid: '0'
+        mode: 0440
+    volumes:
+      - /home/rinne/srv/contest/:/contest/
+      - /home/rinne/srv/problem/:/problem/
+      - /home/rinne/srv/submission/:/submission/
+    networks:
+      boj-server:
+        ipv4_address: 10.233.233.3
+
+
+configs:
+  server_config:
+    file: ./.config.toml
+
+
+
+networks:
+  boj-server:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.233.233.0/24"

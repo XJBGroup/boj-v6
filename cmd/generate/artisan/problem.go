@@ -69,6 +69,7 @@ func getProblemIDCate(prefix string) artisan.Category {
 		artisan.Param("content", artisan.String),
 	)
 
+	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
 	return artisan.Ink().
 		Path("problem/:pid").Meta(&Meta{artisan.RouterMeta{
 		RuntimeRouterMeta: "problem:pid",
@@ -102,21 +103,24 @@ func getProblemIDCate(prefix string) artisan.Category {
 				),
 				artisan.Reply(
 					codeField,
-					artisan.Param("data", problemDescObject),
+					artisan.Param("data", artisan.String),
 				)).
 			Method(artisan.PUT, "Put"+prefix+"ProblemDesc",
 				artisan.Request(
 					artisan.Param("name", artisan.String, required),
 					artisan.Param("content", artisan.String),
 				)).
-			SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
+			SubCate("/ref", artisan.Ink().WithName("ProblemDesc").
 				Method(artisan.POST, "Change"+prefix+"ProblemDescriptionRef",
 					artisan.Request(
 						artisan.Param("name", artisan.String, required),
 						artisan.Param("new_name", artisan.String, required),
 					)),
 			).
-			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc"),
+			Method(artisan.DELETE, "Delete"+prefix+"ProblemDesc",
+				artisan.Request(
+					artisan.Param("name", artisan.String),
+				)),
 		)
 }
 

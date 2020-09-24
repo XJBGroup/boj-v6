@@ -12,6 +12,7 @@ type UserService interface {
 	LoginUser(c controller.MContext)
 	RefreshToken(c controller.MContext)
 	BindEmail(c controller.MContext)
+	ChangePassword(c controller.MContext)
 	InspectUser(c controller.MContext)
 	GetUser(c controller.MContext)
 	PutUser(c controller.MContext)

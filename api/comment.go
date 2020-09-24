@@ -29,8 +29,8 @@ type PostCommentReply struct {
 }
 
 type GetCommentReply struct {
-	Code int              `form:"code" json:"code"`
-	Data *comment.Comment `form:"data" json:"data"`
+	Code int              `json:"code" form:"code"`
+	Data *comment.Comment `json:"data" form:"data"`
 }
 
 type PutCommentRequest struct {

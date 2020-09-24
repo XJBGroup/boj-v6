@@ -6,14 +6,9 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/crypto"
 )
 
-func (db DBImpl) Create(obj *user.User) (int64, error) {
-	var err error
-	obj.Password, err = crypto.NewPasswordString(obj.Password)
-	if err != nil {
-		return 0, err
-	}
-
-	return db.db.Create(obj)
+func (db DBImpl) RecalculatePassword(obj *user.User, password string) (err error) {
+	obj.Password, err = crypto.NewPasswordString(password)
+	return
 }
 
 func (db DBImpl) QueryUserName(name string) (usr *user.User, err error) {

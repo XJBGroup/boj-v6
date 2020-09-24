@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/contest"
+	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
@@ -62,6 +63,14 @@ func DescribeContestService() artisan.ProposingService {
 					codeField,
 					artisan.Param("contest", &contestModel),
 				)).
+			// todo: problem management
+			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
+				Method(artisan.GET, "ListContestUsers",
+					artisan.Reply(
+						codeField,
+						artisan.ArrayParam(artisan.Param("data", new(user.User))))),
+			).
+			// todo: user management
 			Method(artisan.PUT, "PutContest",
 				artisan.Request(
 					artisan.SnakeParam(&contestModel.Title),

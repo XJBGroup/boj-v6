@@ -5,13 +5,13 @@ import (
 )
 
 type AnnouncementFilter struct {
-	Page     int `form:"page" json:"page"`
-	PageSize int `json:"page_size" form:"page_size"`
+	Page     int `json:"page" form:"page"`
+	PageSize int `form:"page_size" json:"page_size"`
 }
 
 type ListAnnouncementsReply struct {
 	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `form:"data" json:"data"`
+	Data []announcement.Announcement `json:"data" form:"data"`
 }
 
 type CountAnnouncementReply struct {
@@ -20,12 +20,12 @@ type CountAnnouncementReply struct {
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `json:"title" form:"title" binding:"required"`
+	Title   string `form:"title" binding:"required" json:"title"`
 	Content string `json:"content" form:"content" binding:"required"`
 }
 
 type PostAnnouncementReply struct {
-	Code int                        `form:"code" json:"code"`
+	Code int                        `json:"code" form:"code"`
 	Data *announcement.Announcement `json:"data" form:"data"`
 }
 
@@ -35,7 +35,7 @@ type GetAnnouncementReply struct {
 }
 
 type PutAnnouncementRequest struct {
-	Title   string `form:"title" json:"title"`
+	Title   string `json:"title" form:"title"`
 	Content string `json:"content" form:"content"`
 }
 

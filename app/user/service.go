@@ -75,9 +75,16 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 
 	var usr = new(user.User)
 	usr.UserName = req.UserName
-	usr.Password = req.Password
 	usr.NickName = req.NickName
 	usr.Gender = req.Gender
+
+	err := svc.db.RecalculatePassword(usr, req.Password)
+	if err != nil {
+		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeGeneratePasswordError,
+			Error: err.Error(),
+		})
+	}
 
 	// check default value
 	aff, err := svc.db.Create(usr)
@@ -85,7 +92,7 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 		if snippet.CheckInsertError(c, err) {
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:  types.CodeInsertError,
 			Error: err.Error(),
 		})
@@ -154,7 +161,7 @@ func (svc *Service) LoginUser(c controller.MContext) {
 	}
 
 	if token, refreshToken, err := svc.middleware.GenerateTokenWithRefreshToken(&types.CustomFields{UID: usr.ID}); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:  types.CodeAuthGenerateTokenError,
 			Error: err.Error(),
 		})
@@ -208,7 +215,42 @@ func (svc *Service) BindEmail(c controller.MContext) {
 	// check default value
 	_, err := svc.db.UpdateFields(usr, []string{"email"})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeUpdateError,
+			Error: err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, &snippet.ResponseOK)
+}
+
+func (svc *Service) ChangePassword(c controller.MContext) {
+	var req = new(api.ChangePasswordRequest)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
+	if !ok {
+		return
+	}
+
+	var usr = new(user.User)
+	usr.ID = id
+
+	verified, err := svc.db.AuthenticatePassword(usr, req.OldPassword)
+	if !snippet.AuthenticatePassword(c, verified, err) {
+		return
+	}
+
+	err = svc.db.RecalculatePassword(usr, req.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+			Code:  types.CodeGeneratePasswordError,
+			Error: err.Error(),
+		})
+	}
+
+	// check default value
+	_, err = svc.db.UpdateFields(usr, []string{"password"})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:  types.CodeUpdateError,
 			Error: err.Error(),
 		})
@@ -218,8 +260,16 @@ func (svc *Service) BindEmail(c controller.MContext) {
 }
 
 func (svc *Service) InspectUser(c controller.MContext) {
-	// todo
-	panic("implement me")
+	id, ok := snippet.ParseUint(c, svc.key)
+	if !ok {
+		return
+	}
+	obj, err := svc.db.ID(id)
+	if snippet.MaybeSelectError(c, obj, err) {
+		return
+	}
+
+	c.JSON(http.StatusOK, api.GetUserReply{Code: types.CodeOK, Data: obj})
 }
 
 func (svc *Service) GetUser(c controller.MContext) {
