@@ -16,7 +16,7 @@ type ListProblemReply struct {
 type CountProblemRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
@@ -27,7 +27,7 @@ type PostProblemRequest struct {
 }
 
 type PostProblemReply struct {
-	Code int             `form:"code" json:"code"`
+	Code int             `json:"code" form:"code"`
 	Data PostProblemData `json:"data" form:"data"`
 }
 
@@ -64,7 +64,7 @@ type GetProblemDescReply struct {
 
 type PutProblemDescRequest struct {
 	Name    string `json:"name" form:"name" binding:"required"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PutProblemDescReply struct {
@@ -76,7 +76,7 @@ type DeleteProblemDescRequest struct {
 }
 
 type DeleteProblemDescReply struct {
-	Code int `form:"code" json:"code"`
+	Code int `json:"code" form:"code"`
 }
 
 type GetProblemRequest struct {
@@ -90,7 +90,7 @@ type GetProblemReply struct {
 type PutProblemRequest struct {
 	Title          string `json:"title" form:"title"`
 	Description    string `json:"description" form:"description"`
-	DescriptionRef string `json:"description_ref" form:"description_ref"`
+	DescriptionRef string `form:"description_ref" json:"description_ref"`
 }
 
 type PutProblemReply struct {
@@ -101,7 +101,7 @@ type DeleteProblemRequest struct {
 }
 
 type DeleteProblemReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 func PSerializeListProblemReply(_code int, _data []problem.Problem) *ListProblemReply {

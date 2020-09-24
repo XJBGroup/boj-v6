@@ -61,7 +61,7 @@ func (d *db) Find(page, pageSize int) (objs []comment.Comment, err error) {
 }
 
 func (d *db) Count() (c int64, err error) {
-	return d.GORMDBImpl.Count(d.idleObject.TableName())
+	return d.GORMDBImpl.Count(d.idleObject)
 }
 
 func (d *db) UpdateFields(obj *comment.Comment, fields []string) (int64, error) {

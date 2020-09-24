@@ -95,8 +95,8 @@ func (db *GORMDBImpl) UpdateFields(obj interface{}, fields []string) (int64, err
 	return rdb.RowsAffected, rdb.Error
 }
 
-func (db *GORMDBImpl) Count(tb string) (c int64, err error) {
-	err = db.DB.Table(tb).Count(&c).Error
+func (db *GORMDBImpl) Count(tb interface{}) (c int64, err error) {
+	err = db.DB.Model(tb).Count(&c).Error
 	return
 }
 

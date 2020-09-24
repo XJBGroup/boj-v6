@@ -55,7 +55,8 @@ func (i InnerService) PostSubmission(c controller.MContext, req *api.PostSubmiss
 	panic("implement me")
 }
 
-func (i InnerService) GetContent(c controller.MContext, req *api.GetContentRequest) (*api.GetContentReply, error) {
+func (i InnerService) GetSubmissionContent(
+	c controller.MContext, req *api.GetSubmissionContentRequest) (*api.GetSubmissionContentReply, error) {
 	panic("implement me")
 }
 

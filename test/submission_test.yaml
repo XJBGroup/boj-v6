@@ -77,16 +77,6 @@ tests:
                 data: { language: "gcc-c++", code: "#include <cstdio>\n int main() { return 0; }  " }
                 script:
                   - [ Assert, data.id, 3 ]
-          #     - name: s2.success
-          #       data: { title: t2, content: c2 }
-          #     - name: s3.success
-          #       data: { title: t3, content: c2 }
-          #     # - name: f1.failed
-          #     #   data: { title: t3, content: c2 }
-          #     - name: f2.failed
-          #       data: { title: c1 }
-          #     - name: f3.failed
-          #       data: { content: c1 }
           - name: ~get
             method: GET
             url: /v1/submission/:sid
@@ -105,30 +95,29 @@ tests:
                 script:
                   - [ Assert, data.id, 2 ]
                   - [ Assert, data.status, 1 ]
-          # - name: ~list
-          #   method: GET
-          #   url: /v1/submission-list
-          #   cases:
-          #     - name: ~success<list, success.suit>
-          #     - name: ~failed<list, failed.suit>
-          #     - name: l1.success
-          #       data: { page: 1, page_size: 2 }
-          #       script:
-          #         # 相当于assert len(decode(response.body, 'json').data) == 2
-          #         - [Assert, len(data), 2]
-          #     - name: l2.success
-          #       data: { page: 2, page_size: 2 }
-          #       script:
-          #         - [Assert, len(data), 1]
-          #     - name: l3.success
-          #       data: { page: 1, page_size: 4 }
-          #       script:
-          #         - [Assert, len(data), 3]
-          - name: ~count
+          - name: ~list
+            method: GET
+            url: /v1/submission-list
+            cases:
+              - name: ~success<list, success.suit>
+              - name: ~failed<list, failed.suit>
+              - name: l1.success
+                data: { page: 1, page_size: 2 }
+                script:
+                  - [Assert, len(data), 2]
+              - name: l2.success
+                data: { page: 2, page_size: 2 }
+                script:
+                  - [Assert, len(data), 1]
+              - name: l3.success
+                data: { page: 1, page_size: 4 }
+                script:
+                  - [Assert, len(data), 3]
+          - name: count
             method: GET
             url: /v1/submission-count
             script:
-              - [ Assert, data, 2 ]
+              - [ Assert, data, 3 ]
           # - name: ~put
           #   method: PUT
           #   url: /v1/submission/:sid

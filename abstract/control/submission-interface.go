@@ -9,7 +9,7 @@ type SubmissionService interface {
 	ListSubmission(c controller.MContext)
 	CountSubmission(c controller.MContext)
 	PostSubmission(c controller.MContext)
-	GetContent(c controller.MContext)
+	GetSubmissionContent(c controller.MContext)
 	GetSubmission(c controller.MContext)
 	DeleteSubmission(c controller.MContext)
 }

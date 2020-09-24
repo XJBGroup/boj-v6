@@ -95,8 +95,8 @@ func DescribeSubmissionService() artisan.ProposingService {
 							&submissionModel.Language, &submissionModel.Shared)),
 					),
 				)).
-			SubCate("/content", artisan.Ink().WithName("GetContent").
-				Method(artisan.GET, "GetContent",
+			SubCate("/content", artisan.Ink().WithName("GetSubmissionContent").
+				Method(artisan.GET, "GetSubmissionContent",
 					artisan.Request(),
 					artisan.Reply(codeField),
 				),

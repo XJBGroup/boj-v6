@@ -36,5 +36,5 @@ func (db *DBImpl) FilterCount(f *submission.Filter) (cnt int64, _ error) {
 }
 
 func (db *DBImpl) HasHash(hash string) (exists bool, err error) {
-	return db.Has(&db.idleObject, "hash = ?", hash)
+	return db.Has(new(submission.Submission), "hash = ?", hash)
 }

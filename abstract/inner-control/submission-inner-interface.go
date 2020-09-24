@@ -10,7 +10,7 @@ type InnerSubmissionService interface {
 	ListSubmission(c controller.MContext, req *api.ListSubmissionRequest) (*api.ListSubmissionReply, error)
 	CountSubmission(c controller.MContext, req *api.CountSubmissionRequest) (*api.CountSubmissionReply, error)
 	PostSubmission(c controller.MContext, req *api.PostSubmissionRequest) (*api.PostSubmissionReply, error)
-	GetContent(c controller.MContext, req *api.GetContentRequest) (*api.GetContentReply, error)
+	GetSubmissionContent(c controller.MContext, req *api.GetSubmissionContentRequest) (*api.GetSubmissionContentReply, error)
 	GetSubmission(c controller.MContext, req *api.GetSubmissionRequest) (*api.GetSubmissionReply, error)
 	DeleteSubmission(c controller.MContext, req *api.DeleteSubmissionRequest) (*api.DeleteSubmissionReply, error)
 }
