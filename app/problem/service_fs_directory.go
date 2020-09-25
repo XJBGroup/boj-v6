@@ -24,7 +24,7 @@ func (svc Service) ProblemFSMkdir(c controller.MContext) {
 
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), req.Path)
 
-	if err := os.MkdirAll(path, 0755); err != nil {
+	if err := svc.filesystem.MkdirAll(path, 0755); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeFSExecError,
 			ErrorS: err.Error(),
@@ -75,7 +75,7 @@ func (svc Service) ProblemFSZipWrite(c controller.MContext) {
 		if err != nil {
 			svc.logger.Debug("error occurs", "error", err)
 		}
-		err = os.Remove(zipName)
+		err = svc.filesystem.Remove(zipName)
 		if err != nil {
 			svc.logger.Debug("error occurs", "error", err)
 			return
@@ -92,7 +92,7 @@ func (svc Service) ProblemFSZipWrite(c controller.MContext) {
 			return
 		}
 		filename := filepath.Join(path, file.Name)
-		err = os.MkdirAll(filepath.Dir(filename), 0770)
+		err = svc.filesystem.MkdirAll(filepath.Dir(filename), 0770)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 				Code:   types.CodeFSExecError,
@@ -101,7 +101,7 @@ func (svc Service) ProblemFSZipWrite(c controller.MContext) {
 			_ = rc.Close()
 			return
 		}
-		w, err := os.Create(filename)
+		w, err := svc.filesystem.Create(filename)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 				Code:   types.CodeFSExecError,
@@ -140,11 +140,11 @@ func (svc Service) ProblemFSZipRead(c controller.MContext) {
 	c.Stream(func(w io.Writer) bool {
 		compressed := zip.NewWriter(w)
 
-		err := filepath.Walk(path, func(path string, info os.FileInfo, upstreamErr error) (err error) {
+		err := svc.filesystemQuery.Walk(path, func(path string, info os.FileInfo, upstreamErr error) (err error) {
 			if upstreamErr != nil {
 				return upstreamErr
 			}
-			fileReader, err := os.Open(path)
+			fileReader, err := svc.filesystem.Open(path)
 			if err != nil {
 				return err
 			}
@@ -228,7 +228,7 @@ func (svc Service) ProblemFSWrites(c controller.MContext) {
 	}
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), req.Path)
 
-	if err := os.MkdirAll(path, 0770); err != nil {
+	if err := svc.filesystem.MkdirAll(path, 0770); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
 			ErrorS: err.Error(),
@@ -267,7 +267,7 @@ func (svc Service) ProblemFSRemoveAll(c controller.MContext) {
 
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), req.Path)
 
-	if err := os.RemoveAll(path); err != nil {
+	if err := svc.filesystem.RemoveAll(path); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
 			ErrorS: err.Error(),

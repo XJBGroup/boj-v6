@@ -22,7 +22,7 @@ func (svc Service) ProblemFSReadConfig(c controller.MContext) {
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), "problem-config")
 
 	var cfg problemconfig.ProblemConfig
-	err := problemconfig.Load(&cfg, path)
+	err := problemconfig.LoadFS(svc.filesystem, &cfg, path)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
@@ -61,7 +61,7 @@ func (svc Service) ProblemFSWriteConfig(c controller.MContext) {
 	}
 
 	var cfg = new(problemconfig.ProblemConfig)
-	err = problemconfig.Load(cfg, path)
+	err = problemconfig.LoadFS(svc.filesystem, cfg, path)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeUploadFileError,
@@ -90,7 +90,7 @@ func (svc Service) ProblemFSPutConfig(c controller.MContext) {
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), "problem-config")
 
 	var cfg problemconfig.ProblemConfig
-	err := problemconfig.Load(&cfg, path)
+	err := problemconfig.LoadFS(svc.filesystem, &cfg, path)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
@@ -106,7 +106,7 @@ func (svc Service) ProblemFSPutConfig(c controller.MContext) {
 		})
 		return
 	}
-	err = problemconfig.Save(&cfg, path)
+	err = problemconfig.SaveFS(svc.filesystem, &cfg, path)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,

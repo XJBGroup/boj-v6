@@ -19,20 +19,20 @@ func (svc *Service) SaveConfigurationToFileSystem(p *problem.Problem, c *problem
 	// Step: Create Problem Directory
 
 	var path = filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(p.ID)))
-	if _, err := os.Stat(path); err != nil {
+	if _, err := svc.filesystem.Stat(path); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 
 		// todo: 处于安全考虑，需要合理商量控制一下perm
-		err := os.Mkdir(path, 0770)
+		err := svc.filesystem.Mkdir(path, 0770)
 		if err != nil {
 			return err
 		}
 	} // else { } // already exists
 
 	// Step: Save Configuration
-	return problemconfig.Save(c, filepath.Join(path, "problem-config"))
+	return problemconfig.SaveFS(svc.filesystem, c, filepath.Join(path, "problem-config"))
 }
 
 func (svc *Service) PostProblem(c controller.MContext) {

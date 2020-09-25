@@ -11,6 +11,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/lib/deepcopy"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/plugin"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
@@ -28,20 +29,18 @@ type Server struct {
 	Cfg          *config.ServerConfig
 	Logger       external.Logger
 	LoggerWriter io.Writer
+	Module       module.Module
 
-	RedisPool  *redis.Pool
+	Filesystem types.Filesystem
 	HttpEngine *control.HttpEngine
-	Router     *api.RootRouter
 
-	contestPath string
+	DatabaseModule *database.Module
+	RedisPool      *redis.Pool
+	Router         *api.RootRouter
 
-	jwtMW *jwt.Middleware
-	//var authMW *privileger.MiddleWare
+	jwtMW        *jwt.Middleware
 	routerAuthMW *controller.Middleware
 	corsMW       gin.HandlerFunc
-
-	Module         module.Module
-	DatabaseModule *database.Module
 
 	plugins []plugin.Plugin
 }
@@ -78,6 +77,11 @@ type OptionName struct {
 	Name string
 }
 
+type OptionFilesystem struct {
+	OptionImpl
+	Filesystem types.Filesystem
+}
+
 type CopyOptionModule OptionModule
 
 func newServer(options []Option) *Server {
@@ -101,6 +105,10 @@ func newServer(options []Option) *Server {
 			srv.Name = option.Name
 		case *OptionName:
 			srv.Name = option.Name
+		case OptionFilesystem:
+			srv.Filesystem = option.Filesystem
+		case *OptionFilesystem:
+			srv.Filesystem = option.Filesystem
 		}
 	}
 
@@ -127,7 +135,7 @@ func InitServer(cfgPath string, mock bool) InitializeAction {
 		return srv.applyInitializeAction([]InitializeAction{
 			InstantiateLogger(),
 			LoadConfig(cfgPath),
-			PrepareFileSystem,
+			PrepareFileSystem(mock),
 			PrepareDatabase(mock),
 			AddEvent,
 		})

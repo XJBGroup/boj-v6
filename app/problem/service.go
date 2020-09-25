@@ -17,13 +17,15 @@ import (
 )
 
 type Service struct {
-	db       problem.DB
-	descDB   problem_desc.DB
-	userDB   user.DB
-	enforcer *external.Enforcer
-	logger   external.Logger
-	cfg      *config.ServerConfig
-	key      string
+	db              problem.DB
+	descDB          problem_desc.DB
+	userDB          user.DB
+	enforcer        *external.Enforcer
+	logger          external.Logger
+	cfg             *config.ServerConfig
+	filesystem      types.Filesystem
+	filesystemQuery types.FilesystemWrapper
+	key             string
 }
 
 func NewService(m module.Module) (*Service, error) {
@@ -34,6 +36,8 @@ func NewService(m module.Module) (*Service, error) {
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 	s.cfg = m.RequireImpl(new(*config.ServerConfig)).(*config.ServerConfig)
+	s.filesystem = m.RequireImpl(new(types.Filesystem)).(types.Filesystem)
+	s.filesystemQuery = types.FilesystemWrapper{Fs: s.filesystem}
 
 	s.key = "pid"
 	return s, nil

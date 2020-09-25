@@ -7,7 +7,6 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strconv"
 )
@@ -21,7 +20,7 @@ func (svc Service) ProblemFSStat(c controller.MContext) {
 
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), req.Path)
 
-	if stat, err := os.Stat(path); err != nil {
+	if stat, err := svc.filesystem.Stat(path); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
 			ErrorS: err.Error(),
@@ -80,7 +79,7 @@ func (svc Service) ProblemFSRemove(c controller.MContext) {
 
 	path := filepath.Join(svc.cfg.PathConfig.ProblemPath, strconv.Itoa(int(id)), req.Path)
 
-	if err := os.Remove(path); err != nil {
+	if err := svc.filesystem.Remove(path); err != nil {
 		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeStatError,
 			ErrorS: err.Error(),
