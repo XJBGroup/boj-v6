@@ -24,7 +24,7 @@ type Tester struct {
 
 type Context struct {
 	*server.MockerContext
-	t *testing.T
+	T *testing.T
 	sugar.HandlerErrorLogger
 }
 
@@ -65,13 +65,18 @@ func StartTester(serverOptions []server.Option) (tester *Tester) {
 func (tester *Tester) Context(tt *testing.T) (s *Context) {
 	return &Context{
 		MockerContext:      tester.Mocker.Context(tt),
-		t:                  tt,
+		T:                  tt,
 		HandlerErrorLogger: sugar.NewHandlerErrorLogger(tt),
 	}
 }
 
 func (t *Context) AssertNoError(noErr bool) *Context {
 	t.MockerContext = t.MockerContext.AssertNoError(noErr)
+	return t
+}
+
+func (t *Context) ResetServerInstance() *Context {
+	t.MockerContext = t.MockerContext.ResetServerInstance()
 	return t
 }
 
@@ -82,16 +87,22 @@ type ErrorObject struct {
 
 func (t *Context) DecodeJSON(body io.Reader, req interface{}) interface{} {
 	if err := json.NewDecoder(body).Decode(req); err != nil {
-		t.t.Fatal(err)
+		t.T.Fatal(err)
 	}
 	return req
 }
 
-func (tester *Tester) Release() {
-	tester.Mocker.ReleaseMock()
+func (t *Context) Main(f func(ctx *Context)) {
+	t.Mocker.Main(func() {
+		if !MakeAdminContext(t.Mocker) {
+			return
+		}
+
+		f(t)
+	})
 }
 
-func (tester *Tester) MakeAdminContext() bool {
+func MakeAdminContext(tester *server.Mocker) bool {
 	resp := tester.Post("/v1/user/register", api.RegisterRequest{
 		UserName: "admin_context",
 		Password: "Admin12345678",
@@ -130,31 +141,23 @@ func (tester *Tester) MakeAdminContext() bool {
 	if err != nil {
 		tester.Logger.Debug("update group error", "error", err)
 	}
-	fmt.Println("QAQQQ", rbac.GetPolicy())
-	fmt.Println("QAQQQ", rbac.GetGroupingPolicy())
 	tester.UseToken(r2.Data.Token)
-	tester.identityToken["admin"] = r2.Data.Token
 	return true
 }
 
 func (tester *Tester) MainM(m *testing.M) {
-	tester.Main(func() {
+	tester.Mocker.Main(func() {
+		if !MakeAdminContext(tester.Mocker) {
+			return
+		}
+		var ok bool
+		tester.identityToken["admin"], ok = tester.Mocker.GetToken()
+		if !ok {
+			return
+		}
+
 		m.Run()
 	})
-}
-
-func (tester *Tester) Main(doSomething func()) {
-	defer func() {
-		if err := recover(); err != nil {
-			sugar.PrintStack()
-			tester.Logger.Error("panic", "error", err)
-		}
-		tester.Release()
-	}()
-	if !tester.MakeAdminContext() {
-		return
-	}
-	doSomething()
 }
 
 type GoStyleTestFunc func(*testing.T)

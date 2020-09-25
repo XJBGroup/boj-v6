@@ -34,6 +34,8 @@ type Mocker struct {
 	shouldPrintRequest bool
 	assertNoError      bool
 	collectResults     bool
+
+	options []Option
 }
 
 type MockerContext struct {
@@ -58,13 +60,10 @@ func TerminateBuildMiddleware(a InitializeAction) InitializeAction {
 	}
 }
 
-func Mock(options ...Option) (srv *Mocker) {
+func RecreateServer(ctx context.Context, options ...Option) (srv *Server) {
+	srv = newServer(options)
 
-	srv = new(Mocker)
-	srv.Server = newServer(options)
-	srv.header = make(map[string]string)
-
-	err := InitServer("", true)(srv.Server)
+	err := InitServer("", true)(srv)
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +82,7 @@ func Mock(options ...Option) (srv *Mocker) {
 		srv.PrepareService() &&
 		srv.BuildRouter(true)) {
 		srv = nil
-		return
+		return nil
 	}
 
 	//if err := srv.Module.Install(srv.RouterProvider); err != nil {
@@ -93,12 +92,6 @@ func Mock(options ...Option) (srv *Mocker) {
 	srv.HttpEngine.Use(mockw.ContextRecorder())
 	control.BuildHttp(srv.Router.Root, srv.HttpEngine)
 	srv.Module.Debug(srv.Logger)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer func() {
-		if srv == nil {
-			cancel()
-		}
-	}()
 
 	for _, plg := range srv.plugins {
 		go plg.Work(ctx)
@@ -107,7 +100,24 @@ func Mock(options ...Option) (srv *Mocker) {
 	if err := srv.DatabaseModule.RawDB.Ping(); err != nil {
 		srv.Logger.Debug("database died", "error", err)
 		srv = nil
-		return
+		return nil
+	}
+
+	return srv
+}
+
+func Mock(options ...Option) (srv *Mocker) {
+
+	srv = &Mocker{
+		header:  make(map[string]string),
+		options: options,
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	srv.Server = RecreateServer(ctx, options...)
+
+	if srv.Server == nil {
+		cancel()
+		panic("create failed")
 	}
 
 	srv.cancel = cancel
@@ -477,4 +487,33 @@ func (mocker *Mocker) DropMock() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (mocker *MockerContext) ResetServerInstance() *MockerContext {
+	copied := new(MockerContext)
+	*copied = *mocker
+	copied.Mocker = new(Mocker)
+	*copied.Mocker = *mocker.Mocker
+
+	ctx, cancel := context.WithCancel(context.Background())
+	copied.Server = RecreateServer(ctx, copied.options...)
+
+	if copied.Server == nil {
+		cancel()
+		panic("create failed")
+	}
+
+	copied.cancel = cancel
+	return copied
+}
+
+func (mocker *Mocker) Main(doSomething func()) {
+	defer func() {
+		if err := recover(); err != nil {
+			sugar.PrintStack()
+			mocker.Logger.Error("panic", "error", err)
+		}
+		mocker.ReleaseMock()
+	}()
+	doSomething()
 }

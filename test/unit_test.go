@@ -5,26 +5,49 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
+	"github.com/Myriad-Dreamin/boj-v6/test/tester"
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
 	"hash/crc32"
 	"strings"
 	"testing"
 )
 
-func TestCRUDUnit(t *testing.T) {
-	g := unittest.Load("test.crud.yaml", false, unittest.V1Opt)
-	runUnitTest(t, g.TestCases)
+func runUnitTest(ctx *tester.Context, ts []*unittest.TestCase) {
+	runUnitTestCB(ctx, func() {}, ts)
 }
 
-func TestProblemUnit(t *testing.T) {
-	g := unittest.Load("problem_test.yaml", false, unittest.V1Opt)
-	runUnitTest(t, g.TestCases)
+func runUnitTestFileIsolated(t *testing.T, fileName string, options ...interface{}) {
+	var (
+		optionCallback func()
+		optionInitFunc func(ctx *tester.Context)
+	)
+
+	for _, o := range options {
+		switch o := o.(type) {
+		case func():
+			optionCallback = o
+		case func(ctx *tester.Context):
+			optionInitFunc = o
+		}
+	}
+
+	srv.Context(t).ResetServerInstance().Main(func(ctx *tester.Context) {
+		g := unittest.Load(fileName, false, unittest.V1Opt)
+		if optionInitFunc != nil {
+			optionInitFunc(ctx)
+		}
+
+		if optionCallback != nil {
+			runUnitTestCB(ctx, optionCallback, g.TestCases)
+		} else {
+			runUnitTest(ctx, g.TestCases)
+		}
+	})
 }
 
-func TestUnit(t *testing.T) {
-	g := unittest.Load("test.yaml", false, unittest.V1Opt)
-	runUnitTest(t, g.TestCases)
-}
+func TestCRUDUnit(t *testing.T)    { runUnitTestFileIsolated(t, "test.crud.yaml") }
+func TestProblemUnit(t *testing.T) { runUnitTestFileIsolated(t, "problem_test.yaml") }
+func TestUnit(t *testing.T)        { runUnitTestFileIsolated(t, "test.yaml") }
 
 func mapConvertString(f func(interface{}) string, x []interface{}) (s []string) {
 	s = make([]string, len(x))
@@ -34,11 +57,7 @@ func mapConvertString(f func(interface{}) string, x []interface{}) (s []string) 
 	return
 }
 
-func runUnitTest(t *testing.T, ts []*unittest.TestCase) {
-	runUnitTestCB(t, func() {}, ts)
-}
-
-func runUnitTestCB(t *testing.T, cb func(), ts []*unittest.TestCase) {
+func runUnitTestCB(ctx *tester.Context, cb func(), ts []*unittest.TestCase) {
 	for _, tt := range ts {
 		if tt.Abstract {
 			continue
@@ -49,12 +68,11 @@ func runUnitTestCB(t *testing.T, cb func(), ts []*unittest.TestCase) {
 		s := crc32.NewIEEE()
 		_, err := s.Write([]byte(tt.Name + "." + tt.Path))
 		if err != nil {
-			t.Error(err)
+			ctx.Error(err)
 		}
 		characteristic := s.Sum32()
-		t.Run(tt.Name+"."+tt.Path, func(t *testing.T) {
+		ctx.T.Run(tt.Name+"."+tt.Path, func(t *testing.T) {
 			characteristic := characteristic
-			ctx := srv.Context(t)
 			method, ok := tt.Meta[unittest.MetaHTTPMethod]
 			if !ok {
 				method, ok = tt.Meta[unittest.MetaMethod]

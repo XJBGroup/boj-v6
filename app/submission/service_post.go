@@ -173,18 +173,23 @@ func (svc Service) PostSubmission(c controller.MContext) {
 
 func WriteToFileSystem(directory string, fullPath string, code string) (err error) {
 
-	if _, err = os.Stat(directory); err != nil && !os.IsExist(err) {
-		err = os.Mkdir(directory, 0777)
-		if err != nil {
-			return err
+	if _, err = os.Stat(directory); err != nil {
+		if !os.IsNotExist(err) {
+			return nil
 		}
-		err = os.Chmod(directory, 0777)
+
+		// todo: 处于安全考虑，需要合理商量控制一下perm
+		err = os.Mkdir(directory, 0777)
 		if err != nil {
 			return err
 		}
 	}
 
-	if _, err = os.Stat(fullPath); err != nil && !os.IsExist(err) {
+	if _, err = os.Stat(fullPath); err != nil {
+		if !os.IsNotExist(err) {
+			return nil
+		}
+
 		var f *os.File
 		f, err = os.Create(fullPath)
 		if err != nil {

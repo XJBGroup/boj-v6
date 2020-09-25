@@ -8,6 +8,7 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/deployment/database"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/boj-v6/lib/control"
+	"github.com/Myriad-Dreamin/boj-v6/lib/deepcopy"
 	"github.com/Myriad-Dreamin/boj-v6/lib/jwt"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/plugin"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
@@ -23,6 +24,7 @@ import (
 )
 
 type Server struct {
+	Name         string
 	Cfg          *config.ServerConfig
 	Logger       external.Logger
 	LoggerWriter io.Writer
@@ -71,6 +73,13 @@ type OptionModule struct {
 	Module module.Module
 }
 
+type OptionName struct {
+	OptionImpl
+	Name string
+}
+
+type CopyOptionModule OptionModule
+
 func newServer(options []Option) *Server {
 	srv := NewServer()
 
@@ -84,6 +93,14 @@ func newServer(options []Option) *Server {
 			srv.Module = option.Module
 		case *OptionModule:
 			srv.Module = option.Module
+		case CopyOptionModule:
+			srv.Module = deepcopy.DeepCopy(option.Module).(module.Module)
+		case *CopyOptionModule:
+			srv.Module = deepcopy.DeepCopy(option.Module).(module.Module)
+		case OptionName:
+			srv.Name = option.Name
+		case *OptionName:
+			srv.Name = option.Name
 		}
 	}
 
@@ -93,6 +110,10 @@ func newServer(options []Option) *Server {
 
 	if srv.LoggerWriter == nil {
 		srv.LoggerWriter = os.Stdout
+	}
+
+	if len(srv.Name) == 0 {
+		srv.Name = "BOJ-v6"
 	}
 
 	//srv.RouterProvider = router.NewProvider(config.ModulePath.Provider.Router)

@@ -4,13 +4,16 @@ import (
 	unwrap_func_sqlite "github.com/Myriad-Dreamin/boj-v6/lib/unwrap_func/sqlite"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
 	"github.com/Myriad-Dreamin/boj-v6/test/tester"
+	"github.com/Myriad-Dreamin/minimum-lib/crypto"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
+	"golang.org/x/crypto/bcrypt"
 	"os"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
+	crypto.SetCost(bcrypt.MinCost)
 
 	serverModule := make(module.Module)
 	unwrap_func_sqlite.Register(serverModule)
@@ -20,7 +23,7 @@ func TestMain(m *testing.M) {
 			server.OptionRouterLoggerWriter{
 				Writer: logFile,
 			},
-			server.OptionModule{
+			server.CopyOptionModule{
 				Module: serverModule,
 			},
 		}

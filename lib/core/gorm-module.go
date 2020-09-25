@@ -1,11 +1,12 @@
 package mcore
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	core_cfg "github.com/Myriad-Dreamin/boj-v6/lib/core-cfg"
 	"github.com/Myriad-Dreamin/minimum-lib/module"
 	"github.com/jinzhu/gorm"
-	"log"
 )
 
 type GormModule struct {
@@ -114,15 +115,23 @@ func OpenGORM(dep module.Module) (*gorm.DB, error) {
 	return db, nil
 }
 
+func NewUUID() ([]byte, error) {
+	var dest = make([]byte, 16)
+	if _, err := rand.Read(dest); err != nil {
+		return nil, err
+	}
+	return dest, nil
+}
+
 func MockGORM(_ module.Module) (*gorm.DB, error) {
-	db, err := gorm.Open("sqlite3", "file::memory:?cache=shared")
+	uuid, err := NewUUID()
 	if err != nil {
 		return nil, err
 	}
-	sSql := "PRAGMA journal_mode=WAL"
-	_, err = db.DB().Exec(sSql)
+
+	db, err := gorm.Open("sqlite3", "file:"+hex.EncodeToString(uuid)+".db?mode=memory&cache=shared")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return db, nil

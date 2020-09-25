@@ -160,7 +160,7 @@ func MaybeGetRawDataError(c controller.MContext, err error) bool {
 
 func MaybeCountError(c controller.MContext, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeSelectError,
 			ErrorS: err.Error(),
 		})
@@ -227,7 +227,7 @@ func MaybeSelectErrorWithTip(c controller.MContext, anyObj interface{}, err erro
 
 func MaybeMissingError(c controller.MContext, has bool, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeSelectError,
 			ErrorS: err.Error(),
 		})
@@ -245,7 +245,7 @@ func MaybeMissingError(c controller.MContext, has bool, err error) bool {
 
 func MaybeMissingErrorWithTip(c controller.MContext, has bool, err error, missError string) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeSelectError,
 			ErrorS: err.Error(),
 		})
@@ -263,7 +263,7 @@ func MaybeMissingErrorWithTip(c controller.MContext, has bool, err error, missEr
 }
 func MaybeOnlySelectError(c controller.MContext, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeSelectError,
 			ErrorS: err.Error(),
 		})
@@ -298,7 +298,7 @@ func CreateObj(c controller.MContext, checker func(err error) types.ServiceCode,
 		if CheckInsertError(c, checker, err) {
 			return false
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeInsertError,
 			ErrorS: err.Error(),
 		})
@@ -317,7 +317,7 @@ func CreateObjWithTip(c controller.MContext, checker func(err error) types.Servi
 		if CheckInsertError(c, checker, err) {
 			return false
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeInsertError,
 			ErrorS: "create " + tip + " failed: " + err.Error(),
 		})
@@ -343,7 +343,7 @@ func UpdateObj(c controller.MContext, checker func(err error) types.ServiceCode,
 		if CheckInsertError(c, checker, err) {
 			return false
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeUpdateError,
 			ErrorS: err.Error(),
 		})
@@ -359,7 +359,7 @@ func UpdateObj(c controller.MContext, checker func(err error) types.ServiceCode,
 
 func UpdateFields(c controller.MContext, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeUpdateError,
 			ErrorS: err.Error(),
 		})

@@ -9,7 +9,7 @@ import (
 
 func ResetPassword(c controller.MContext, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeUpdateError,
 			ErrorS: err.Error(),
 		})
@@ -20,7 +20,7 @@ func ResetPassword(c controller.MContext, err error) bool {
 
 func AuthenticatePassword(c controller.MContext, ok bool, err error) bool {
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeAuthenticatePasswordError,
 			ErrorS: err.Error(),
 		})

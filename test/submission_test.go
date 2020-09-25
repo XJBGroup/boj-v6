@@ -3,10 +3,11 @@ package tests
 import (
 	"context"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
-	"github.com/Myriad-Dreamin/boj-v6/lib/unittest"
+	"github.com/Myriad-Dreamin/boj-v6/test/tester"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 type handler struct {
@@ -21,27 +22,34 @@ func (h *handler) HandlePostSubmission(ctx context.Context, e submission.PostEve
 }
 
 func TestSubmissionUnit(t *testing.T) {
-	subscriber := srv.Module.RequireImpl(new(submission.Subscriber)).(submission.Subscriber)
+	var (
+		db submission.DB
+		ch chan *submission.Submission
+	)
 
-	ch := make(chan *submission.Submission, 5)
-	db := srv.Module.RequireImpl(new(submission.DB)).(submission.DB)
-	subscriber.AddPostSubmissionHandler(&handler{
-		ch: ch, t: t})
+	runUnitTestFileIsolated(t, "submission_test.yaml",
+		func(ctx *tester.Context) {
 
-	g := unittest.Load("submission_test.yaml", false, unittest.V1Opt)
-	runUnitTestCB(t, func() {
-		select {
-		case s := <-ch:
-			if s.ID == 1 {
-				s.Status = types.StatusAccepted
+			subscriber := ctx.Module.RequireImpl(new(submission.Subscriber)).(submission.Subscriber)
 
-				aff, err := db.UpdateFields(s, []string{"status"})
-				assert.Equal(t, int64(1), aff)
-				assert.NoError(t, err, aff)
+			ch = make(chan *submission.Submission, 5)
+			db = ctx.Module.RequireImpl(new(submission.DB)).(submission.DB)
+			subscriber.AddPostSubmissionHandler(&handler{
+				ch: ch, t: t})
+		},
+		func() {
+			time.Sleep(time.Millisecond)
+			select {
+			case s := <-ch:
+				if s.ID == 1 {
+					s.Status = types.StatusAccepted
+
+					aff, err := db.UpdateFields(s, []string{"status"})
+					assert.Equal(t, int64(1), aff)
+					assert.NoError(t, err, aff)
+				}
+			default:
+
 			}
-		default:
-
-		}
-
-	}, g.TestCases)
+		})
 }

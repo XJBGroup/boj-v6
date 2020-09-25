@@ -63,20 +63,21 @@ func getFields(scope *gorm.Scope) []*gorm.Field {
 		isStruct           = indirectScopeValue.Kind() == reflect.Struct
 	)
 
+	// offset = 8 + 24 * 7 = 176
 	search := *(*map[string]interface{})(
 		unsafe.Pointer(uintptr(unsafe.Pointer(scope.Search)) + 176))
-	var querys searchable
+	var queries searchable
 	if search != nil {
 		var v = search["query"]
 		if v != nil {
-			querys = serialSearchContainer(v.([]string))
+			queries = serialSearchContainer(v.([]string))
 
-			if querys.Len() > 10 {
+			if queries.Len() > 10 {
 				var oq = make(map[string]bool)
 				for _, vv := range v.([]string) {
 					oq[vv] = true
 				}
-				querys = mapSearchContainer(oq)
+				queries = mapSearchContainer(oq)
 			}
 		}
 	}
@@ -91,13 +92,13 @@ func getFields(scope *gorm.Scope) []*gorm.Field {
 				fieldValue = reflect.Indirect(fieldValue).FieldByName(name)
 			}
 
-			if querys == nil || querys.Search(structField.DBName) {
+			if queries == nil || queries.Search(structField.DBName) {
 				fields = append(fields, &gorm.Field{StructField: structField, Field: fieldValue})
 			}
 		}
 	} else {
 		for _, structField := range scope.GetModelStruct().StructFields {
-			if querys == nil || querys.Search(structField.DBName) {
+			if queries == nil || queries.Search(structField.DBName) {
 				fields = append(fields, &gorm.Field{StructField: structField, IsBlank: true})
 			}
 		}
@@ -172,7 +173,7 @@ func init() {
 	// hack terrible assign_updating_attributes impl of callback
 	gorm.DefaultCallback.Update().Remove("gorm:assign_updating_attributes")
 	gorm.DefaultCallback.Update().Before("after_create1").Register(
-		"gorm:begin_transaction", func(scope *gorm.Scope) {
+		"gorm:assign_updating_attributes", func(scope *gorm.Scope) {
 			if attrs, ok := scope.InstanceGet("gorm:update_interface"); ok {
 				if updateMaps, hasUpdate := updatedAttrsWithValues(scope, attrs); hasUpdate {
 					scope.InstanceSet("gorm:update_attrs", updateMaps)

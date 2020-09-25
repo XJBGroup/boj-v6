@@ -148,7 +148,7 @@ func (svc Service) GetProblem(c controller.MContext) {
 		}
 		err = svc.descDB.LoadDesc(pd)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
+			c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
 				Code:   types.CodeSelectError,
 				ErrorS: err.Error(),
 			})
@@ -158,7 +158,7 @@ func (svc Service) GetProblem(c controller.MContext) {
 		p.Description = string(pd.Content)
 		err = svc.descDB.ReleaseDesc(pd)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, serial.ErrorSerializer{
+			c.AbortWithStatusJSON(http.StatusOK, serial.ErrorSerializer{
 				Code:   types.CodeSelectError,
 				ErrorS: err.Error(),
 			})
