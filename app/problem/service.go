@@ -88,45 +88,28 @@ func (svc Service) PutProblem(c controller.MContext) {
 	}
 }
 
+// FillPutFields can update problem's `Title` and `DescriptionRef`.
+//
+// The remain columns, such as `Description`, `TimeLimit`, `MemoryLimit`, `CodeLengthLimit`,
+// `IsSpj`, are all Legacy Column in Database.
+//
+// If you want to change default description template, please update the field `DescriptionRef`.
+// If you want to change others, please update them in configuration file.
 func (svc *Service) FillPutFields(problem *problem.Problem, req *api.PutProblemRequest) (fields []string) {
-	// todo: update request fields
 	if len(req.Title) != 0 {
 		problem.Title = req.Title
 		fields = append(fields, "title")
 	}
-	//if len(req.Description) != 0 {
-	//	problem.Description = req.Description
-	//	fields = append(fields, "description")
-	//}
 	if len(req.DescriptionRef) != 0 {
 		problem.DescriptionRef = req.DescriptionRef
 		fields = append(fields, "description_ref")
 	}
 
-	//if req.TimeLimit != 0 {
-	//	problem.TimeLimit = req.TimeLimit
-	//	fields = append(fields, "time-limit")
-	//}
-	//
-	//if req.MemoryLimit != 0 {
-	//	problem.MemoryLimit = req.MemoryLimit
-	//	fields = append(fields, "memory-limit")
-	//}
-	//
-	//if req.CodeLengthLimit != 0 {
-	//	problem.CodeLengthLimit = req.CodeLengthLimit
-	//	fields = append(fields, "code_length-limit")
-	//}
-	//
-	//if req.UpdateSpj {
-	//	problem.IsSpj = req.IsSpj
-	//	fields = append(fields, "is-spj")
-	//}
-
 	return
 }
 
 func (svc Service) GetProblem(c controller.MContext) {
+
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -165,6 +148,8 @@ func (svc Service) GetProblem(c controller.MContext) {
 			return
 		}
 	}
+
+	// todo: fill configuration from filesystem
 
 	c.JSON(http.StatusOK, api.SerializeGetProblemReply(types.CodeOK,
 		api.SerializeGetProblemData(p, api.SerializeGetProblemAuthorData(author))))

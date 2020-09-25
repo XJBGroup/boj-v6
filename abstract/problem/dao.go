@@ -13,4 +13,5 @@ type DB interface {
 	Count() (int64, error)
 
 	ID(id uint) (*Problem, error)
+	HasByPID(pid uint) (exists bool, err error)
 }

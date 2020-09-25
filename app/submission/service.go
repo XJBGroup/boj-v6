@@ -109,6 +109,8 @@ func (svc *Service) DeleteSubmission(c controller.MContext) {
 		return
 	}
 
+	// todo: check remove all files
+
 	var path = filepath.Join(svc.cfg.PathConfig.CodePath, obj.Hash)
 	if _, err = os.Stat(path); err == nil {
 		err = os.RemoveAll(path)

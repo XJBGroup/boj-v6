@@ -67,8 +67,9 @@ func DescribeContestService() artisan.ProposingService {
 							&contestModel.ID, &contestModel.Title, &contestModel.StartAt, &contestModel.CreatedAt,
 							&contestModel.BoardFrozenDuration, &contestModel.EndDuration, &contestModel.Description,
 							&contestModel.AuthorID, &contestModel.ContestType),
-					),
-					))).
+					)),
+				),
+			).
 			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
 				Method(artisan.GET, "ListContestUsers",
 					artisan.Request(),

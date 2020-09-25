@@ -6,15 +6,15 @@ import (
 )
 
 type ListSubmissionRequest struct {
-	Page         int   `json:"page" form:"page"`
+	Page         int   `form:"page" json:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
 	OnProblem    uint  `json:"on_problem" form:"on_problem"`
-	WithLanguage uint8 `form:"with_language" json:"with_language"`
-	HasStatus    int64 `form:"has_status" json:"has_status"`
+	WithLanguage uint8 `json:"with_language" form:"with_language"`
+	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
 
 type ListSubmissionReply struct {
@@ -25,7 +25,7 @@ type ListSubmissionReply struct {
 type ListSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `form:"created_at" json:"created_at"`
-	ProblemId  uint      `json:"problem_id" form:"problem_id"`
+	ProblemId  uint      `form:"problem_id" json:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
@@ -38,19 +38,19 @@ type ListSubmissionInnerReply struct {
 
 type CountSubmissionRequest struct {
 	Page         int   `json:"page" form:"page"`
-	PageSize     int   `json:"page_size" form:"page_size"`
-	MemOrder     *bool `form:"mem_order" json:"mem_order"`
-	TimeOrder    *bool `json:"time_order" form:"time_order"`
+	PageSize     int   `form:"page_size" json:"page_size"`
+	MemOrder     *bool `json:"mem_order" form:"mem_order"`
+	TimeOrder    *bool `form:"time_order" json:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
-	OnProblem    uint  `json:"on_problem" form:"on_problem"`
+	OnProblem    uint  `form:"on_problem" json:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
 	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
 
 type CountSubmissionReply struct {
-	Code int   `form:"code" json:"code"`
-	Data int64 `form:"data" json:"data"`
+	Code int   `json:"code" form:"code"`
+	Data int64 `json:"data" form:"data"`
 }
 
 type PostSubmissionRequest struct {
@@ -58,23 +58,23 @@ type PostSubmissionRequest struct {
 	Information string `json:"information" form:"information"`
 	Shared      uint8  `json:"shared" form:"shared"`
 	Language    string `json:"language" form:"language" binding:"required"`
-	Code        string `json:"code" form:"code" binding:"required"`
+	Code        string `binding:"required" json:"code" form:"code"`
 }
 
 type PostSubmissionReply struct {
-	Code int                `form:"code" json:"code"`
+	Code int                `json:"code" form:"code"`
 	Data PostSubmissionData `json:"data" form:"data"`
 }
 
 type PostSubmissionData struct {
-	Id uint `form:"id" json:"id"`
+	Id uint `json:"id" form:"id"`
 }
 
 type GetSubmissionContentRequest struct {
 }
 
 type GetSubmissionContentReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type GetSubmissionRequest struct {

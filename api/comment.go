@@ -38,7 +38,7 @@ type GetCommentReply struct {
 
 type PutCommentRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PutCommentReply struct {

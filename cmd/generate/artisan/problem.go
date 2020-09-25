@@ -66,67 +66,8 @@ func getPostProblemCate(prefix string) artisan.Category {
 		)
 }
 
-func getProblemIDCate(prefix string) artisan.Category {
-
-	var problemDescObject = artisan.Object(prefix+"ProblemDescData",
-		artisan.SnakeParam(&problemDescModel.Name),
-		artisan.SnakeParam(&problemDescModel.UpdatedAt),
-	)
-
-	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
-	return artisan.Ink().
-		Path("problem/:pid").Meta(&Meta{artisan.RouterMeta{
-		RuntimeRouterMeta: "problem:pid",
-	}}).
-		Method(artisan.GET, "Get"+prefix+"Problem",
-			artisan.Request(),
-			StdReply(artisan.Object(
-				"Get"+prefix+"ProblemData",
-				artisan.SnakeParam(&problemModel.ID),
-				artisan.SnakeParam(&problemModel.CreatedAt),
-				artisan.SnakeParam(&problemModel.UpdatedAt),
-				artisan.SnakeParam(&problemModel.IsSpj),
-				artisan.SnakeParam(&problemModel.Title),
-				artisan.SnakeParam(&problemModel.Description),
-				artisan.SnakeParam(&problemModel.DescriptionRef),
-				artisan.SnakeParam(&problemModel.TimeLimit),
-				artisan.SnakeParam(&problemModel.MemoryLimit),
-				artisan.SnakeParam(&problemModel.CodeLengthLimit),
-				artisan.Param("author",
-					artisan.Object(
-						"Get"+prefix+"ProblemAuthorData",
-						artisan.SnakeParam(&problemUserModel.ID),
-						artisan.SnakeParam(&problemUserModel.NickName),
-					),
-				),
-			)),
-		).
-		Method(artisan.PUT, "Put"+prefix+"Problem",
-			artisan.Request(
-				artisan.SPsC(&problemModel.Title, &problemModel.Description, &problemModel.DescriptionRef),
-			),
-			artisan.Reply(codeField),
-		).
-		Method(artisan.DELETE, "Delete"+prefix+"Problem",
-			artisan.Request(),
-			artisan.Reply(codeField),
-		).
-		SubCate("/desc-list", artisan.Ink().WithName("List"+prefix+"ProblemDesc").
-			Method(artisan.GET, "List"+prefix+"ProblemDesc",
-				artisan.QT("List"+prefix+"ProblemDescRequest", mytraits.Filter{}),
-				artisan.Reply(
-					codeField,
-					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
-			),
-		).
-		SubCate("/desc-count", artisan.Ink().WithName("Count"+prefix+"ProblemDesc").
-			Method(artisan.GET, "Count"+prefix+"ProblemDesc",
-				artisan.QT("Count"+prefix+"ProblemDescRequest", mytraits.Filter{}),
-				artisan.Reply(
-					codeField,
-					artisan.Param("data", artisan.Int64)),
-			),
-		).
+func wrapProblemDescToCate(cat artisan.Category, prefix string) artisan.Category {
+	return cat.
 		SubCate("/desc", artisan.Ink().WithName("ProblemDesc").
 			Method(artisan.POST, "Post"+prefix+"ProblemDesc",
 				artisan.Request(
@@ -168,14 +109,226 @@ func getProblemIDCate(prefix string) artisan.Category {
 		)
 }
 
+func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category {
+	// todo: problem fs boj/blob/master/server/router/problem-router.go#L134
+	return cate.
+		SubCate("/fs", artisan.Ink().WithName("ProblemFS").
+			SubCate("file", artisan.Ink().WithName(prefix+"ProblemFSFileOperation").
+				Method(artisan.GET, prefix+"ProblemFSStat",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSStatInnerReply",
+							artisan.Param("name", artisan.String),
+							artisan.Param("size", artisan.Int64),
+							artisan.Param("is_dir", artisan.Bool),
+							artisan.Param("mod_time", artisan.Time),
+						)),
+					),
+				).
+				Method(artisan.POST, prefix+"ProblemFSWrite",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSWriteInnerReply")),
+					),
+				).
+				Method(artisan.DELETE, prefix+"ProblemFSRemove",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSRemoveInnerReply")),
+					),
+				).
+				SubCate("content", artisan.Ink().WithName(prefix+"ProblemFSRead").
+					Method(artisan.GET, prefix+"ProblemFSRead",
+						artisan.Request(
+							artisan.Param("path", artisan.String, required),
+						),
+						artisan.Reply(
+							codeField,
+							artisan.Param("data", artisan.Object(prefix+"ProblemFSReadInnerReply")),
+						),
+					)),
+			).
+			SubCate("directory", artisan.Ink().WithName(prefix+"ProblemFSDirectoryOperation").
+				Method(artisan.GET, prefix+"ProblemFSLS",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.ArrayParam(artisan.Param("data", artisan.Object(prefix+"ProblemFSLSInnerReply",
+							artisan.Param("name", artisan.String),
+							artisan.Param("size", artisan.Int64),
+							artisan.Param("is_dir", artisan.Bool),
+							artisan.Param("mod_time", artisan.Time),
+						))),
+					),
+				).
+				Method(artisan.POST, prefix+"ProblemFSWrites",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSWritesInnerReply")),
+					),
+				).
+				Method(artisan.PUT, prefix+"ProblemFSMkdir",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSMkdirInnerReply")),
+					),
+				).
+				Method(artisan.DELETE, prefix+"ProblemFSRemoveAll",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSRemoveAllInnerReply")),
+					),
+				).
+				SubCate("content", artisan.Ink().WithName(prefix+"ProblemFSZipRead").
+					Method(artisan.GET, prefix+"ProblemFSZipRead",
+						artisan.Request(
+							artisan.Param("path", artisan.String, required),
+						),
+						artisan.Reply(
+							codeField,
+							artisan.Param("data", artisan.Object(prefix+"ProblemFSZipReadInnerReply")),
+						),
+					)),
+			).
+			SubCate("config", artisan.Ink().WithName(prefix+"ProblemFSConfigOperation").
+				Method(artisan.GET, prefix+"ProblemFSReadConfig",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSReadConfigInnerReply")),
+					),
+				).
+				Method(artisan.POST, prefix+"ProblemFSWriteConfig",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSWriteConfigInnerReply")),
+					),
+				).
+				Method(artisan.PUT, prefix+"ProblemFSPutConfig",
+					artisan.Request(
+						artisan.Param("path", artisan.String, required),
+					),
+					artisan.Reply(
+						codeField,
+						artisan.Param("data", artisan.Object(prefix+"ProblemFSPutConfigInnerReply")),
+					),
+				),
+			),
+		// todo testcases
+		//.
+		//SubCate("write-testcases", artisan.Ink().WithName(prefix+"ProblemFSWriteTestCases").
+		//	Method(artisan.POST, prefix+"ProblemFSWriteTestCases",
+		//		artisan.Request(
+		//			artisan.Param("path", artisan.String, required),
+		//		),
+		//		artisan.Reply(
+		//			codeField,
+		//			artisan.Param("data", artisan.Object(prefix+"ProblemFSWriteTestCasesInnerReply",
+		//			)),
+		//		),
+		//	)).
+		)
+}
+
+func getProblemIDCate(prefix string) artisan.Category {
+
+	var problemDescObject = artisan.Object(prefix+"ProblemDescData",
+		artisan.SnakeParam(&problemDescModel.Name),
+		artisan.SnakeParam(&problemDescModel.UpdatedAt),
+	)
+
+	cate := artisan.Ink().
+		Path("problem/:pid").Meta(&Meta{artisan.RouterMeta{
+		RuntimeRouterMeta: "problem:pid",
+	}}).
+		Method(artisan.GET, "Get"+prefix+"Problem",
+			artisan.Request(),
+			StdReply(artisan.Object(
+				"Get"+prefix+"ProblemData",
+				artisan.SnakeParam(&problemModel.ID),
+				artisan.SnakeParam(&problemModel.CreatedAt),
+				artisan.SnakeParam(&problemModel.UpdatedAt),
+				artisan.SnakeParam(&problemModel.IsSpj),
+				artisan.SnakeParam(&problemModel.Title),
+				artisan.SnakeParam(&problemModel.Description),
+				artisan.SnakeParam(&problemModel.DescriptionRef),
+				artisan.SnakeParam(&problemModel.TimeLimit),
+				artisan.SnakeParam(&problemModel.MemoryLimit),
+				artisan.SnakeParam(&problemModel.CodeLengthLimit),
+				artisan.Param("author",
+					artisan.Object(
+						"Get"+prefix+"ProblemAuthorData",
+						artisan.SnakeParam(&problemUserModel.ID),
+						artisan.SnakeParam(&problemUserModel.NickName),
+					),
+				),
+			)),
+		).
+		Method(artisan.PUT, "Put"+prefix+"Problem",
+			artisan.Request(
+				artisan.SPsC(&problemModel.Title, &problemModel.DescriptionRef),
+			),
+			artisan.Reply(codeField),
+		).
+		Method(artisan.DELETE, "Delete"+prefix+"Problem",
+			artisan.Request(),
+			artisan.Reply(codeField),
+		).
+		SubCate("/desc-list", artisan.Ink().WithName("List"+prefix+"ProblemDesc").
+			Method(artisan.GET, "List"+prefix+"ProblemDesc",
+				artisan.QT("List"+prefix+"ProblemDescRequest", mytraits.Filter{}),
+				artisan.Reply(
+					codeField,
+					artisan.ArrayParam(artisan.Param("data", problemDescObject))),
+			),
+		).
+		SubCate("/desc-count", artisan.Ink().WithName("Count"+prefix+"ProblemDesc").
+			Method(artisan.GET, "Count"+prefix+"ProblemDesc",
+				artisan.QT("Count"+prefix+"ProblemDescRequest", mytraits.Filter{}),
+				artisan.Reply(
+					codeField,
+					artisan.Param("data", artisan.Int64)),
+			),
+		)
+	return wrapProblemDescToCate(cate, prefix)
+}
+
 func DescribeProblemService() artisan.ProposingService {
 
 	svc := &ProblemCategories{
-		List:    getListProblemCate(""),
-		Count:   getCountProblemCate(""),
-		Post:    getPostProblemCate(""),
-		IdGroup: getProblemIDCate(""),
+		List:  getListProblemCate(""),
+		Count: getCountProblemCate(""),
+		Post:  getPostProblemCate(""),
 	}
+
+	svc.IdGroup = getProblemIDCate("")
+	svc.IdGroup = wrapProblemFSToCate(svc.IdGroup, "")
+
 	svc.Name("ProblemService").
 		UseModel(
 			artisan.Model(artisan.Name("problem"), &problemModel),
