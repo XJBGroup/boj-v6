@@ -6,7 +6,7 @@ import (
 )
 
 type ListSubmissionRequest struct {
-	Page         int   `form:"page" json:"page"`
+	Page         int   `json:"page" form:"page"`
 	PageSize     int   `json:"page_size" form:"page_size"`
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
@@ -23,46 +23,46 @@ type ListSubmissionReply struct {
 }
 
 type ListSubmissionInnerReply struct {
-	Id         uint      `json:"id" form:"id"`
-	CreatedAt  time.Time `form:"created_at" json:"created_at"`
-	ProblemId  uint      `form:"problem_id" json:"problem_id"`
+	Id         uint      `form:"id" json:"id"`
+	CreatedAt  time.Time `json:"created_at" form:"created_at"`
+	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
-	CodeLength int       `json:"code_length" form:"code_length"`
+	CodeLength int       `form:"code_length" json:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
-	Shared     uint8     `json:"shared" form:"shared"`
+	Shared     uint8     `form:"shared" json:"shared"`
 }
 
 type CountSubmissionRequest struct {
 	Page         int   `json:"page" form:"page"`
-	PageSize     int   `form:"page_size" json:"page_size"`
+	PageSize     int   `json:"page_size" form:"page_size"`
 	MemOrder     *bool `json:"mem_order" form:"mem_order"`
-	TimeOrder    *bool `form:"time_order" json:"time_order"`
+	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `json:"id_order" form:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
-	OnProblem    uint  `form:"on_problem" json:"on_problem"`
+	OnProblem    uint  `json:"on_problem" form:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
 	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
 
 type CountSubmissionReply struct {
 	Code int   `json:"code" form:"code"`
-	Data int64 `json:"data" form:"data"`
+	Data int64 `form:"data" json:"data"`
 }
 
 type PostSubmissionRequest struct {
 	Pid         uint   `json:"pid" form:"pid" route-param:"-"`
 	Information string `json:"information" form:"information"`
-	Shared      uint8  `json:"shared" form:"shared"`
+	Shared      uint8  `form:"shared" json:"shared"`
 	Language    string `json:"language" form:"language" binding:"required"`
-	Code        string `binding:"required" json:"code" form:"code"`
+	Code        string `json:"code" form:"code" binding:"required"`
 }
 
 type PostSubmissionReply struct {
-	Code int                `json:"code" form:"code"`
+	Code int                `form:"code" json:"code"`
 	Data PostSubmissionData `json:"data" form:"data"`
 }
 
@@ -74,7 +74,7 @@ type GetSubmissionContentRequest struct {
 }
 
 type GetSubmissionContentReply struct {
-	Code int `form:"code" json:"code"`
+	Code int `json:"code" form:"code"`
 }
 
 type GetSubmissionRequest struct {
@@ -82,19 +82,19 @@ type GetSubmissionRequest struct {
 
 type GetSubmissionReply struct {
 	Code int                     `json:"code" form:"code"`
-	Data GetSubmissionInnerReply `json:"data" form:"data"`
+	Data GetSubmissionInnerReply `form:"data" json:"data"`
 }
 
 type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
-	CreatedAt  time.Time `json:"created_at" form:"created_at"`
+	CreatedAt  time.Time `form:"created_at" json:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
-	CodeLength int       `json:"code_length" form:"code_length"`
+	CodeLength int       `form:"code_length" json:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
 }

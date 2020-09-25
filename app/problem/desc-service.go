@@ -12,7 +12,7 @@ import (
 
 func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	var req = new(api.ChangeProblemDescriptionRefRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -42,7 +42,7 @@ func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	e = svc.descDB.LoadDesc(obj)
 	if e != nil {
 		snippet.DoRollback(rollbacks)
-		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescLoadError,
 			ErrorS: e.Error(),
 		})
@@ -54,7 +54,7 @@ func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	e = svc.descDB.SaveDesc(obj)
 	if e != nil {
 		snippet.DoRollback(rollbacks)
-		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescSaveError,
 			ErrorS: e.Error(),
 		})
@@ -75,7 +75,7 @@ func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	e = svc.descDB.DeleteDesc(obj)
 	if e != nil {
 		snippet.DoRollback(rollbacks)
-		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescDeleteError,
 			ErrorS: e.Error(),
 		})
@@ -87,7 +87,7 @@ func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 
 func (svc *Service) PostProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -125,7 +125,7 @@ func (svc *Service) PostProblemDesc(c controller.MContext) {
 
 func (svc *Service) GetProblemDesc(c controller.MContext) {
 	var req = new(api.GetProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -156,7 +156,7 @@ func (svc *Service) GetProblemDesc(c controller.MContext) {
 
 func (svc *Service) PutProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -189,7 +189,7 @@ func (svc *Service) PutProblemDesc(c controller.MContext) {
 
 func (svc *Service) DeleteProblemDesc(c controller.MContext) {
 	var req = new(api.DeleteProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -212,7 +212,7 @@ func (svc *Service) DeleteProblemDesc(c controller.MContext) {
 				"affect", aff2, "error", snippet.ConvertErrorToString(err2))
 		}
 
-		c.JSON(http.StatusOK, &serial.ErrorSerializer{
+		c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
 			Code:   types.CodeProblemDescDeleteError,
 			ErrorS: err.Error(),
 		})
@@ -224,7 +224,7 @@ func (svc *Service) DeleteProblemDesc(c controller.MContext) {
 
 func (svc *Service) ListProblemDesc(c controller.MContext) {
 	var req = new(api.ListProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}
@@ -240,7 +240,7 @@ func (svc *Service) ListProblemDesc(c controller.MContext) {
 
 func (svc *Service) CountProblemDesc(c controller.MContext) {
 	var req = new(api.ListProblemDescRequest)
-	id, ok := snippet.ParseUintAndBind(c, "pid", req)
+	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
 	}

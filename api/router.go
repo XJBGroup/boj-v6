@@ -47,14 +47,14 @@ type GenerateRouterTraits interface {
 type RootRouter struct {
 	H
 	Root                *Router
-	CommentService      *CommentServiceRouter
-	SubmissionService   *SubmissionServiceRouter
 	ProblemService      *ProblemServiceRouter
 	ContestService      *ContestServiceRouter
 	GroupService        *GroupServiceRouter
 	UserService         *UserServiceRouter
 	AuthService         *AuthServiceRouter
 	AnnouncementService *AnnouncementServiceRouter
+	CommentService      *CommentServiceRouter
+	SubmissionService   *SubmissionServiceRouter
 	Ping                *LeafRouter
 	//Images   *LeafRouter
 	//Musics   *LeafRouter
@@ -85,257 +85,17 @@ func NewRootRouter(traits GenerateRouterTraits) (r *RootRouter) {
 
 	r.Ping = r.Root.GET("/ping", PingFunc)
 
-	r.CommentService = NewCommentServiceRouter(traits, r.H)
-	r.SubmissionService = NewSubmissionServiceRouter(traits, r.H)
 	r.ProblemService = NewProblemServiceRouter(traits, r.H)
 	r.ContestService = NewContestServiceRouter(traits, r.H)
 	r.GroupService = NewGroupServiceRouter(traits, r.H)
 	r.UserService = NewUserServiceRouter(traits, r.H)
 	r.AuthService = NewAuthServiceRouter(traits, r.H)
 	r.AnnouncementService = NewAnnouncementServiceRouter(traits, r.H)
+	r.CommentService = NewCommentServiceRouter(traits, r.H)
+	r.SubmissionService = NewSubmissionServiceRouter(traits, r.H)
 
 	traits.AfterBuild(r)
 	traits.ApplyAuth(r)
-	return
-}
-
-type CommentServiceRouter struct {
-	H
-	List    *CommentServiceListRouter
-	Count   *CommentServiceCountRouter
-	Post    *CommentServicePostRouter
-	IdGroup *CommentServiceIdGroupRouter
-}
-
-func NewCommentServiceRouter(traits GenerateRouterTraits, h H) (r *CommentServiceRouter) {
-	r = &CommentServiceRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Extend("CommentService"),
-			AuthRouter: h.GetAuthRouter().Extend("CommentService"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.List = NewCommentServiceListRouter(traits, r.H)
-	r.Count = NewCommentServiceCountRouter(traits, r.H)
-	r.Post = NewCommentServicePostRouter(traits, r.H)
-	r.IdGroup = NewCommentServiceIdGroupRouter(traits, r.H)
-
-	return
-}
-
-type CommentServiceListRouter struct {
-	H
-
-	ListComment *LeafRouter
-}
-
-func NewCommentServiceListRouter(traits GenerateRouterTraits, h H) (r *CommentServiceListRouter) {
-	r = &CommentServiceListRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment-list"),
-			AuthRouter: h.GetAuthRouter().Group("comment-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).ListComment)
-
-	return
-}
-
-type CommentServiceCountRouter struct {
-	H
-
-	CountComment *LeafRouter
-}
-
-func NewCommentServiceCountRouter(traits GenerateRouterTraits, h H) (r *CommentServiceCountRouter) {
-	r = &CommentServiceCountRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment-count"),
-			AuthRouter: h.GetAuthRouter().Group("comment-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).CountComment)
-
-	return
-}
-
-type CommentServicePostRouter struct {
-	H
-
-	PostComment *LeafRouter
-}
-
-func NewCommentServicePostRouter(traits GenerateRouterTraits, h H) (r *CommentServicePostRouter) {
-	r = &CommentServicePostRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment"),
-			AuthRouter: h.GetAuthRouter().Group("comment"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.PostComment = r.GetRouter().POST("", traits.GetServiceInstance("CommentService").(CommentService).PostComment)
-
-	return
-}
-
-type CommentServiceIdGroupRouter struct {
-	H
-
-	GetComment    *LeafRouter
-	PutComment    *LeafRouter
-	DeleteComment *LeafRouter
-}
-
-func NewCommentServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *CommentServiceIdGroupRouter) {
-	r = &CommentServiceIdGroupRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("comment/:cmid"),
-			AuthRouter: h.GetAuthRouter().Group("comment/:cmid"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "comment:cmid"),
-		},
-	}
-
-	r.GetComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).GetComment)
-	r.PutComment = r.GetRouter().PUT("", traits.GetServiceInstance("CommentService").(CommentService).PutComment)
-	r.DeleteComment = r.GetRouter().DELETE("", traits.GetServiceInstance("CommentService").(CommentService).DeleteComment)
-
-	return
-}
-
-type SubmissionServiceRouter struct {
-	H
-	List    *SubmissionServiceListRouter
-	Count   *SubmissionServiceCountRouter
-	Post    *SubmissionServicePostRouter
-	IdGroup *SubmissionServiceIdGroupRouter
-}
-
-func NewSubmissionServiceRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceRouter) {
-	r = &SubmissionServiceRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Extend("SubmissionService"),
-			AuthRouter: h.GetAuthRouter().Extend("SubmissionService"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.List = NewSubmissionServiceListRouter(traits, r.H)
-	r.Count = NewSubmissionServiceCountRouter(traits, r.H)
-	r.Post = NewSubmissionServicePostRouter(traits, r.H)
-	r.IdGroup = NewSubmissionServiceIdGroupRouter(traits, r.H)
-
-	return
-}
-
-type SubmissionServiceListRouter struct {
-	H
-
-	ListSubmission *LeafRouter
-}
-
-func NewSubmissionServiceListRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceListRouter) {
-	r = &SubmissionServiceListRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("submission-list"),
-			AuthRouter: h.GetAuthRouter().Group("submission-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).ListSubmission)
-
-	return
-}
-
-type SubmissionServiceCountRouter struct {
-	H
-
-	CountSubmission *LeafRouter
-}
-
-func NewSubmissionServiceCountRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceCountRouter) {
-	r = &SubmissionServiceCountRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("submission-count"),
-			AuthRouter: h.GetAuthRouter().Group("submission-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).CountSubmission)
-
-	return
-}
-
-type SubmissionServicePostRouter struct {
-	H
-
-	PostSubmission *LeafRouter
-}
-
-func NewSubmissionServicePostRouter(traits GenerateRouterTraits, h H) (r *SubmissionServicePostRouter) {
-	r = &SubmissionServicePostRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/problem/:pid/submission"),
-			AuthRouter: h.GetAuthRouter().Group("/problem/:pid/submission"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "problem:pid"),
-		},
-	}
-
-	r.PostSubmission = r.GetAuthRouter().POST("", traits.GetServiceInstance("SubmissionService").(SubmissionService).PostSubmission)
-	r.PostSubmission = traits.ApplyAuthOnMethod(r.PostSubmission, "~")
-
-	return
-}
-
-type SubmissionServiceIdGroupRouter struct {
-	H
-	GetSubmissionContent *SubmissionServiceIdGroupGetSubmissionContentRouter
-
-	GetSubmission    *LeafRouter
-	DeleteSubmission *LeafRouter
-}
-
-func NewSubmissionServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceIdGroupRouter) {
-	r = &SubmissionServiceIdGroupRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("submission/:sid"),
-			AuthRouter: h.GetAuthRouter().Group("submission/:sid"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "submission:sid"),
-		},
-	}
-
-	r.GetSubmissionContent = NewSubmissionServiceIdGroupGetSubmissionContentRouter(traits, r.H)
-
-	r.GetSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetSubmission)
-	r.DeleteSubmission = r.GetRouter().DELETE("", traits.GetServiceInstance("SubmissionService").(SubmissionService).DeleteSubmission)
-
-	return
-}
-
-type SubmissionServiceIdGroupGetSubmissionContentRouter struct {
-	H
-
-	GetSubmissionContent *LeafRouter
-}
-
-func NewSubmissionServiceIdGroupGetSubmissionContentRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceIdGroupGetSubmissionContentRouter) {
-	r = &SubmissionServiceIdGroupGetSubmissionContentRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/content"),
-			AuthRouter: h.GetAuthRouter().Group("/content"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.GetSubmissionContent = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetSubmissionContent)
-
 	return
 }
 
@@ -427,10 +187,10 @@ func NewProblemServicePostRouter(traits GenerateRouterTraits, h H) (r *ProblemSe
 
 type ProblemServiceIdGroupRouter struct {
 	H
-	ProblemDesc      *ProblemServiceIdGroupProblemDescRouter
-	ProblemFS        *ProblemServiceIdGroupProblemFSRouter
 	ListProblemDesc  *ProblemServiceIdGroupListProblemDescRouter
 	CountProblemDesc *ProblemServiceIdGroupCountProblemDescRouter
+	ProblemDesc      *ProblemServiceIdGroupProblemDescRouter
+	ProblemFS        *ProblemServiceIdGroupProblemFSRouter
 
 	GetProblem    *LeafRouter
 	PutProblem    *LeafRouter
@@ -446,14 +206,54 @@ func NewProblemServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *Proble
 		},
 	}
 
-	r.ProblemDesc = NewProblemServiceIdGroupProblemDescRouter(traits, r.H)
-	r.ProblemFS = NewProblemServiceIdGroupProblemFSRouter(traits, r.H)
 	r.ListProblemDesc = NewProblemServiceIdGroupListProblemDescRouter(traits, r.H)
 	r.CountProblemDesc = NewProblemServiceIdGroupCountProblemDescRouter(traits, r.H)
+	r.ProblemDesc = NewProblemServiceIdGroupProblemDescRouter(traits, r.H)
+	r.ProblemFS = NewProblemServiceIdGroupProblemFSRouter(traits, r.H)
 
 	r.GetProblem = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).GetProblem)
 	r.PutProblem = r.GetRouter().PUT("", traits.GetServiceInstance("ProblemService").(ProblemService).PutProblem)
 	r.DeleteProblem = r.GetRouter().DELETE("", traits.GetServiceInstance("ProblemService").(ProblemService).DeleteProblem)
+
+	return
+}
+
+type ProblemServiceIdGroupListProblemDescRouter struct {
+	H
+
+	ListProblemDesc *LeafRouter
+}
+
+func NewProblemServiceIdGroupListProblemDescRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupListProblemDescRouter) {
+	r = &ProblemServiceIdGroupListProblemDescRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/desc-list"),
+			AuthRouter: h.GetAuthRouter().Group("/desc-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).ListProblemDesc)
+
+	return
+}
+
+type ProblemServiceIdGroupCountProblemDescRouter struct {
+	H
+
+	CountProblemDesc *LeafRouter
+}
+
+func NewProblemServiceIdGroupCountProblemDescRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupCountProblemDescRouter) {
+	r = &ProblemServiceIdGroupCountProblemDescRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/desc-count"),
+			AuthRouter: h.GetAuthRouter().Group("/desc-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).CountProblemDesc)
 
 	return
 }
@@ -579,7 +379,7 @@ func NewProblemServiceIdGroupProblemFSProblemFSFileOperationProblemFSReadRouter(
 
 type ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationRouter struct {
 	H
-	ProblemFSZipRead *ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter
+	ProblemFSZipOperation *ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter
 
 	ProblemFSLS        *LeafRouter
 	ProblemFSWrites    *LeafRouter
@@ -596,7 +396,7 @@ func NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationRouter(traits G
 		},
 	}
 
-	r.ProblemFSZipRead = NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter(traits, r.H)
+	r.ProblemFSZipOperation = NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter(traits, r.H)
 
 	r.ProblemFSLS = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSLS)
 	r.ProblemFSWrites = r.GetRouter().POST("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSWrites)
@@ -606,21 +406,23 @@ func NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationRouter(traits G
 	return
 }
 
-type ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter struct {
+type ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter struct {
 	H
 
-	ProblemFSZipRead *LeafRouter
+	ProblemFSZipWrite *LeafRouter
+	ProblemFSZipRead  *LeafRouter
 }
 
-func NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter) {
-	r = &ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipReadRouter{
+func NewProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter) {
+	r = &ProblemServiceIdGroupProblemFSProblemFSDirectoryOperationProblemFSZipOperationRouter{
 		H: &BaseH{
-			Router:     h.GetRouter().Group("content"),
-			AuthRouter: h.GetAuthRouter().Group("content"),
+			Router:     h.GetRouter().Group("zip"),
+			AuthRouter: h.GetAuthRouter().Group("zip"),
 			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
 		},
 	}
 
+	r.ProblemFSZipWrite = r.GetRouter().POST("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSZipWrite)
 	r.ProblemFSZipRead = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSZipRead)
 
 	return
@@ -646,46 +448,6 @@ func NewProblemServiceIdGroupProblemFSProblemFSConfigOperationRouter(traits Gene
 	r.ProblemFSReadConfig = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSReadConfig)
 	r.ProblemFSWriteConfig = r.GetRouter().POST("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSWriteConfig)
 	r.ProblemFSPutConfig = r.GetRouter().PUT("", traits.GetServiceInstance("ProblemService").(ProblemService).ProblemFSPutConfig)
-
-	return
-}
-
-type ProblemServiceIdGroupListProblemDescRouter struct {
-	H
-
-	ListProblemDesc *LeafRouter
-}
-
-func NewProblemServiceIdGroupListProblemDescRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupListProblemDescRouter) {
-	r = &ProblemServiceIdGroupListProblemDescRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/desc-list"),
-			AuthRouter: h.GetAuthRouter().Group("/desc-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).ListProblemDesc)
-
-	return
-}
-
-type ProblemServiceIdGroupCountProblemDescRouter struct {
-	H
-
-	CountProblemDesc *LeafRouter
-}
-
-func NewProblemServiceIdGroupCountProblemDescRouter(traits GenerateRouterTraits, h H) (r *ProblemServiceIdGroupCountProblemDescRouter) {
-	r = &ProblemServiceIdGroupCountProblemDescRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/desc-count"),
-			AuthRouter: h.GetAuthRouter().Group("/desc-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ProblemService").(ProblemService).CountProblemDesc)
 
 	return
 }
@@ -778,11 +540,11 @@ func NewContestServicePostRouter(traits GenerateRouterTraits, h H) (r *ContestSe
 
 type ContestServiceIdGroupRouter struct {
 	H
+	ListContestUsers *ContestServiceIdGroupListContestUsersRouter
 	List             *ContestServiceIdGroupListRouter
 	Count            *ContestServiceIdGroupCountRouter
 	Post             *ContestServiceIdGroupPostRouter
 	IdGroup          *ContestServiceIdGroupIdGroupRouter
-	ListContestUsers *ContestServiceIdGroupListContestUsersRouter
 
 	GetContest    *LeafRouter
 	PutContest    *LeafRouter
@@ -798,16 +560,36 @@ func NewContestServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *Contes
 		},
 	}
 
+	r.ListContestUsers = NewContestServiceIdGroupListContestUsersRouter(traits, r.H)
 	r.List = NewContestServiceIdGroupListRouter(traits, r.H)
 	r.Count = NewContestServiceIdGroupCountRouter(traits, r.H)
 	r.Post = NewContestServiceIdGroupPostRouter(traits, r.H)
 	r.IdGroup = NewContestServiceIdGroupIdGroupRouter(traits, r.H)
-	r.ListContestUsers = NewContestServiceIdGroupListContestUsersRouter(traits, r.H)
 
 	r.GetContest = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).GetContest)
 	r.PutContest = r.GetAuthRouter().PUT("", traits.GetServiceInstance("ContestService").(ContestService).PutContest)
 	r.PutContest = traits.ApplyAuthOnMethod(r.PutContest, "~")
 	r.DeleteContest = r.GetRouter().DELETE("", traits.GetServiceInstance("ContestService").(ContestService).DeleteContest)
+
+	return
+}
+
+type ContestServiceIdGroupListContestUsersRouter struct {
+	H
+
+	ListContestUsers *LeafRouter
+}
+
+func NewContestServiceIdGroupListContestUsersRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupListContestUsersRouter) {
+	r = &ContestServiceIdGroupListContestUsersRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/user-list"),
+			AuthRouter: h.GetAuthRouter().Group("/user-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListContestUsers = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).ListContestUsers)
 
 	return
 }
@@ -875,9 +657,9 @@ func NewContestServiceIdGroupPostRouter(traits GenerateRouterTraits, h H) (r *Co
 
 type ContestServiceIdGroupIdGroupRouter struct {
 	H
-	ProblemDesc             *ContestServiceIdGroupIdGroupProblemDescRouter
 	ListContestProblemDesc  *ContestServiceIdGroupIdGroupListContestProblemDescRouter
 	CountContestProblemDesc *ContestServiceIdGroupIdGroupCountContestProblemDescRouter
+	ProblemDesc             *ContestServiceIdGroupIdGroupProblemDescRouter
 
 	GetContestProblem    *LeafRouter
 	PutContestProblem    *LeafRouter
@@ -893,13 +675,53 @@ func NewContestServiceIdGroupIdGroupRouter(traits GenerateRouterTraits, h H) (r 
 		},
 	}
 
-	r.ProblemDesc = NewContestServiceIdGroupIdGroupProblemDescRouter(traits, r.H)
 	r.ListContestProblemDesc = NewContestServiceIdGroupIdGroupListContestProblemDescRouter(traits, r.H)
 	r.CountContestProblemDesc = NewContestServiceIdGroupIdGroupCountContestProblemDescRouter(traits, r.H)
+	r.ProblemDesc = NewContestServiceIdGroupIdGroupProblemDescRouter(traits, r.H)
 
 	r.GetContestProblem = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).GetContestProblem)
 	r.PutContestProblem = r.GetRouter().PUT("", traits.GetServiceInstance("ContestService").(ContestService).PutContestProblem)
 	r.DeleteContestProblem = r.GetRouter().DELETE("", traits.GetServiceInstance("ContestService").(ContestService).DeleteContestProblem)
+
+	return
+}
+
+type ContestServiceIdGroupIdGroupListContestProblemDescRouter struct {
+	H
+
+	ListContestProblemDesc *LeafRouter
+}
+
+func NewContestServiceIdGroupIdGroupListContestProblemDescRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupIdGroupListContestProblemDescRouter) {
+	r = &ContestServiceIdGroupIdGroupListContestProblemDescRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/desc-list"),
+			AuthRouter: h.GetAuthRouter().Group("/desc-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListContestProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).ListContestProblemDesc)
+
+	return
+}
+
+type ContestServiceIdGroupIdGroupCountContestProblemDescRouter struct {
+	H
+
+	CountContestProblemDesc *LeafRouter
+}
+
+func NewContestServiceIdGroupIdGroupCountContestProblemDescRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupIdGroupCountContestProblemDescRouter) {
+	r = &ContestServiceIdGroupIdGroupCountContestProblemDescRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/desc-count"),
+			AuthRouter: h.GetAuthRouter().Group("/desc-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountContestProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).CountContestProblemDesc)
 
 	return
 }
@@ -949,66 +771,6 @@ func NewContestServiceIdGroupIdGroupProblemDescProblemDescRouter(traits Generate
 	}
 
 	r.ChangeContestProblemDescriptionRef = r.GetRouter().POST("", traits.GetServiceInstance("ContestService").(ContestService).ChangeContestProblemDescriptionRef)
-
-	return
-}
-
-type ContestServiceIdGroupIdGroupListContestProblemDescRouter struct {
-	H
-
-	ListContestProblemDesc *LeafRouter
-}
-
-func NewContestServiceIdGroupIdGroupListContestProblemDescRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupIdGroupListContestProblemDescRouter) {
-	r = &ContestServiceIdGroupIdGroupListContestProblemDescRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/desc-list"),
-			AuthRouter: h.GetAuthRouter().Group("/desc-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListContestProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).ListContestProblemDesc)
-
-	return
-}
-
-type ContestServiceIdGroupIdGroupCountContestProblemDescRouter struct {
-	H
-
-	CountContestProblemDesc *LeafRouter
-}
-
-func NewContestServiceIdGroupIdGroupCountContestProblemDescRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupIdGroupCountContestProblemDescRouter) {
-	r = &ContestServiceIdGroupIdGroupCountContestProblemDescRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/desc-count"),
-			AuthRouter: h.GetAuthRouter().Group("/desc-count"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.CountContestProblemDesc = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).CountContestProblemDesc)
-
-	return
-}
-
-type ContestServiceIdGroupListContestUsersRouter struct {
-	H
-
-	ListContestUsers *LeafRouter
-}
-
-func NewContestServiceIdGroupListContestUsersRouter(traits GenerateRouterTraits, h H) (r *ContestServiceIdGroupListContestUsersRouter) {
-	r = &ContestServiceIdGroupListContestUsersRouter{
-		H: &BaseH{
-			Router:     h.GetRouter().Group("/user-list"),
-			AuthRouter: h.GetAuthRouter().Group("/user-list"),
-			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
-		},
-	}
-
-	r.ListContestUsers = r.GetRouter().GET("", traits.GetServiceInstance("ContestService").(ContestService).ListContestUsers)
 
 	return
 }
@@ -1587,6 +1349,246 @@ func NewAnnouncementServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *A
 	r.PutAnnouncement = traits.ApplyAuthOnMethod(r.PutAnnouncement, "~")
 	r.DeleteAnnouncement = r.GetAuthRouter().DELETE("", traits.GetServiceInstance("AnnouncementService").(AnnouncementService).DeleteAnnouncement)
 	r.DeleteAnnouncement = traits.ApplyAuthOnMethod(r.DeleteAnnouncement, "~")
+
+	return
+}
+
+type CommentServiceRouter struct {
+	H
+	List    *CommentServiceListRouter
+	Count   *CommentServiceCountRouter
+	Post    *CommentServicePostRouter
+	IdGroup *CommentServiceIdGroupRouter
+}
+
+func NewCommentServiceRouter(traits GenerateRouterTraits, h H) (r *CommentServiceRouter) {
+	r = &CommentServiceRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Extend("CommentService"),
+			AuthRouter: h.GetAuthRouter().Extend("CommentService"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.List = NewCommentServiceListRouter(traits, r.H)
+	r.Count = NewCommentServiceCountRouter(traits, r.H)
+	r.Post = NewCommentServicePostRouter(traits, r.H)
+	r.IdGroup = NewCommentServiceIdGroupRouter(traits, r.H)
+
+	return
+}
+
+type CommentServiceListRouter struct {
+	H
+
+	ListComment *LeafRouter
+}
+
+func NewCommentServiceListRouter(traits GenerateRouterTraits, h H) (r *CommentServiceListRouter) {
+	r = &CommentServiceListRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment-list"),
+			AuthRouter: h.GetAuthRouter().Group("comment-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).ListComment)
+
+	return
+}
+
+type CommentServiceCountRouter struct {
+	H
+
+	CountComment *LeafRouter
+}
+
+func NewCommentServiceCountRouter(traits GenerateRouterTraits, h H) (r *CommentServiceCountRouter) {
+	r = &CommentServiceCountRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment-count"),
+			AuthRouter: h.GetAuthRouter().Group("comment-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).CountComment)
+
+	return
+}
+
+type CommentServicePostRouter struct {
+	H
+
+	PostComment *LeafRouter
+}
+
+func NewCommentServicePostRouter(traits GenerateRouterTraits, h H) (r *CommentServicePostRouter) {
+	r = &CommentServicePostRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment"),
+			AuthRouter: h.GetAuthRouter().Group("comment"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.PostComment = r.GetRouter().POST("", traits.GetServiceInstance("CommentService").(CommentService).PostComment)
+
+	return
+}
+
+type CommentServiceIdGroupRouter struct {
+	H
+
+	GetComment    *LeafRouter
+	PutComment    *LeafRouter
+	DeleteComment *LeafRouter
+}
+
+func NewCommentServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *CommentServiceIdGroupRouter) {
+	r = &CommentServiceIdGroupRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("comment/:cmid"),
+			AuthRouter: h.GetAuthRouter().Group("comment/:cmid"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "comment:cmid"),
+		},
+	}
+
+	r.GetComment = r.GetRouter().GET("", traits.GetServiceInstance("CommentService").(CommentService).GetComment)
+	r.PutComment = r.GetRouter().PUT("", traits.GetServiceInstance("CommentService").(CommentService).PutComment)
+	r.DeleteComment = r.GetRouter().DELETE("", traits.GetServiceInstance("CommentService").(CommentService).DeleteComment)
+
+	return
+}
+
+type SubmissionServiceRouter struct {
+	H
+	List    *SubmissionServiceListRouter
+	Count   *SubmissionServiceCountRouter
+	Post    *SubmissionServicePostRouter
+	IdGroup *SubmissionServiceIdGroupRouter
+}
+
+func NewSubmissionServiceRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceRouter) {
+	r = &SubmissionServiceRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Extend("SubmissionService"),
+			AuthRouter: h.GetAuthRouter().Extend("SubmissionService"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.List = NewSubmissionServiceListRouter(traits, r.H)
+	r.Count = NewSubmissionServiceCountRouter(traits, r.H)
+	r.Post = NewSubmissionServicePostRouter(traits, r.H)
+	r.IdGroup = NewSubmissionServiceIdGroupRouter(traits, r.H)
+
+	return
+}
+
+type SubmissionServiceListRouter struct {
+	H
+
+	ListSubmission *LeafRouter
+}
+
+func NewSubmissionServiceListRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceListRouter) {
+	r = &SubmissionServiceListRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission-list"),
+			AuthRouter: h.GetAuthRouter().Group("submission-list"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.ListSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).ListSubmission)
+
+	return
+}
+
+type SubmissionServiceCountRouter struct {
+	H
+
+	CountSubmission *LeafRouter
+}
+
+func NewSubmissionServiceCountRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceCountRouter) {
+	r = &SubmissionServiceCountRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission-count"),
+			AuthRouter: h.GetAuthRouter().Group("submission-count"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.CountSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).CountSubmission)
+
+	return
+}
+
+type SubmissionServicePostRouter struct {
+	H
+
+	PostSubmission *LeafRouter
+}
+
+func NewSubmissionServicePostRouter(traits GenerateRouterTraits, h H) (r *SubmissionServicePostRouter) {
+	r = &SubmissionServicePostRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/problem/:pid/submission"),
+			AuthRouter: h.GetAuthRouter().Group("/problem/:pid/submission"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "problem:pid"),
+		},
+	}
+
+	r.PostSubmission = r.GetAuthRouter().POST("", traits.GetServiceInstance("SubmissionService").(SubmissionService).PostSubmission)
+	r.PostSubmission = traits.ApplyAuthOnMethod(r.PostSubmission, "~")
+
+	return
+}
+
+type SubmissionServiceIdGroupRouter struct {
+	H
+	GetSubmissionContent *SubmissionServiceIdGroupGetSubmissionContentRouter
+
+	GetSubmission    *LeafRouter
+	DeleteSubmission *LeafRouter
+}
+
+func NewSubmissionServiceIdGroupRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceIdGroupRouter) {
+	r = &SubmissionServiceIdGroupRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("submission/:sid"),
+			AuthRouter: h.GetAuthRouter().Group("submission/:sid"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), "submission:sid"),
+		},
+	}
+
+	r.GetSubmissionContent = NewSubmissionServiceIdGroupGetSubmissionContentRouter(traits, r.H)
+
+	r.GetSubmission = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetSubmission)
+	r.DeleteSubmission = r.GetRouter().DELETE("", traits.GetServiceInstance("SubmissionService").(SubmissionService).DeleteSubmission)
+
+	return
+}
+
+type SubmissionServiceIdGroupGetSubmissionContentRouter struct {
+	H
+
+	GetSubmissionContent *LeafRouter
+}
+
+func NewSubmissionServiceIdGroupGetSubmissionContentRouter(traits GenerateRouterTraits, h H) (r *SubmissionServiceIdGroupGetSubmissionContentRouter) {
+	r = &SubmissionServiceIdGroupGetSubmissionContentRouter{
+		H: &BaseH{
+			Router:     h.GetRouter().Group("/content"),
+			AuthRouter: h.GetAuthRouter().Group("/content"),
+			Auth:       traits.ApplyRouteMeta(h.GetAuth(), ""),
+		},
+	}
+
+	r.GetSubmissionContent = r.GetRouter().GET("", traits.GetServiceInstance("SubmissionService").(SubmissionService).GetSubmissionContent)
 
 	return
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem-desc"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
@@ -19,12 +20,12 @@ type ListProblemReply struct {
 type CountProblemRequest = gorm_crud_dao.Filter
 
 type CountProblemReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data []int `json:"data" form:"data"`
 }
 
 type PostProblemRequest struct {
-	Title       string                       `form:"title" binding:"required" json:"title"`
+	Title       string                       `json:"title" form:"title" binding:"required"`
 	Description string                       `json:"description" form:"description"`
 	Config      *problemconfig.ProblemConfig `json:"config" form:"config"`
 }
@@ -38,17 +39,36 @@ type PostProblemData struct {
 	Id uint `json:"id" form:"id"`
 }
 
+type ListProblemDescRequest = gorm_crud_dao.Filter
+
+type ListProblemDescReply struct {
+	Code int               `json:"code" form:"code"`
+	Data []ProblemDescData `json:"data" form:"data"`
+}
+
+type ProblemDescData struct {
+	Name      string    `json:"name" form:"name"`
+	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
+}
+
+type CountProblemDescRequest = gorm_crud_dao.Filter
+
+type CountProblemDescReply struct {
+	Code int   `form:"code" json:"code"`
+	Data int64 `json:"data" form:"data"`
+}
+
 type ChangeProblemDescriptionRefRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	NewName string `json:"new_name" form:"new_name" binding:"required"`
 }
 
 type ChangeProblemDescriptionRefReply struct {
-	Code int `form:"code" json:"code"`
+	Code int `json:"code" form:"code"`
 }
 
 type PostProblemDescRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	Content string `json:"content" form:"content"`
 }
 
@@ -66,68 +86,27 @@ type GetProblemDescReply struct {
 }
 
 type PutProblemDescRequest struct {
-	Name    string `form:"name" binding:"required" json:"name"`
+	Name    string `json:"name" form:"name" binding:"required"`
 	Content string `json:"content" form:"content"`
 }
 
 type PutProblemDescReply struct {
-	Code int `json:"code" form:"code"`
+	Code int `form:"code" json:"code"`
 }
 
 type DeleteProblemDescRequest struct {
-	Name string `json:"name" form:"name"`
+	Name string `form:"name" json:"name"`
 }
 
 type DeleteProblemDescReply struct {
-	Code int `json:"code" form:"code"`
-}
-
-type ProblemFSReadConfigRequest struct {
-	Path string `json:"path" form:"path" binding:"required"`
-}
-
-type ProblemFSReadConfigReply struct {
-	Code int                           `json:"code" form:"code"`
-	Data ProblemFSReadConfigInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSReadConfigInnerReply struct {
-}
-
-type ProblemFSWriteConfigRequest struct {
-	Path string `form:"path" binding:"required" json:"path"`
-}
-
-type ProblemFSWriteConfigReply struct {
-	Code int                            `json:"code" form:"code"`
-	Data ProblemFSWriteConfigInnerReply `form:"data" json:"data"`
-}
-
-type ProblemFSWriteConfigInnerReply struct {
-}
-
-type ProblemFSPutConfigRequest struct {
-	Path string `json:"path" form:"path" binding:"required"`
-}
-
-type ProblemFSPutConfigReply struct {
-	Code int                          `json:"code" form:"code"`
-	Data ProblemFSPutConfigInnerReply `form:"data" json:"data"`
-}
-
-type ProblemFSPutConfigInnerReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type ProblemFSReadRequest struct {
-	Path string `json:"path" form:"path" binding:"required"`
+	Path string `binding:"required" json:"path" form:"path"`
 }
 
 type ProblemFSReadReply struct {
-	Code int                     `json:"code" form:"code"`
-	Data ProblemFSReadInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSReadInnerReply struct {
 }
 
 type ProblemFSStatRequest struct {
@@ -151,15 +130,11 @@ type ProblemFSWriteRequest struct {
 }
 
 type ProblemFSWriteReply struct {
-	Code int                      `json:"code" form:"code"`
-	Data ProblemFSWriteInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSWriteInnerReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type ProblemFSRemoveRequest struct {
-	Path string `binding:"required" json:"path" form:"path"`
+	Path string `form:"path" binding:"required" json:"path"`
 }
 
 type ProblemFSRemoveReply struct {
@@ -170,16 +145,20 @@ type ProblemFSRemoveReply struct {
 type ProblemFSRemoveInnerReply struct {
 }
 
+type ProblemFSZipWriteRequest struct {
+	Path string `binding:"required" json:"path" form:"path"`
+}
+
+type ProblemFSZipWriteReply struct {
+	Code int `json:"code" form:"code"`
+}
+
 type ProblemFSZipReadRequest struct {
 	Path string `json:"path" form:"path" binding:"required"`
 }
 
 type ProblemFSZipReadReply struct {
-	Code int                        `json:"code" form:"code"`
-	Data ProblemFSZipReadInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSZipReadInnerReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type ProblemFSLSRequest struct {
@@ -187,7 +166,7 @@ type ProblemFSLSRequest struct {
 }
 
 type ProblemFSLSReply struct {
-	Code int                     `form:"code" json:"code"`
+	Code int                     `json:"code" form:"code"`
 	Data []ProblemFSLSInnerReply `json:"data" form:"data"`
 }
 
@@ -195,7 +174,7 @@ type ProblemFSLSInnerReply struct {
 	Name    string    `json:"name" form:"name"`
 	Size    int64     `json:"size" form:"size"`
 	IsDir   bool      `json:"is_dir" form:"is_dir"`
-	ModTime time.Time `json:"mod_time" form:"mod_time"`
+	ModTime time.Time `form:"mod_time" json:"mod_time"`
 }
 
 type ProblemFSWritesRequest struct {
@@ -203,23 +182,15 @@ type ProblemFSWritesRequest struct {
 }
 
 type ProblemFSWritesReply struct {
-	Code int                       `json:"code" form:"code"`
-	Data ProblemFSWritesInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSWritesInnerReply struct {
+	Code int `json:"code" form:"code"`
 }
 
 type ProblemFSMkdirRequest struct {
-	Path string `json:"path" form:"path" binding:"required"`
+	Path string `binding:"required" json:"path" form:"path"`
 }
 
 type ProblemFSMkdirReply struct {
-	Code int                      `json:"code" form:"code"`
-	Data ProblemFSMkdirInnerReply `json:"data" form:"data"`
-}
-
-type ProblemFSMkdirInnerReply struct {
+	Code int `json:"code" form:"code"`
 }
 
 type ProblemFSRemoveAllRequest struct {
@@ -227,30 +198,35 @@ type ProblemFSRemoveAllRequest struct {
 }
 
 type ProblemFSRemoveAllReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type ProblemFSReadConfigRequest struct {
+	Path string `json:"path" form:"path"`
+}
+
+type ProblemFSReadConfigReply struct {
 	Code int                          `json:"code" form:"code"`
-	Data ProblemFSRemoveAllInnerReply `json:"data" form:"data"`
+	Data *problemconfig.ProblemConfig `json:"data" form:"data"`
 }
 
-type ProblemFSRemoveAllInnerReply struct {
+type ProblemFSWriteConfigRequest struct {
+	Path string `json:"path" form:"path"`
 }
 
-type ListProblemDescRequest = gorm_crud_dao.Filter
-
-type ListProblemDescReply struct {
-	Code int               `form:"code" json:"code"`
-	Data []ProblemDescData `json:"data" form:"data"`
+type ProblemFSWriteConfigReply struct {
+	Code int `json:"code" form:"code"`
 }
 
-type ProblemDescData struct {
-	Name      string    `json:"name" form:"name"`
-	UpdatedAt time.Time `json:"updated_at" form:"updated_at"`
+type ProblemFSPutConfigRequest struct {
+	Path  string          `form:"path" json:"path"`
+	Key   string          `form:"key" json:"key"`
+	Value json.RawMessage `json:"value" form:"value"`
 }
 
-type CountProblemDescRequest = gorm_crud_dao.Filter
-
-type CountProblemDescReply struct {
-	Code int   `json:"code" form:"code"`
-	Data int64 `form:"data" json:"data"`
+type ProblemFSPutConfigReply struct {
+	Code int                          `json:"code" form:"code"`
+	Data *problemconfig.ProblemConfig `form:"data" json:"data"`
 }
 
 type GetProblemRequest struct {
@@ -262,22 +238,22 @@ type GetProblemReply struct {
 }
 
 type GetProblemData struct {
-	Id              uint                 `form:"id" json:"id"`
-	CreatedAt       time.Time            `form:"created_at" json:"created_at"`
+	Id              uint                 `json:"id" form:"id"`
+	CreatedAt       time.Time            `json:"created_at" form:"created_at"`
 	UpdatedAt       time.Time            `json:"updated_at" form:"updated_at"`
 	IsSpj           bool                 `json:"is_spj" form:"is_spj"`
 	Title           string               `json:"title" form:"title"`
 	Description     string               `json:"description" form:"description"`
 	DescriptionRef  string               `json:"description_ref" form:"description_ref"`
 	TimeLimit       int64                `json:"time_limit" form:"time_limit"`
-	MemoryLimit     int64                `json:"memory_limit" form:"memory_limit"`
+	MemoryLimit     int64                `form:"memory_limit" json:"memory_limit"`
 	CodeLengthLimit int64                `json:"code_length_limit" form:"code_length_limit"`
 	Author          GetProblemAuthorData `json:"author" form:"author"`
 }
 
 type GetProblemAuthorData struct {
 	Id       uint   `json:"id" form:"id"`
-	NickName string `json:"nick_name" form:"nick_name"`
+	NickName string `form:"nick_name" json:"nick_name"`
 }
 
 type PutProblemRequest struct {
@@ -428,6 +404,87 @@ func _packSerializePostProblemData(problem *problem.Problem) PostProblemData {
 func PackSerializePostProblemData(problem []*problem.Problem) (pack []PostProblemData) {
 	for i := range problem {
 		pack = append(pack, _packSerializePostProblemData(problem[i]))
+	}
+	return
+}
+func PSerializeListProblemDescReply(_code int, _data []ProblemDescData) *ListProblemDescReply {
+
+	return &ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+
+	return ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+
+	return ListProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeListProblemDescReply(_code []int, _data [][]ProblemDescData) (pack []ListProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeListProblemDescReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) *ProblemDescData {
+
+	return &ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func SerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+
+	return ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func _packSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+
+	return ProblemDescData{
+		Name:      problemDesc.Name,
+		UpdatedAt: problemDesc.UpdatedAt,
+	}
+}
+func PackSerializeProblemDescData(problemDesc []problem_desc.ProblemDesc) (pack []ProblemDescData) {
+	for i := range problemDesc {
+		pack = append(pack, _packSerializeProblemDescData(problemDesc[i]))
+	}
+	return
+}
+func PSerializeCountProblemDescReply(_code int, _data int64) *CountProblemDescReply {
+
+	return &CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+
+	return CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+
+	return CountProblemDescReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeCountProblemDescReply(_code []int, _data []int64) (pack []CountProblemDescReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeCountProblemDescReply(_code[i], _data[i]))
 	}
 	return
 }
@@ -683,204 +740,6 @@ func PackSerializeDeleteProblemDescReply(_code []int) (pack []DeleteProblemDescR
 	}
 	return
 }
-func PSerializeProblemFSReadConfigRequest(_path string) *ProblemFSReadConfigRequest {
-
-	return &ProblemFSReadConfigRequest{
-		Path: _path,
-	}
-}
-func SerializeProblemFSReadConfigRequest(_path string) ProblemFSReadConfigRequest {
-
-	return ProblemFSReadConfigRequest{
-		Path: _path,
-	}
-}
-func _packSerializeProblemFSReadConfigRequest(_path string) ProblemFSReadConfigRequest {
-
-	return ProblemFSReadConfigRequest{
-		Path: _path,
-	}
-}
-func PackSerializeProblemFSReadConfigRequest(_path []string) (pack []ProblemFSReadConfigRequest) {
-	for i := range _path {
-		pack = append(pack, _packSerializeProblemFSReadConfigRequest(_path[i]))
-	}
-	return
-}
-func PSerializeProblemFSReadConfigReply(_code int, _data ProblemFSReadConfigInnerReply) *ProblemFSReadConfigReply {
-
-	return &ProblemFSReadConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeProblemFSReadConfigReply(_code int, _data ProblemFSReadConfigInnerReply) ProblemFSReadConfigReply {
-
-	return ProblemFSReadConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeProblemFSReadConfigReply(_code int, _data ProblemFSReadConfigInnerReply) ProblemFSReadConfigReply {
-
-	return ProblemFSReadConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeProblemFSReadConfigReply(_code []int, _data []ProblemFSReadConfigInnerReply) (pack []ProblemFSReadConfigReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSReadConfigReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeProblemFSReadConfigInnerReply() *ProblemFSReadConfigInnerReply {
-
-	return &ProblemFSReadConfigInnerReply{}
-}
-func SerializeProblemFSReadConfigInnerReply() ProblemFSReadConfigInnerReply {
-
-	return ProblemFSReadConfigInnerReply{}
-}
-func _packSerializeProblemFSReadConfigInnerReply() ProblemFSReadConfigInnerReply {
-
-	return ProblemFSReadConfigInnerReply{}
-}
-func PackSerializeProblemFSReadConfigInnerReply() (pack []ProblemFSReadConfigInnerReply) {
-	return
-}
-func PSerializeProblemFSWriteConfigRequest(_path string) *ProblemFSWriteConfigRequest {
-
-	return &ProblemFSWriteConfigRequest{
-		Path: _path,
-	}
-}
-func SerializeProblemFSWriteConfigRequest(_path string) ProblemFSWriteConfigRequest {
-
-	return ProblemFSWriteConfigRequest{
-		Path: _path,
-	}
-}
-func _packSerializeProblemFSWriteConfigRequest(_path string) ProblemFSWriteConfigRequest {
-
-	return ProblemFSWriteConfigRequest{
-		Path: _path,
-	}
-}
-func PackSerializeProblemFSWriteConfigRequest(_path []string) (pack []ProblemFSWriteConfigRequest) {
-	for i := range _path {
-		pack = append(pack, _packSerializeProblemFSWriteConfigRequest(_path[i]))
-	}
-	return
-}
-func PSerializeProblemFSWriteConfigReply(_code int, _data ProblemFSWriteConfigInnerReply) *ProblemFSWriteConfigReply {
-
-	return &ProblemFSWriteConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeProblemFSWriteConfigReply(_code int, _data ProblemFSWriteConfigInnerReply) ProblemFSWriteConfigReply {
-
-	return ProblemFSWriteConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeProblemFSWriteConfigReply(_code int, _data ProblemFSWriteConfigInnerReply) ProblemFSWriteConfigReply {
-
-	return ProblemFSWriteConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeProblemFSWriteConfigReply(_code []int, _data []ProblemFSWriteConfigInnerReply) (pack []ProblemFSWriteConfigReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSWriteConfigReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeProblemFSWriteConfigInnerReply() *ProblemFSWriteConfigInnerReply {
-
-	return &ProblemFSWriteConfigInnerReply{}
-}
-func SerializeProblemFSWriteConfigInnerReply() ProblemFSWriteConfigInnerReply {
-
-	return ProblemFSWriteConfigInnerReply{}
-}
-func _packSerializeProblemFSWriteConfigInnerReply() ProblemFSWriteConfigInnerReply {
-
-	return ProblemFSWriteConfigInnerReply{}
-}
-func PackSerializeProblemFSWriteConfigInnerReply() (pack []ProblemFSWriteConfigInnerReply) {
-	return
-}
-func PSerializeProblemFSPutConfigRequest(_path string) *ProblemFSPutConfigRequest {
-
-	return &ProblemFSPutConfigRequest{
-		Path: _path,
-	}
-}
-func SerializeProblemFSPutConfigRequest(_path string) ProblemFSPutConfigRequest {
-
-	return ProblemFSPutConfigRequest{
-		Path: _path,
-	}
-}
-func _packSerializeProblemFSPutConfigRequest(_path string) ProblemFSPutConfigRequest {
-
-	return ProblemFSPutConfigRequest{
-		Path: _path,
-	}
-}
-func PackSerializeProblemFSPutConfigRequest(_path []string) (pack []ProblemFSPutConfigRequest) {
-	for i := range _path {
-		pack = append(pack, _packSerializeProblemFSPutConfigRequest(_path[i]))
-	}
-	return
-}
-func PSerializeProblemFSPutConfigReply(_code int, _data ProblemFSPutConfigInnerReply) *ProblemFSPutConfigReply {
-
-	return &ProblemFSPutConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeProblemFSPutConfigReply(_code int, _data ProblemFSPutConfigInnerReply) ProblemFSPutConfigReply {
-
-	return ProblemFSPutConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeProblemFSPutConfigReply(_code int, _data ProblemFSPutConfigInnerReply) ProblemFSPutConfigReply {
-
-	return ProblemFSPutConfigReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeProblemFSPutConfigReply(_code []int, _data []ProblemFSPutConfigInnerReply) (pack []ProblemFSPutConfigReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSPutConfigReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeProblemFSPutConfigInnerReply() *ProblemFSPutConfigInnerReply {
-
-	return &ProblemFSPutConfigInnerReply{}
-}
-func SerializeProblemFSPutConfigInnerReply() ProblemFSPutConfigInnerReply {
-
-	return ProblemFSPutConfigInnerReply{}
-}
-func _packSerializeProblemFSPutConfigInnerReply() ProblemFSPutConfigInnerReply {
-
-	return ProblemFSPutConfigInnerReply{}
-}
-func PackSerializeProblemFSPutConfigInnerReply() (pack []ProblemFSPutConfigInnerReply) {
-	return
-}
 func PSerializeProblemFSReadRequest(_path string) *ProblemFSReadRequest {
 
 	return &ProblemFSReadRequest{
@@ -905,46 +764,19 @@ func PackSerializeProblemFSReadRequest(_path []string) (pack []ProblemFSReadRequ
 	}
 	return
 }
-func PSerializeProblemFSReadReply(_code int, _data ProblemFSReadInnerReply) *ProblemFSReadReply {
+func PSerializeProblemFSReadReply() *ProblemFSReadReply {
 
-	return &ProblemFSReadReply{
-		Code: _code,
-		Data: _data,
-	}
+	return &ProblemFSReadReply{}
 }
-func SerializeProblemFSReadReply(_code int, _data ProblemFSReadInnerReply) ProblemFSReadReply {
+func SerializeProblemFSReadReply() ProblemFSReadReply {
 
-	return ProblemFSReadReply{
-		Code: _code,
-		Data: _data,
-	}
+	return ProblemFSReadReply{}
 }
-func _packSerializeProblemFSReadReply(_code int, _data ProblemFSReadInnerReply) ProblemFSReadReply {
+func _packSerializeProblemFSReadReply() ProblemFSReadReply {
 
-	return ProblemFSReadReply{
-		Code: _code,
-		Data: _data,
-	}
+	return ProblemFSReadReply{}
 }
-func PackSerializeProblemFSReadReply(_code []int, _data []ProblemFSReadInnerReply) (pack []ProblemFSReadReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSReadReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeProblemFSReadInnerReply() *ProblemFSReadInnerReply {
-
-	return &ProblemFSReadInnerReply{}
-}
-func SerializeProblemFSReadInnerReply() ProblemFSReadInnerReply {
-
-	return ProblemFSReadInnerReply{}
-}
-func _packSerializeProblemFSReadInnerReply() ProblemFSReadInnerReply {
-
-	return ProblemFSReadInnerReply{}
-}
-func PackSerializeProblemFSReadInnerReply() (pack []ProblemFSReadInnerReply) {
+func PackSerializeProblemFSReadReply() (pack []ProblemFSReadReply) {
 	return
 }
 func PSerializeProblemFSStatRequest(_path string) *ProblemFSStatRequest {
@@ -1055,46 +887,28 @@ func PackSerializeProblemFSWriteRequest(_path []string) (pack []ProblemFSWriteRe
 	}
 	return
 }
-func PSerializeProblemFSWriteReply(_code int, _data ProblemFSWriteInnerReply) *ProblemFSWriteReply {
+func PSerializeProblemFSWriteReply(_code int) *ProblemFSWriteReply {
 
 	return &ProblemFSWriteReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeProblemFSWriteReply(_code int, _data ProblemFSWriteInnerReply) ProblemFSWriteReply {
+func SerializeProblemFSWriteReply(_code int) ProblemFSWriteReply {
 
 	return ProblemFSWriteReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeProblemFSWriteReply(_code int, _data ProblemFSWriteInnerReply) ProblemFSWriteReply {
+func _packSerializeProblemFSWriteReply(_code int) ProblemFSWriteReply {
 
 	return ProblemFSWriteReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeProblemFSWriteReply(_code []int, _data []ProblemFSWriteInnerReply) (pack []ProblemFSWriteReply) {
+func PackSerializeProblemFSWriteReply(_code []int) (pack []ProblemFSWriteReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSWriteReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSWriteReply(_code[i]))
 	}
-	return
-}
-func PSerializeProblemFSWriteInnerReply() *ProblemFSWriteInnerReply {
-
-	return &ProblemFSWriteInnerReply{}
-}
-func SerializeProblemFSWriteInnerReply() ProblemFSWriteInnerReply {
-
-	return ProblemFSWriteInnerReply{}
-}
-func _packSerializeProblemFSWriteInnerReply() ProblemFSWriteInnerReply {
-
-	return ProblemFSWriteInnerReply{}
-}
-func PackSerializeProblemFSWriteInnerReply() (pack []ProblemFSWriteInnerReply) {
 	return
 }
 func PSerializeProblemFSRemoveRequest(_path string) *ProblemFSRemoveRequest {
@@ -1163,6 +977,54 @@ func _packSerializeProblemFSRemoveInnerReply() ProblemFSRemoveInnerReply {
 func PackSerializeProblemFSRemoveInnerReply() (pack []ProblemFSRemoveInnerReply) {
 	return
 }
+func PSerializeProblemFSZipWriteRequest(_path string) *ProblemFSZipWriteRequest {
+
+	return &ProblemFSZipWriteRequest{
+		Path: _path,
+	}
+}
+func SerializeProblemFSZipWriteRequest(_path string) ProblemFSZipWriteRequest {
+
+	return ProblemFSZipWriteRequest{
+		Path: _path,
+	}
+}
+func _packSerializeProblemFSZipWriteRequest(_path string) ProblemFSZipWriteRequest {
+
+	return ProblemFSZipWriteRequest{
+		Path: _path,
+	}
+}
+func PackSerializeProblemFSZipWriteRequest(_path []string) (pack []ProblemFSZipWriteRequest) {
+	for i := range _path {
+		pack = append(pack, _packSerializeProblemFSZipWriteRequest(_path[i]))
+	}
+	return
+}
+func PSerializeProblemFSZipWriteReply(_code int) *ProblemFSZipWriteReply {
+
+	return &ProblemFSZipWriteReply{
+		Code: _code,
+	}
+}
+func SerializeProblemFSZipWriteReply(_code int) ProblemFSZipWriteReply {
+
+	return ProblemFSZipWriteReply{
+		Code: _code,
+	}
+}
+func _packSerializeProblemFSZipWriteReply(_code int) ProblemFSZipWriteReply {
+
+	return ProblemFSZipWriteReply{
+		Code: _code,
+	}
+}
+func PackSerializeProblemFSZipWriteReply(_code []int) (pack []ProblemFSZipWriteReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeProblemFSZipWriteReply(_code[i]))
+	}
+	return
+}
 func PSerializeProblemFSZipReadRequest(_path string) *ProblemFSZipReadRequest {
 
 	return &ProblemFSZipReadRequest{
@@ -1187,46 +1049,28 @@ func PackSerializeProblemFSZipReadRequest(_path []string) (pack []ProblemFSZipRe
 	}
 	return
 }
-func PSerializeProblemFSZipReadReply(_code int, _data ProblemFSZipReadInnerReply) *ProblemFSZipReadReply {
+func PSerializeProblemFSZipReadReply(_code int) *ProblemFSZipReadReply {
 
 	return &ProblemFSZipReadReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeProblemFSZipReadReply(_code int, _data ProblemFSZipReadInnerReply) ProblemFSZipReadReply {
+func SerializeProblemFSZipReadReply(_code int) ProblemFSZipReadReply {
 
 	return ProblemFSZipReadReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeProblemFSZipReadReply(_code int, _data ProblemFSZipReadInnerReply) ProblemFSZipReadReply {
+func _packSerializeProblemFSZipReadReply(_code int) ProblemFSZipReadReply {
 
 	return ProblemFSZipReadReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeProblemFSZipReadReply(_code []int, _data []ProblemFSZipReadInnerReply) (pack []ProblemFSZipReadReply) {
+func PackSerializeProblemFSZipReadReply(_code []int) (pack []ProblemFSZipReadReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSZipReadReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSZipReadReply(_code[i]))
 	}
-	return
-}
-func PSerializeProblemFSZipReadInnerReply() *ProblemFSZipReadInnerReply {
-
-	return &ProblemFSZipReadInnerReply{}
-}
-func SerializeProblemFSZipReadInnerReply() ProblemFSZipReadInnerReply {
-
-	return ProblemFSZipReadInnerReply{}
-}
-func _packSerializeProblemFSZipReadInnerReply() ProblemFSZipReadInnerReply {
-
-	return ProblemFSZipReadInnerReply{}
-}
-func PackSerializeProblemFSZipReadInnerReply() (pack []ProblemFSZipReadInnerReply) {
 	return
 }
 func PSerializeProblemFSLSRequest(_path string) *ProblemFSLSRequest {
@@ -1337,46 +1181,28 @@ func PackSerializeProblemFSWritesRequest(_path []string) (pack []ProblemFSWrites
 	}
 	return
 }
-func PSerializeProblemFSWritesReply(_code int, _data ProblemFSWritesInnerReply) *ProblemFSWritesReply {
+func PSerializeProblemFSWritesReply(_code int) *ProblemFSWritesReply {
 
 	return &ProblemFSWritesReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeProblemFSWritesReply(_code int, _data ProblemFSWritesInnerReply) ProblemFSWritesReply {
+func SerializeProblemFSWritesReply(_code int) ProblemFSWritesReply {
 
 	return ProblemFSWritesReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeProblemFSWritesReply(_code int, _data ProblemFSWritesInnerReply) ProblemFSWritesReply {
+func _packSerializeProblemFSWritesReply(_code int) ProblemFSWritesReply {
 
 	return ProblemFSWritesReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeProblemFSWritesReply(_code []int, _data []ProblemFSWritesInnerReply) (pack []ProblemFSWritesReply) {
+func PackSerializeProblemFSWritesReply(_code []int) (pack []ProblemFSWritesReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSWritesReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSWritesReply(_code[i]))
 	}
-	return
-}
-func PSerializeProblemFSWritesInnerReply() *ProblemFSWritesInnerReply {
-
-	return &ProblemFSWritesInnerReply{}
-}
-func SerializeProblemFSWritesInnerReply() ProblemFSWritesInnerReply {
-
-	return ProblemFSWritesInnerReply{}
-}
-func _packSerializeProblemFSWritesInnerReply() ProblemFSWritesInnerReply {
-
-	return ProblemFSWritesInnerReply{}
-}
-func PackSerializeProblemFSWritesInnerReply() (pack []ProblemFSWritesInnerReply) {
 	return
 }
 func PSerializeProblemFSMkdirRequest(_path string) *ProblemFSMkdirRequest {
@@ -1403,46 +1229,28 @@ func PackSerializeProblemFSMkdirRequest(_path []string) (pack []ProblemFSMkdirRe
 	}
 	return
 }
-func PSerializeProblemFSMkdirReply(_code int, _data ProblemFSMkdirInnerReply) *ProblemFSMkdirReply {
+func PSerializeProblemFSMkdirReply(_code int) *ProblemFSMkdirReply {
 
 	return &ProblemFSMkdirReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeProblemFSMkdirReply(_code int, _data ProblemFSMkdirInnerReply) ProblemFSMkdirReply {
+func SerializeProblemFSMkdirReply(_code int) ProblemFSMkdirReply {
 
 	return ProblemFSMkdirReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeProblemFSMkdirReply(_code int, _data ProblemFSMkdirInnerReply) ProblemFSMkdirReply {
+func _packSerializeProblemFSMkdirReply(_code int) ProblemFSMkdirReply {
 
 	return ProblemFSMkdirReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeProblemFSMkdirReply(_code []int, _data []ProblemFSMkdirInnerReply) (pack []ProblemFSMkdirReply) {
+func PackSerializeProblemFSMkdirReply(_code []int) (pack []ProblemFSMkdirReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSMkdirReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSMkdirReply(_code[i]))
 	}
-	return
-}
-func PSerializeProblemFSMkdirInnerReply() *ProblemFSMkdirInnerReply {
-
-	return &ProblemFSMkdirInnerReply{}
-}
-func SerializeProblemFSMkdirInnerReply() ProblemFSMkdirInnerReply {
-
-	return ProblemFSMkdirInnerReply{}
-}
-func _packSerializeProblemFSMkdirInnerReply() ProblemFSMkdirInnerReply {
-
-	return ProblemFSMkdirInnerReply{}
-}
-func PackSerializeProblemFSMkdirInnerReply() (pack []ProblemFSMkdirInnerReply) {
 	return
 }
 func PSerializeProblemFSRemoveAllRequest(_path string) *ProblemFSRemoveAllRequest {
@@ -1469,126 +1277,183 @@ func PackSerializeProblemFSRemoveAllRequest(_path []string) (pack []ProblemFSRem
 	}
 	return
 }
-func PSerializeProblemFSRemoveAllReply(_code int, _data ProblemFSRemoveAllInnerReply) *ProblemFSRemoveAllReply {
+func PSerializeProblemFSRemoveAllReply(_code int) *ProblemFSRemoveAllReply {
 
 	return &ProblemFSRemoveAllReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeProblemFSRemoveAllReply(_code int, _data ProblemFSRemoveAllInnerReply) ProblemFSRemoveAllReply {
+func SerializeProblemFSRemoveAllReply(_code int) ProblemFSRemoveAllReply {
 
 	return ProblemFSRemoveAllReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeProblemFSRemoveAllReply(_code int, _data ProblemFSRemoveAllInnerReply) ProblemFSRemoveAllReply {
+func _packSerializeProblemFSRemoveAllReply(_code int) ProblemFSRemoveAllReply {
 
 	return ProblemFSRemoveAllReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeProblemFSRemoveAllReply(_code []int, _data []ProblemFSRemoveAllInnerReply) (pack []ProblemFSRemoveAllReply) {
+func PackSerializeProblemFSRemoveAllReply(_code []int) (pack []ProblemFSRemoveAllReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeProblemFSRemoveAllReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSRemoveAllReply(_code[i]))
 	}
 	return
 }
-func PSerializeProblemFSRemoveAllInnerReply() *ProblemFSRemoveAllInnerReply {
+func PSerializeProblemFSReadConfigRequest(_path string) *ProblemFSReadConfigRequest {
 
-	return &ProblemFSRemoveAllInnerReply{}
+	return &ProblemFSReadConfigRequest{
+		Path: _path,
+	}
 }
-func SerializeProblemFSRemoveAllInnerReply() ProblemFSRemoveAllInnerReply {
+func SerializeProblemFSReadConfigRequest(_path string) ProblemFSReadConfigRequest {
 
-	return ProblemFSRemoveAllInnerReply{}
+	return ProblemFSReadConfigRequest{
+		Path: _path,
+	}
 }
-func _packSerializeProblemFSRemoveAllInnerReply() ProblemFSRemoveAllInnerReply {
+func _packSerializeProblemFSReadConfigRequest(_path string) ProblemFSReadConfigRequest {
 
-	return ProblemFSRemoveAllInnerReply{}
+	return ProblemFSReadConfigRequest{
+		Path: _path,
+	}
 }
-func PackSerializeProblemFSRemoveAllInnerReply() (pack []ProblemFSRemoveAllInnerReply) {
+func PackSerializeProblemFSReadConfigRequest(_path []string) (pack []ProblemFSReadConfigRequest) {
+	for i := range _path {
+		pack = append(pack, _packSerializeProblemFSReadConfigRequest(_path[i]))
+	}
 	return
 }
-func PSerializeListProblemDescReply(_code int, _data []ProblemDescData) *ListProblemDescReply {
+func PSerializeProblemFSReadConfigReply(_code int, _data *problemconfig.ProblemConfig) *ProblemFSReadConfigReply {
 
-	return &ListProblemDescReply{
+	return &ProblemFSReadConfigReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func SerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+func SerializeProblemFSReadConfigReply(_code int, _data *problemconfig.ProblemConfig) ProblemFSReadConfigReply {
 
-	return ListProblemDescReply{
+	return ProblemFSReadConfigReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func _packSerializeListProblemDescReply(_code int, _data []ProblemDescData) ListProblemDescReply {
+func _packSerializeProblemFSReadConfigReply(_code int, _data *problemconfig.ProblemConfig) ProblemFSReadConfigReply {
 
-	return ListProblemDescReply{
+	return ProblemFSReadConfigReply{
 		Code: _code,
 		Data: _data,
 	}
 }
-func PackSerializeListProblemDescReply(_code []int, _data [][]ProblemDescData) (pack []ListProblemDescReply) {
+func PackSerializeProblemFSReadConfigReply(_code []int, _data []*problemconfig.ProblemConfig) (pack []ProblemFSReadConfigReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeListProblemDescReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSReadConfigReply(_code[i], _data[i]))
 	}
 	return
 }
-func PSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) *ProblemDescData {
+func PSerializeProblemFSWriteConfigRequest(_path string) *ProblemFSWriteConfigRequest {
 
-	return &ProblemDescData{
-		Name:      problemDesc.Name,
-		UpdatedAt: problemDesc.UpdatedAt,
+	return &ProblemFSWriteConfigRequest{
+		Path: _path,
 	}
 }
-func SerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+func SerializeProblemFSWriteConfigRequest(_path string) ProblemFSWriteConfigRequest {
 
-	return ProblemDescData{
-		Name:      problemDesc.Name,
-		UpdatedAt: problemDesc.UpdatedAt,
+	return ProblemFSWriteConfigRequest{
+		Path: _path,
 	}
 }
-func _packSerializeProblemDescData(problemDesc problem_desc.ProblemDesc) ProblemDescData {
+func _packSerializeProblemFSWriteConfigRequest(_path string) ProblemFSWriteConfigRequest {
 
-	return ProblemDescData{
-		Name:      problemDesc.Name,
-		UpdatedAt: problemDesc.UpdatedAt,
+	return ProblemFSWriteConfigRequest{
+		Path: _path,
 	}
 }
-func PackSerializeProblemDescData(problemDesc []problem_desc.ProblemDesc) (pack []ProblemDescData) {
-	for i := range problemDesc {
-		pack = append(pack, _packSerializeProblemDescData(problemDesc[i]))
+func PackSerializeProblemFSWriteConfigRequest(_path []string) (pack []ProblemFSWriteConfigRequest) {
+	for i := range _path {
+		pack = append(pack, _packSerializeProblemFSWriteConfigRequest(_path[i]))
 	}
 	return
 }
-func PSerializeCountProblemDescReply(_code int, _data int64) *CountProblemDescReply {
+func PSerializeProblemFSWriteConfigReply(_code int) *ProblemFSWriteConfigReply {
 
-	return &CountProblemDescReply{
+	return &ProblemFSWriteConfigReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func SerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+func SerializeProblemFSWriteConfigReply(_code int) ProblemFSWriteConfigReply {
 
-	return CountProblemDescReply{
+	return ProblemFSWriteConfigReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func _packSerializeCountProblemDescReply(_code int, _data int64) CountProblemDescReply {
+func _packSerializeProblemFSWriteConfigReply(_code int) ProblemFSWriteConfigReply {
 
-	return CountProblemDescReply{
+	return ProblemFSWriteConfigReply{
 		Code: _code,
-		Data: _data,
 	}
 }
-func PackSerializeCountProblemDescReply(_code []int, _data []int64) (pack []CountProblemDescReply) {
+func PackSerializeProblemFSWriteConfigReply(_code []int) (pack []ProblemFSWriteConfigReply) {
 	for i := range _code {
-		pack = append(pack, _packSerializeCountProblemDescReply(_code[i], _data[i]))
+		pack = append(pack, _packSerializeProblemFSWriteConfigReply(_code[i]))
+	}
+	return
+}
+func PSerializeProblemFSPutConfigRequest(_path string, _key string, _value json.RawMessage) *ProblemFSPutConfigRequest {
+
+	return &ProblemFSPutConfigRequest{
+		Path:  _path,
+		Key:   _key,
+		Value: _value,
+	}
+}
+func SerializeProblemFSPutConfigRequest(_path string, _key string, _value json.RawMessage) ProblemFSPutConfigRequest {
+
+	return ProblemFSPutConfigRequest{
+		Path:  _path,
+		Key:   _key,
+		Value: _value,
+	}
+}
+func _packSerializeProblemFSPutConfigRequest(_path string, _key string, _value json.RawMessage) ProblemFSPutConfigRequest {
+
+	return ProblemFSPutConfigRequest{
+		Path:  _path,
+		Key:   _key,
+		Value: _value,
+	}
+}
+func PackSerializeProblemFSPutConfigRequest(_path []string, _key []string, _value []json.RawMessage) (pack []ProblemFSPutConfigRequest) {
+	for i := range _path {
+		pack = append(pack, _packSerializeProblemFSPutConfigRequest(_path[i], _key[i], _value[i]))
+	}
+	return
+}
+func PSerializeProblemFSPutConfigReply(_code int, _data *problemconfig.ProblemConfig) *ProblemFSPutConfigReply {
+
+	return &ProblemFSPutConfigReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeProblemFSPutConfigReply(_code int, _data *problemconfig.ProblemConfig) ProblemFSPutConfigReply {
+
+	return ProblemFSPutConfigReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeProblemFSPutConfigReply(_code int, _data *problemconfig.ProblemConfig) ProblemFSPutConfigReply {
+
+	return ProblemFSPutConfigReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeProblemFSPutConfigReply(_code []int, _data []*problemconfig.ProblemConfig) (pack []ProblemFSPutConfigReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeProblemFSPutConfigReply(_code[i], _data[i]))
 	}
 	return
 }

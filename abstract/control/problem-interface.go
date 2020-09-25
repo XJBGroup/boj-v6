@@ -18,6 +18,7 @@ type ProblemService interface {
 	ProblemFSStat(c controller.MContext)
 	ProblemFSWrite(c controller.MContext)
 	ProblemFSRemove(c controller.MContext)
+	ProblemFSZipWrite(c controller.MContext)
 	ProblemFSZipRead(c controller.MContext)
 	ProblemFSLS(c controller.MContext)
 	ProblemFSWrites(c controller.MContext)

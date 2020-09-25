@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	problem_desc "github.com/Myriad-Dreamin/boj-v6/abstract/problem-desc"
@@ -134,7 +135,6 @@ func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category 
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSWriteInnerReply")),
 					),
 				).
 				Method(artisan.DELETE, prefix+"ProblemFSRemove",
@@ -151,10 +151,8 @@ func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category 
 						artisan.Request(
 							artisan.Param("path", artisan.String, required),
 						),
-						artisan.Reply(
-							codeField,
-							artisan.Param("data", artisan.Object(prefix+"ProblemFSReadInnerReply")),
-						),
+						// return file
+						artisan.Reply(),
 					)),
 			).
 			SubCate("directory", artisan.Ink().WithName(prefix+"ProblemFSDirectoryOperation").
@@ -178,7 +176,6 @@ func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category 
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSWritesInnerReply")),
 					),
 				).
 				Method(artisan.PUT, prefix+"ProblemFSMkdir",
@@ -187,7 +184,6 @@ func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category 
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSMkdirInnerReply")),
 					),
 				).
 				Method(artisan.DELETE, prefix+"ProblemFSRemoveAll",
@@ -196,46 +192,56 @@ func wrapProblemFSToCate(cate artisan.Category, prefix string) artisan.Category 
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSRemoveAllInnerReply")),
 					),
 				).
-				SubCate("content", artisan.Ink().WithName(prefix+"ProblemFSZipRead").
+				SubCate("zip", artisan.Ink().WithName(prefix+"ProblemFSZipOperation").
+					Method(artisan.POST, prefix+"ProblemFSZipWrite",
+						artisan.Request(
+							artisan.Param("path", artisan.String, required),
+							// zip file in request stream
+						),
+						artisan.Reply(
+							codeField,
+						),
+					).
 					Method(artisan.GET, prefix+"ProblemFSZipRead",
 						artisan.Request(
 							artisan.Param("path", artisan.String, required),
 						),
 						artisan.Reply(
 							codeField,
-							artisan.Param("data", artisan.Object(prefix+"ProblemFSZipReadInnerReply")),
 						),
-					)),
+					),
+				),
 			).
 			SubCate("config", artisan.Ink().WithName(prefix+"ProblemFSConfigOperation").
 				Method(artisan.GET, prefix+"ProblemFSReadConfig",
 					artisan.Request(
-						artisan.Param("path", artisan.String, required),
+						artisan.Param("path", artisan.String),
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSReadConfigInnerReply")),
+						artisan.Param("data", new(*problemconfig.ProblemConfig)),
 					),
 				).
 				Method(artisan.POST, prefix+"ProblemFSWriteConfig",
 					artisan.Request(
-						artisan.Param("path", artisan.String, required),
+						artisan.Param("path", artisan.String),
+						// upload: form file
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSWriteConfigInnerReply")),
 					),
 				).
 				Method(artisan.PUT, prefix+"ProblemFSPutConfig",
 					artisan.Request(
-						artisan.Param("path", artisan.String, required),
+						artisan.Param("path", artisan.String),
+						artisan.Param("key", artisan.String),
+						artisan.Param("value", new(json.RawMessage)),
 					),
 					artisan.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object(prefix+"ProblemFSPutConfigInnerReply")),
+						artisan.Param("data", new(*problemconfig.ProblemConfig)),
 					),
 				),
 			),
