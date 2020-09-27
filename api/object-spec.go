@@ -2,18 +2,18 @@ package api
 
 import "github.com/Myriad-Dreamin/boj-v6/abstract/control"
 
-type AnnouncementService = control.AnnouncementService
+type AnnouncementController = control.AnnouncementController
 
-type UserService = control.UserService
+type UserController = control.UserController
 
-type CommentService = control.CommentService
+type CommentController = control.CommentController
 
-type SubmissionService = control.SubmissionService
+type SubmissionController = control.SubmissionController
 
-type ProblemService = control.ProblemService
+type ProblemController = control.ProblemController
 
-type GroupService = control.GroupService
+type GroupController = control.GroupController
 
-type ContestService = control.ContestService
+type ContestController = control.ContestController
 
-type AuthService = control.AuthService
+type AuthController = control.AuthController

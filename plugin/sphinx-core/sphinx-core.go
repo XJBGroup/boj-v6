@@ -21,7 +21,7 @@ package sphinxcore
 //	logger              plugin.Logger
 //	cfg                 *plugin.ServerConfig
 //	consumer            *cluster.Consumer
-//	submissionService   *submissionservice.Service
+//	submissionService   *submissionservice.Controller
 //	submissionDB        *model.SubmissionDB
 //	contestSubmissionDB *model.ContestSubmissionDB
 //	contestDB           *model.ContestDB

@@ -18,7 +18,7 @@ type UserCategories struct {
 	IdGroup      artisan.Category
 }
 
-func DescribeUserService() artisan.ProposingService {
+func DescribeUserController() artisan.ProposingService {
 	var userModel = new(user.User)
 	var _valueUserModel user.User
 
@@ -32,7 +32,7 @@ func DescribeUserService() artisan.ProposingService {
 			append(listParams, name)...)
 	}
 
-	svc := &UserCategories{
+	controller := &UserCategories{
 		List: artisan.Ink().
 			Path("user-list").
 			Method(artisan.GET, "ListUser",
@@ -173,8 +173,8 @@ func DescribeUserService() artisan.ProposingService {
 				artisan.Reply(codeField),
 			),
 	}
-	svc.Name("UserService").
+	controller.Name("UserController").
 		UseModel(artisan.Model(artisan.Name("user"), &userModel),
 			artisan.Model(artisan.Name("valueUser"), &_valueUserModel))
-	return svc
+	return controller
 }

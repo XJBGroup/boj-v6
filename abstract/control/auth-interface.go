@@ -4,8 +4,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type AuthService interface {
-	AuthServiceSignatureXXX() interface{}
+type AuthController interface {
+	AuthControllerSignatureXXX() interface{}
 	AddPolicy(c controller.MContext)
 	RemovePolicy(c controller.MContext)
 	HasPolicy(c controller.MContext)

@@ -16,7 +16,7 @@ import (
 	"strconv"
 )
 
-type Service struct {
+type Controller struct {
 	db              problem.DB
 	descDB          problem_desc.DB
 	userDB          user.DB
@@ -28,8 +28,8 @@ type Service struct {
 	key             string
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.db = m.RequireImpl(new(problem.DB)).(problem.DB)
 	s.descDB = m.RequireImpl(new(problem_desc.DB)).(problem_desc.DB)
 	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
@@ -43,11 +43,11 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) ProblemServiceSignatureXXX() interface{} {
+func (svc Controller) ProblemControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc Service) ListProblem(c controller.MContext) {
+func (svc Controller) ListProblem(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -61,7 +61,7 @@ func (svc Service) ListProblem(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeListProblemReply(types.CodeOK, problems))
 }
 
-func (svc Service) CountProblem(c controller.MContext) {
+func (svc Controller) CountProblem(c controller.MContext) {
 	// todo: problem filter
 	cnt, err := svc.db.Count()
 	if snippet.MaybeCountError(c, err) {
@@ -74,7 +74,7 @@ func (svc Service) CountProblem(c controller.MContext) {
 	})
 }
 
-func (svc Service) PutProblem(c controller.MContext) {
+func (svc Controller) PutProblem(c controller.MContext) {
 	var req = new(api.PutProblemRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -99,7 +99,7 @@ func (svc Service) PutProblem(c controller.MContext) {
 //
 // If you want to change default description template, please update the field `DescriptionRef`.
 // If you want to change others, please update them in configuration file.
-func (svc *Service) FillPutFields(problem *problem.Problem, req *api.PutProblemRequest) (fields []string) {
+func (svc *Controller) FillPutFields(problem *problem.Problem, req *api.PutProblemRequest) (fields []string) {
 	if len(req.Title) != 0 {
 		problem.Title = req.Title
 		fields = append(fields, "title")
@@ -112,7 +112,7 @@ func (svc *Service) FillPutFields(problem *problem.Problem, req *api.PutProblemR
 	return
 }
 
-func (svc Service) GetProblem(c controller.MContext) {
+func (svc Controller) GetProblem(c controller.MContext) {
 
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
@@ -159,7 +159,7 @@ func (svc Service) GetProblem(c controller.MContext) {
 		api.SerializeGetProblemData(p, api.SerializeGetProblemAuthorData(author))))
 }
 
-func (svc Service) DeleteProblem(c controller.MContext) {
+func (svc Controller) DeleteProblem(c controller.MContext) {
 	obj := new(problem.Problem)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)

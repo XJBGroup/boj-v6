@@ -1,7 +1,7 @@
-package problem
+package user
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/control"
 )
 
-type Service = control.ProblemService
+type Controller = control.UserController

@@ -1,7 +1,7 @@
-package group
+package contest
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/control"
 )
 
-type Service = control.GroupService
+type Controller = control.ContestController

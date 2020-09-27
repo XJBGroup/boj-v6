@@ -11,9 +11,9 @@ type AuthCategories struct {
 	GroupingPolicy artisan.Category
 }
 
-func DescribeAuthService() artisan.ProposingService {
+func DescribeAuthController() artisan.ProposingService {
 
-	svc := &AuthCategories{
+	controller := &AuthCategories{
 		Policy: artisan.Ink().Path("/policy").Method(
 			artisan.POST, "AddPolicy",
 			artisan.Request(
@@ -69,6 +69,6 @@ func DescribeAuthService() artisan.ProposingService {
 				artisan.Param("data", artisan.Bool)),
 		),
 	}
-	svc.Name("AuthService")
-	return svc
+	controller.Name("AuthController")
+	return controller
 }

@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type Service struct {
+type Controller struct {
 	db         user.DB
 	middleware *jwt.Middleware
 	enforcer   *external.Enforcer
@@ -24,8 +24,8 @@ type Service struct {
 	key        string
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.db = m.RequireImpl(new(user.DB)).(user.DB)
 	s.middleware = m.RequireImpl(new(*jwt.Middleware)).(*jwt.Middleware)
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
@@ -35,11 +35,11 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc *Service) UserServiceSignatureXXX() interface{} {
+func (svc *Controller) UserControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc *Service) ListUser(c controller.MContext) {
+func (svc *Controller) ListUser(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -55,7 +55,7 @@ func (svc *Service) ListUser(c controller.MContext) {
 	return
 }
 
-func (svc *Service) CountUser(c controller.MContext) {
+func (svc *Controller) CountUser(c controller.MContext) {
 	count, err := svc.db.Count()
 	if snippet.MaybeCountError(c, err) {
 		return
@@ -67,7 +67,7 @@ func (svc *Service) CountUser(c controller.MContext) {
 	})
 }
 
-func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
+func (svc *Controller) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	var req = new(api.RegisterRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -115,11 +115,11 @@ func (svc *Service) DoRegister(c controller.MContext) (r *api.RegisterReply) {
 	return
 }
 
-func (svc *Service) Register(c controller.MContext) {
+func (svc *Controller) Register(c controller.MContext) {
 	svc.DoRegister(c)
 }
 
-func (svc *Service) RegisterAdmin(c controller.MContext) {
+func (svc *Controller) RegisterAdmin(c controller.MContext) {
 	resp := svc.DoRegister(c)
 	if resp == nil {
 		return
@@ -131,7 +131,7 @@ func (svc *Service) RegisterAdmin(c controller.MContext) {
 	}
 }
 
-func (svc *Service) GetUserIdentities(id uint) (identities []string) {
+func (svc *Controller) GetUserIdentities(id uint) (identities []string) {
 
 	// todo: all identities
 	if svc.enforcer.HasGroupingPolicy("user:"+strconv.Itoa(int(id)), "admin") {
@@ -140,7 +140,7 @@ func (svc *Service) GetUserIdentities(id uint) (identities []string) {
 	return
 }
 
-func (svc *Service) LoginUser(c controller.MContext) {
+func (svc *Controller) LoginUser(c controller.MContext) {
 	var req = new(api.LoginUserRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -195,7 +195,7 @@ func (svc *Service) LoginUser(c controller.MContext) {
 	}
 }
 
-func (svc *Service) RefreshToken(c controller.MContext) {
+func (svc *Controller) RefreshToken(c controller.MContext) {
 	newToken, err := svc.middleware.RefreshToken(c)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusUnauthorized, err)
@@ -208,7 +208,7 @@ func (svc *Service) RefreshToken(c controller.MContext) {
 	})
 }
 
-func (svc *Service) BindEmail(c controller.MContext) {
+func (svc *Controller) BindEmail(c controller.MContext) {
 	var req = new(api.BindEmailRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -233,7 +233,7 @@ func (svc *Service) BindEmail(c controller.MContext) {
 	c.JSON(http.StatusOK, &snippet.ResponseOK)
 }
 
-func (svc *Service) ChangePassword(c controller.MContext) {
+func (svc *Controller) ChangePassword(c controller.MContext) {
 	var req = new(api.ChangePasswordRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -268,7 +268,7 @@ func (svc *Service) ChangePassword(c controller.MContext) {
 	c.JSON(http.StatusOK, &snippet.ResponseOK)
 }
 
-func (svc *Service) InspectUser(c controller.MContext) {
+func (svc *Controller) InspectUser(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -287,7 +287,7 @@ func (svc *Service) InspectUser(c controller.MContext) {
 			obj, svc.GetUserIdentities(obj.ID), successProblems, triedProblems)))
 }
 
-func (svc *Service) GetUser(c controller.MContext) {
+func (svc *Controller) GetUser(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -301,7 +301,7 @@ func (svc *Service) GetUser(c controller.MContext) {
 		api.SerializeGetUserInnerReply(obj)))
 }
 
-func (svc *Service) PutUser(c controller.MContext) {
+func (svc *Controller) PutUser(c controller.MContext) {
 	var req = new(api.PutUserRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -319,7 +319,7 @@ func (svc *Service) PutUser(c controller.MContext) {
 	}
 }
 
-func (svc *Service) DeleteUser(c controller.MContext) {
+func (svc *Controller) DeleteUser(c controller.MContext) {
 	obj := new(user.User)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)
@@ -333,7 +333,7 @@ func (svc *Service) DeleteUser(c controller.MContext) {
 	}
 }
 
-func (svc *Service) FillPutFields(obj *user.User, req *api.PutUserRequest) (fields []string) {
+func (svc *Controller) FillPutFields(obj *user.User, req *api.PutUserRequest) (fields []string) {
 	if req.Gender != 255 {
 		obj.Motto = req.Motto
 		fields = append(fields, "gender")

@@ -14,7 +14,7 @@ type SubmissionCategories struct {
 	IdGroup    artisan.Category
 }
 
-func DescribeSubmissionService() artisan.ProposingService {
+func DescribeSubmissionController() artisan.ProposingService {
 	var submissionModel = new(submission.Submission)
 	var valueSubmissionModel submission.Submission
 
@@ -35,7 +35,7 @@ func DescribeSubmissionService() artisan.ProposingService {
 			append(listParams, name)...)
 	}
 
-	svc := &SubmissionCategories{
+	controller := &SubmissionCategories{
 		List: artisan.Ink().
 			Path("submission-list").
 			Method(artisan.GET, "ListSubmission",
@@ -106,8 +106,8 @@ func DescribeSubmissionService() artisan.ProposingService {
 				artisan.Reply(codeField),
 			),
 	}
-	svc.Name("SubmissionService").
+	controller.Name("SubmissionController").
 		UseModel(artisan.Model(artisan.Name("submission"), &submissionModel),
 			artisan.Model(artisan.Name("valueSubmission"), &valueSubmissionModel))
-	return svc
+	return controller
 }

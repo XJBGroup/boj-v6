@@ -324,24 +324,24 @@ func getProblemIDCate(prefix string) artisan.Category {
 	return wrapProblemDescToCate(cate, prefix)
 }
 
-func DescribeProblemService() artisan.ProposingService {
+func DescribeProblemController() artisan.ProposingService {
 
-	svc := &ProblemCategories{
+	controller := &ProblemCategories{
 		List:  getListProblemCate(""),
 		Count: getCountProblemCate(""),
 		Post:  getPostProblemCate(""),
 	}
 
-	svc.IdGroup = getProblemIDCate("")
-	svc.IdGroup = wrapProblemFSToCate(svc.IdGroup, "")
+	controller.IdGroup = getProblemIDCate("")
+	controller.IdGroup = wrapProblemFSToCate(controller.IdGroup, "")
 
-	svc.Name("ProblemService").
+	controller.Name("ProblemController").
 		UseModel(
 			artisan.Model(artisan.Name("problem"), &problemModel),
 			artisan.Model(artisan.Name("problemUser"), &problemUserModel),
 			artisan.Model(artisan.Name("problemDesc"), &problemDescModel),
 		)
-	return svc
+	return controller
 }
 
 func DescribeProblemCategory(c artisan.Category, prefix string) artisan.Category {

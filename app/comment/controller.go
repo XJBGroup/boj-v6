@@ -11,23 +11,23 @@ import (
 	"net/http"
 )
 
-type Service struct {
+type Controller struct {
 	db     comment.DB
 	logger log.TendermintLogger
 	key    string
 }
 
-func (svc *Service) CommentServiceSignatureXXX() interface{} {
+func (svc *Controller) CommentControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.db = m.RequireImpl(new(comment.DB)).(comment.DB)
 	return s, nil
 }
 
-func (svc *Service) ListComment(c controller.MContext) {
+func (svc *Controller) ListComment(c controller.MContext) {
 	var req = new(api.ListCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -44,7 +44,7 @@ func (svc *Service) ListComment(c controller.MContext) {
 	return
 }
 
-func (svc *Service) CountComment(c controller.MContext) {
+func (svc *Controller) CountComment(c controller.MContext) {
 	var req = new(api.CountCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -61,7 +61,7 @@ func (svc *Service) CountComment(c controller.MContext) {
 	})
 }
 
-func (svc *Service) PostComment(c controller.MContext) {
+func (svc *Controller) PostComment(c controller.MContext) {
 	var req = new(api.PostCommentRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -81,7 +81,7 @@ func (svc *Service) PostComment(c controller.MContext) {
 	}
 }
 
-func (svc *Service) GetComment(c controller.MContext) {
+func (svc *Controller) GetComment(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -104,7 +104,7 @@ func (svc *Service) GetComment(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetCommentReply(types.CodeOK, obj)) // api.AnnouncementToGetReply(obj, author, luu))
 }
 
-func (svc *Service) DeleteComment(c controller.MContext) {
+func (svc *Controller) DeleteComment(c controller.MContext) {
 	obj := new(comment.Comment)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)
@@ -118,7 +118,7 @@ func (svc *Service) DeleteComment(c controller.MContext) {
 	}
 }
 
-func (svc *Service) PutComment(c controller.MContext) {
+func (svc *Controller) PutComment(c controller.MContext) {
 	var req = new(api.PutCommentRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -139,7 +139,7 @@ func (svc *Service) PutComment(c controller.MContext) {
 	}
 }
 
-func (svc *Service) FillPutFields(obj *comment.Comment, req *api.PutCommentRequest) (fields []string) {
+func (svc *Controller) FillPutFields(obj *comment.Comment, req *api.PutCommentRequest) (fields []string) {
 	if len(req.Title) != 0 {
 		obj.Title = req.Title
 		fields = append(fields, "title")

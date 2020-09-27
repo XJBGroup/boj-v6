@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
+func (svc *Controller) ChangeProblemDescriptionRef(c controller.MContext) {
 	var req = new(api.ChangeProblemDescriptionRefRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -85,7 +85,7 @@ func (svc *Service) ChangeProblemDescriptionRef(c controller.MContext) {
 	c.JSON(http.StatusOK, snippet.ResponseOK)
 }
 
-func (svc *Service) PostProblemDesc(c controller.MContext) {
+func (svc *Controller) PostProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -123,7 +123,7 @@ func (svc *Service) PostProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc *Service) GetProblemDesc(c controller.MContext) {
+func (svc *Controller) GetProblemDesc(c controller.MContext) {
 	var req = new(api.GetProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -154,7 +154,7 @@ func (svc *Service) GetProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc *Service) PutProblemDesc(c controller.MContext) {
+func (svc *Controller) PutProblemDesc(c controller.MContext) {
 	var req = new(api.PostProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -187,7 +187,7 @@ func (svc *Service) PutProblemDesc(c controller.MContext) {
 	}
 }
 
-func (svc *Service) DeleteProblemDesc(c controller.MContext) {
+func (svc *Controller) DeleteProblemDesc(c controller.MContext) {
 	var req = new(api.DeleteProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -222,7 +222,7 @@ func (svc *Service) DeleteProblemDesc(c controller.MContext) {
 	c.JSON(http.StatusOK, snippet.ResponseOK)
 }
 
-func (svc *Service) ListProblemDesc(c controller.MContext) {
+func (svc *Controller) ListProblemDesc(c controller.MContext) {
 	var req = new(api.ListProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -238,7 +238,7 @@ func (svc *Service) ListProblemDesc(c controller.MContext) {
 		api.PackSerializeProblemDescData(ss)))
 }
 
-func (svc *Service) CountProblemDesc(c controller.MContext) {
+func (svc *Controller) CountProblemDesc(c controller.MContext) {
 	var req = new(api.ListProblemDescRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {

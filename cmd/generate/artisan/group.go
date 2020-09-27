@@ -16,12 +16,12 @@ type GroupCategories struct {
 	IdGroup    artisan.Category
 }
 
-func DescribeGroupService() artisan.ProposingService {
+func DescribeGroupController() artisan.ProposingService {
 	var groupModel = new(group.Group)
 	var _groupModel = new(group.Group)
 	var valueUserModel user.User
 
-	svc := &GroupCategories{
+	controller := &GroupCategories{
 		List: artisan.Ink().
 			Path("group-list").
 			Method(artisan.GET, "ListGroup",
@@ -110,8 +110,8 @@ func DescribeGroupService() artisan.ProposingService {
 			)),
 		// todo: post user by name
 	}
-	svc.Name("GroupService").
+	controller.Name("GroupController").
 		UseModel(artisan.Model(artisan.Name("group"), &groupModel),
 			artisan.Model(artisan.Name("valueUser"), &valueUserModel))
-	return svc
+	return controller
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type GroupService interface {
-	GroupServiceSignatureXXX() interface{}
+type GroupController interface {
+	GroupControllerSignatureXXX() interface{}
 	ListGroup(c controller.MContext)
 	CountGroup(c controller.MContext)
 	PostGroup(c controller.MContext)

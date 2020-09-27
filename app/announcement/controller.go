@@ -12,26 +12,26 @@ import (
 	"net/http"
 )
 
-type Service struct {
+type Controller struct {
 	db     announcement.DB
 	userDB user.DB
 	logger log.TendermintLogger
 	key    string
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.db = m.RequireImpl(new(announcement.DB)).(announcement.DB)
 	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
 	s.key = "aid"
 	return s, nil
 }
 
-func (svc *Service) AnnouncementServiceSignatureXXX() interface{} {
+func (svc *Controller) AnnouncementControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc *Service) ListAnnouncement(c controller.MContext) {
+func (svc *Controller) ListAnnouncement(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -46,7 +46,7 @@ func (svc *Service) ListAnnouncement(c controller.MContext) {
 	return
 }
 
-func (svc *Service) CountAnnouncement(c controller.MContext) {
+func (svc *Controller) CountAnnouncement(c controller.MContext) {
 	count, err := svc.db.Count()
 	if snippet.MaybeCountError(c, err) {
 		return
@@ -65,7 +65,7 @@ which means that the request to this method must be with header
 "Authorization": "Bearer {your token}"
 and, the operating user must be in the group of admin.
 */
-func (svc *Service) PostAnnouncement(c controller.MContext) {
+func (svc *Controller) PostAnnouncement(c controller.MContext) {
 	var req = new(api.PostAnnouncementRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -89,7 +89,7 @@ func (svc *Service) PostAnnouncement(c controller.MContext) {
 GetAnnouncement v1/announcement/:aid GET
 requiring nothing, so anyone is ok.
 */
-func (svc *Service) GetAnnouncement(c controller.MContext) {
+func (svc *Controller) GetAnnouncement(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -112,7 +112,7 @@ func (svc *Service) GetAnnouncement(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetAnnouncementReply(types.CodeOK, obj))
 }
 
-func (svc *Service) PutAnnouncement(c controller.MContext) {
+func (svc *Controller) PutAnnouncement(c controller.MContext) {
 	var req = new(api.PutAnnouncementRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -137,7 +137,7 @@ func (svc *Service) PutAnnouncement(c controller.MContext) {
 DeleteAnnouncement v1/announcement/:aid DELETE
 requiring the aiming announcement's write privilege
 */
-func (svc *Service) DeleteAnnouncement(c controller.MContext) {
+func (svc *Controller) DeleteAnnouncement(c controller.MContext) {
 	obj := new(announcement.Announcement)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)
@@ -151,7 +151,7 @@ func (svc *Service) DeleteAnnouncement(c controller.MContext) {
 	}
 }
 
-func (svc *Service) FillPutFields(obj *announcement.Announcement, req *api.PutAnnouncementRequest) (fields []string) {
+func (svc *Controller) FillPutFields(obj *announcement.Announcement, req *api.PutAnnouncementRequest) (fields []string) {
 	if len(req.Title) != 0 {
 		obj.Title = req.Title
 		fields = append(fields, "title")

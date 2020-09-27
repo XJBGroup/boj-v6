@@ -28,7 +28,7 @@ func modifyProblem(cfg *problemconfig.ProblemConfig, problem *problem.Problem) {
 
 }
 
-func (svc *Service) BindProblemFSRequest(c controller.MContext, req interface{}) (id uint, ok bool) {
+func (svc *Controller) BindProblemFSRequest(c controller.MContext, req interface{}) (id uint, ok bool) {
 	id, ok = snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
 		return
@@ -43,7 +43,7 @@ func (svc *Service) BindProblemFSRequest(c controller.MContext, req interface{})
 	return id, ok
 }
 
-//func (svc *Service) WriteTestCases(c controller.MContext) {
+//func (svc *Controller) WriteTestCases(c controller.MContext) {
 //	id, ok := snippet.ParseUint(c, svc.key)
 //	if !ok {
 //		return

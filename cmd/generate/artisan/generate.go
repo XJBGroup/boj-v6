@@ -26,19 +26,19 @@ func (m *Meta) NeedAuth() *Meta {
 }
 
 // todo move inner service generate
-func svcMethods(svc artisan.ServiceDescription) (res string) {
-	res = fmt.Sprintf("    %sSignatureXXX() interface{}\n", svc.GetName())
-	for _, cat := range svc.GetCategories() {
-		res += _svcMethods(cat)
+func controllerMethods(controller artisan.ServiceDescription) (res string) {
+	res = fmt.Sprintf("    %sSignatureXXX() interface{}\n", controller.GetName())
+	for _, cat := range controller.GetCategories() {
+		res += _controllerMethods(cat)
 	}
 	return
 }
 
-func _svcMethods(svc artisan.CategoryDescription) (res string) {
-	for _, cat := range svc.GetCategories() {
-		res += _svcMethods(cat)
+func _controllerMethods(controller artisan.CategoryDescription) (res string) {
+	for _, cat := range controller.GetCategories() {
+		res += _controllerMethods(cat)
 	}
-	for _, method := range svc.GetMethods() {
+	for _, method := range controller.GetMethods() {
 		res += "    " + method.GetName() + "(c controller.MContext, req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
 	}
 	return
@@ -52,34 +52,34 @@ func main() {
 		cate artisan.ProposingService
 		name string
 	}{
-		{DescribeUserService(), "user"},
-		{DescribeAuthService(), "auth"},
-		{DescribeAnnouncementService(), "announcement"},
-		{DescribeCommentService(), "comment"},
-		{DescribeSubmissionService(), "submission"},
-		{DescribeProblemService(), "problem"},
-		{DescribeContestService(), "contest"},
-		{DescribeGroupService(), "group"},
+		{DescribeUserController(), "user"},
+		{DescribeAuthController(), "auth"},
+		{DescribeAnnouncementController(), "announcement"},
+		{DescribeCommentController(), "comment"},
+		{DescribeSubmissionController(), "submission"},
+		{DescribeProblemController(), "problem"},
+		{DescribeContestController(), "contest"},
+		{DescribeGroupController(), "group"},
 	}
 
-	var svc *artisan.PublishedServices
-	var svcs []artisan.ProposingService
+	var controller *artisan.PublishedServices
+	var controllers []artisan.ProposingService
 	for _, tsk := range meta {
-		svcs = append(svcs, tsk.cate)
+		controllers = append(controllers, tsk.cate)
 	}
-	svc = artisan.NewService(svcs...).Base(v1).SetPackageName("api").Final()
+	controller = artisan.NewService(controllers...).Base(v1).SetPackageName("api").Final()
 
-	sugar.HandlerError0(svc.PublishRouter("api/router.go"))
+	sugar.HandlerError0(controller.PublishRouter("api/router.go"))
 
 	for _, tsk := range meta {
-		subSvc := svc.GetService(tsk.cate)
-		delete(svc.GetServices(), tsk.cate)
+		subController := controller.GetService(tsk.cate)
+		delete(controller.GetServices(), tsk.cate)
 
-		sugar.HandlerError0(svc.PublishObjects(
-			subSvc.SetFilePath("api/" + tsk.name + ".go")))
-		sugar.HandlerError0(subSvc.SetFilePath(
+		sugar.HandlerError0(controller.PublishObjects(
+			subController.SetFilePath("api/" + tsk.name + ".go")))
+		sugar.HandlerError0(subController.SetFilePath(
 			"abstract/control/"+tsk.name+"-interface.go").PublishInterface(
-			"control", svc.Opts))
+			"control", controller.Opts))
 
 		sugar.HandlerError0(ioutil.WriteFile(
 			"abstract/inner-control/"+tsk.name+"-inner-interface.go",
@@ -92,8 +92,8 @@ import (
 )
 
 type Inner%s interface {
-%s}`, subSvc.GetName(), svcMethods(subSvc))), 0644))
+%s}`, subController.GetName(), controllerMethods(subController))), 0644))
 	}
 
-	sugar.HandlerError0(svc.Publish())
+	sugar.HandlerError0(controller.Publish())
 }

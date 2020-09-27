@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerGroupService interface {
-	GroupServiceSignatureXXX() interface{}
+type InnerGroupController interface {
+	GroupControllerSignatureXXX() interface{}
 	ListGroup(c controller.MContext, req *api.ListGroupRequest) (*api.ListGroupReply, error)
 	CountGroup(c controller.MContext, req *api.CountGroupRequest) (*api.CountGroupReply, error)
 	PostGroup(c controller.MContext, req *api.PostGroupRequest) (*api.PostGroupReply, error)

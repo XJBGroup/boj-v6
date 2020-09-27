@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func (svc *Service) SaveConfigurationToFileSystem(p *problem.Problem, c *problemconfig.ProblemConfig) error {
+func (svc *Controller) SaveConfigurationToFileSystem(p *problem.Problem, c *problemconfig.ProblemConfig) error {
 
 	// Step: Create Problem Directory
 
@@ -35,7 +35,7 @@ func (svc *Service) SaveConfigurationToFileSystem(p *problem.Problem, c *problem
 	return problemconfig.SaveFS(svc.filesystem, c, filepath.Join(path, "problem-config"))
 }
 
-func (svc *Service) PostProblem(c controller.MContext) {
+func (svc *Controller) PostProblem(c controller.MContext) {
 
 	// Step: Bind Request
 

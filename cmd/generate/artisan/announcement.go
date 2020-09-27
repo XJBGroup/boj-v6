@@ -14,7 +14,7 @@ type AnnouncementCategories struct {
 	IdGroup    artisan.Category
 }
 
-func DescribeAnnouncementService() artisan.ProposingService {
+func DescribeAnnouncementController() artisan.ProposingService {
 	var announcementModel = new(announcement.Announcement)
 	var _announcementModel = new(announcement.Announcement)
 
@@ -26,7 +26,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 	var announcementFilter = artisan.Object(
 		append(listParams, "ListAnnouncementRequest")...)
 
-	svc := &AnnouncementCategories{
+	controller := &AnnouncementCategories{
 		List: artisan.Ink().
 			Path("announcement-list").
 			Method(artisan.GET, "ListAnnouncement",
@@ -77,7 +77,7 @@ func DescribeAnnouncementService() artisan.ProposingService {
 				artisan.Request(), artisan.Reply(codeField),
 			),
 	}
-	svc.Name("AnnouncementService").
+	controller.Name("AnnouncementController").
 		UseModel(artisan.Model(artisan.Name("announcement"), &announcementModel))
-	return svc
+	return controller
 }

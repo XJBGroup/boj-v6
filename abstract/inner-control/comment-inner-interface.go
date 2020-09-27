@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerCommentService interface {
-	CommentServiceSignatureXXX() interface{}
+type InnerCommentController interface {
+	CommentControllerSignatureXXX() interface{}
 	ListComment(c controller.MContext, req *api.ListCommentRequest) (*api.ListCommentReply, error)
 	CountComment(c controller.MContext, req *api.CountCommentRequest) (*api.CountCommentReply, error)
 	PostComment(c controller.MContext, req *api.PostCommentRequest) (*api.PostCommentReply, error)

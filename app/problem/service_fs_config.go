@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func (svc Service) ProblemFSReadConfig(c controller.MContext) {
+func (svc Controller) ProblemFSReadConfig(c controller.MContext) {
 	var req api.ProblemFSReadConfigRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -35,7 +35,7 @@ func (svc Service) ProblemFSReadConfig(c controller.MContext) {
 		api.SerializeProblemFSReadConfigReply(types.CodeOK, &cfg))
 }
 
-func (svc Service) ProblemFSWriteConfig(c controller.MContext) {
+func (svc Controller) ProblemFSWriteConfig(c controller.MContext) {
 	var req api.ProblemFSWriteConfigRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -81,7 +81,7 @@ func (svc Service) ProblemFSWriteConfig(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeProblemFSWriteConfigReply(types.CodeOK))
 }
 
-func (svc Service) ProblemFSPutConfig(c controller.MContext) {
+func (svc Controller) ProblemFSPutConfig(c controller.MContext) {
 	var req api.ProblemFSPutConfigRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {

@@ -23,8 +23,8 @@ type serviceResult struct {
 func (srv *Server) PrepareService() bool {
 	for _, serviceResult := range []serviceResult{
 
-		{"InnerSubmissionService", new(*submission.InnerService),
-			functional.Decay(submission.NewInnerService(srv.Module))},
+		//{"InnerSubmissionController", new(*submission.InnerService),
+		//	functional.Decay(submission.NewInnerService(srv.Module))},
 	} {
 		// build Router failed when requesting service with database, report and return
 		if serviceResult.Err != nil {
@@ -40,22 +40,22 @@ func (srv *Server) PrepareService() bool {
 	}
 
 	for _, serviceResult := range []serviceResult{
-		{"AuthService", new(*auth.Service),
-			functional.Decay(auth.NewService(srv.Module))},
-		{"AnnouncementService", new(*announcement.Service),
-			functional.Decay(announcement.NewService(srv.Module))},
-		{"CommentService", new(*comment.Service),
-			functional.Decay(comment.NewService(srv.Module))},
-		{"SubmissionService", new(*submission.Service),
-			functional.Decay(submission.NewService(srv.Module))},
-		{"UserService", new(*user.Service),
-			functional.Decay(user.NewService(srv.Module))},
-		{"ProblemService", new(*problem.Service),
-			functional.Decay(problem.NewService(srv.Module))},
-		{"ContestService", new(*contest.Service),
-			functional.Decay(contest.NewService(srv.Module))},
-		{"GroupService", new(*group.Service),
-			functional.Decay(group.NewService(srv.Module))},
+		{"AuthController", new(*auth.Controller),
+			functional.Decay(auth.NewController(srv.Module))},
+		{"AnnouncementController", new(*announcement.Controller),
+			functional.Decay(announcement.NewController(srv.Module))},
+		{"CommentController", new(*comment.Controller),
+			functional.Decay(comment.NewController(srv.Module))},
+		{"SubmissionController", new(*submission.Controller),
+			functional.Decay(submission.NewController(srv.Module))},
+		{"UserController", new(*user.Controller),
+			functional.Decay(user.NewController(srv.Module))},
+		{"ProblemController", new(*problem.Controller),
+			functional.Decay(problem.NewController(srv.Module))},
+		{"ContestController", new(*contest.Controller),
+			functional.Decay(contest.NewController(srv.Module))},
+		{"GroupController", new(*group.Controller),
+			functional.Decay(group.NewController(srv.Module))},
 	} {
 		// build Router failed when requesting service with database, report and return
 		if serviceResult.Err != nil {

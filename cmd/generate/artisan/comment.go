@@ -23,11 +23,11 @@ type CommentCategories struct {
 //	NoReply bool
 //}
 
-func DescribeCommentService() artisan.ProposingService {
+func DescribeCommentController() artisan.ProposingService {
 	var commentModel = new(comment.Comment)
 	var _commentModel = new(comment.Comment)
 
-	svc := &CommentCategories{
+	controller := &CommentCategories{
 		List: artisan.Ink().
 			Path("comment-list").
 			Method(artisan.GET, "ListComment",
@@ -78,7 +78,7 @@ func DescribeCommentService() artisan.ProposingService {
 				artisan.Reply(codeField),
 			),
 	}
-	svc.Name("CommentService").
+	controller.Name("CommentController").
 		UseModel(artisan.Model(artisan.Name("comment"), &commentModel))
-	return svc
+	return controller
 }

@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-func (svc Service) SaveCodeToFileSystem(s *submission.Submission, code string) (err error) {
+func (svc Controller) SaveCodeToFileSystem(s *submission.Submission, code string) (err error) {
 
 	// Step: Compute Hash
 
@@ -71,7 +71,7 @@ func (svc Service) SaveCodeToFileSystem(s *submission.Submission, code string) (
 	return nil
 }
 
-func (svc Service) PostSubmission(c controller.MContext) {
+func (svc Controller) PostSubmission(c controller.MContext) {
 	if c.IsAborted() {
 		return
 	}

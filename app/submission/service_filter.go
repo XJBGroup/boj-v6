@@ -21,7 +21,7 @@ const (
 	notContest      = 1 << 62
 )
 
-func (svc *Service) ResolveFilter(c controller.MContext) *submission.Filter {
+func (svc *Controller) ResolveFilter(c controller.MContext) *submission.Filter {
 	var req = new(api.ListSubmissionRequest)
 	if !snippet.BindRequest(c, req) {
 		return nil

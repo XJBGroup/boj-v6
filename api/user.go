@@ -16,9 +16,9 @@ type ListUserReply struct {
 }
 
 type ListUserInnerReply struct {
-	Id                  uint      `json:"id" form:"id"`
+	Id                  uint      `form:"id" json:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
-	LastLogin           time.Time `form:"last_login" json:"last_login"`
+	LastLogin           time.Time `json:"last_login" form:"last_login"`
 	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `json:"nick_name" form:"nick_name"`
 	Email               string    `json:"email" form:"email"`
@@ -33,7 +33,7 @@ type CountUserRequest struct {
 }
 
 type CountUserReply struct {
-	Code int   `form:"code" json:"code"`
+	Code int   `json:"code" form:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
@@ -50,13 +50,13 @@ type RegisterReply struct {
 }
 
 type UserRegisterData struct {
-	Id uint `json:"id" form:"id"`
+	Id uint `form:"id" json:"id"`
 }
 
 type LoginUserRequest struct {
 	Id       uint   `json:"id" form:"id"`
 	UserName string `json:"user_name" form:"user_name"`
-	Email    string `json:"email" form:"email"`
+	Email    string `form:"email" json:"email"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
 
@@ -80,28 +80,11 @@ type RefreshTokenRequest struct {
 
 type RefreshTokenReply struct {
 	Code int                  `form:"code" json:"code"`
-	Data UserRefreshTokenData `form:"data" json:"data"`
+	Data UserRefreshTokenData `json:"data" form:"data"`
 }
 
 type UserRefreshTokenData struct {
-	Token string `form:"token" json:"token"`
-}
-
-type BindEmailRequest struct {
-	Email string `json:"email" form:"email" binding:"email"`
-}
-
-type BindEmailReply struct {
-	Code int `json:"code" form:"code"`
-}
-
-type ChangePasswordRequest struct {
-	OldPassword string `form:"old_password" binding:"required" json:"old_password"`
-	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
-}
-
-type ChangePasswordReply struct {
-	Code int `json:"code" form:"code"`
+	Token string `json:"token" form:"token"`
 }
 
 type InspectUserRequest struct {
@@ -122,7 +105,24 @@ type InspectUserInnerReply struct {
 	Gender          uint8     `json:"gender" form:"gender"`
 	Identities      []string  `json:"identities" form:"identities"`
 	SuccessProblems []uint    `json:"success_problems" form:"success_problems"`
-	TriedProblems   []uint    `json:"tried_problems" form:"tried_problems"`
+	TriedProblems   []uint    `form:"tried_problems" json:"tried_problems"`
+}
+
+type BindEmailRequest struct {
+	Email string `json:"email" form:"email" binding:"email"`
+}
+
+type BindEmailReply struct {
+	Code int `json:"code" form:"code"`
+}
+
+type ChangePasswordRequest struct {
+	OldPassword string `binding:"required" json:"old_password" form:"old_password"`
+	NewPassword string `form:"new_password" binding:"required" json:"new_password"`
+}
+
+type ChangePasswordReply struct {
+	Code int `form:"code" json:"code"`
 }
 
 type GetUserRequest struct {
@@ -130,7 +130,7 @@ type GetUserRequest struct {
 
 type GetUserReply struct {
 	Code int               `json:"code" form:"code"`
-	Data GetUserInnerReply `json:"data" form:"data"`
+	Data GetUserInnerReply `form:"data" json:"data"`
 }
 
 type GetUserInnerReply struct {
@@ -138,11 +138,11 @@ type GetUserInnerReply struct {
 	NickName  string    `json:"nick_name" form:"nick_name"`
 	LastLogin time.Time `json:"last_login" form:"last_login"`
 	Motto     string    `json:"motto" form:"motto"`
-	Gender    uint8     `form:"gender" json:"gender"`
+	Gender    uint8     `json:"gender" form:"gender"`
 }
 
 type PutUserRequest struct {
-	Gender   uint8  `form:"gender" json:"gender"`
+	Gender   uint8  `json:"gender" form:"gender"`
 	NickName string `json:"nick_name" form:"nick_name"`
 	Motto    string `json:"motto" form:"motto"`
 }
@@ -566,6 +566,99 @@ func PackSerializeUserRefreshTokenData(_token []string) (pack []UserRefreshToken
 	}
 	return
 }
+func PSerializeInspectUserRequest() *InspectUserRequest {
+
+	return &InspectUserRequest{}
+}
+func SerializeInspectUserRequest() InspectUserRequest {
+
+	return InspectUserRequest{}
+}
+func _packSerializeInspectUserRequest() InspectUserRequest {
+
+	return InspectUserRequest{}
+}
+func PackSerializeInspectUserRequest() (pack []InspectUserRequest) {
+	return
+}
+func PSerializeInspectUserReply(_code int, _data InspectUserInnerReply) *InspectUserReply {
+
+	return &InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func SerializeInspectUserReply(_code int, _data InspectUserInnerReply) InspectUserReply {
+
+	return InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func _packSerializeInspectUserReply(_code int, _data InspectUserInnerReply) InspectUserReply {
+
+	return InspectUserReply{
+		Code: _code,
+		Data: _data,
+	}
+}
+func PackSerializeInspectUserReply(_code []int, _data []InspectUserInnerReply) (pack []InspectUserReply) {
+	for i := range _code {
+		pack = append(pack, _packSerializeInspectUserReply(_code[i], _data[i]))
+	}
+	return
+}
+func PSerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) *InspectUserInnerReply {
+
+	return &InspectUserInnerReply{
+		Id:              user.ID,
+		NickName:        user.NickName,
+		UserName:        user.UserName,
+		LastLogin:       user.LastLogin,
+		Email:           user.Email,
+		Motto:           user.Motto,
+		Gender:          user.Gender,
+		Identities:      _identities,
+		SuccessProblems: _successProblems,
+		TriedProblems:   _triedProblems,
+	}
+}
+func SerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) InspectUserInnerReply {
+
+	return InspectUserInnerReply{
+		Id:              user.ID,
+		NickName:        user.NickName,
+		UserName:        user.UserName,
+		LastLogin:       user.LastLogin,
+		Email:           user.Email,
+		Motto:           user.Motto,
+		Gender:          user.Gender,
+		Identities:      _identities,
+		SuccessProblems: _successProblems,
+		TriedProblems:   _triedProblems,
+	}
+}
+func _packSerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) InspectUserInnerReply {
+
+	return InspectUserInnerReply{
+		Id:              user.ID,
+		NickName:        user.NickName,
+		UserName:        user.UserName,
+		LastLogin:       user.LastLogin,
+		Email:           user.Email,
+		Motto:           user.Motto,
+		Gender:          user.Gender,
+		Identities:      _identities,
+		SuccessProblems: _successProblems,
+		TriedProblems:   _triedProblems,
+	}
+}
+func PackSerializeInspectUserInnerReply(user []*user.User, _identities [][]string, _successProblems [][]uint, _triedProblems [][]uint) (pack []InspectUserInnerReply) {
+	for i := range user {
+		pack = append(pack, _packSerializeInspectUserInnerReply(user[i], _identities[i], _successProblems[i], _triedProblems[i]))
+	}
+	return
+}
 func PSerializeBindEmailRequest(user *user.User) *BindEmailRequest {
 
 	return &BindEmailRequest{
@@ -662,99 +755,6 @@ func _packSerializeChangePasswordReply(_code int) ChangePasswordReply {
 func PackSerializeChangePasswordReply(_code []int) (pack []ChangePasswordReply) {
 	for i := range _code {
 		pack = append(pack, _packSerializeChangePasswordReply(_code[i]))
-	}
-	return
-}
-func PSerializeInspectUserRequest() *InspectUserRequest {
-
-	return &InspectUserRequest{}
-}
-func SerializeInspectUserRequest() InspectUserRequest {
-
-	return InspectUserRequest{}
-}
-func _packSerializeInspectUserRequest() InspectUserRequest {
-
-	return InspectUserRequest{}
-}
-func PackSerializeInspectUserRequest() (pack []InspectUserRequest) {
-	return
-}
-func PSerializeInspectUserReply(_code int, _data InspectUserInnerReply) *InspectUserReply {
-
-	return &InspectUserReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func SerializeInspectUserReply(_code int, _data InspectUserInnerReply) InspectUserReply {
-
-	return InspectUserReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func _packSerializeInspectUserReply(_code int, _data InspectUserInnerReply) InspectUserReply {
-
-	return InspectUserReply{
-		Code: _code,
-		Data: _data,
-	}
-}
-func PackSerializeInspectUserReply(_code []int, _data []InspectUserInnerReply) (pack []InspectUserReply) {
-	for i := range _code {
-		pack = append(pack, _packSerializeInspectUserReply(_code[i], _data[i]))
-	}
-	return
-}
-func PSerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) *InspectUserInnerReply {
-
-	return &InspectUserInnerReply{
-		Id:              user.ID,
-		NickName:        user.NickName,
-		UserName:        user.UserName,
-		LastLogin:       user.LastLogin,
-		Email:           user.Email,
-		Motto:           user.Motto,
-		Gender:          user.Gender,
-		Identities:      _identities,
-		SuccessProblems: _successProblems,
-		TriedProblems:   _triedProblems,
-	}
-}
-func SerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) InspectUserInnerReply {
-
-	return InspectUserInnerReply{
-		Id:              user.ID,
-		NickName:        user.NickName,
-		UserName:        user.UserName,
-		LastLogin:       user.LastLogin,
-		Email:           user.Email,
-		Motto:           user.Motto,
-		Gender:          user.Gender,
-		Identities:      _identities,
-		SuccessProblems: _successProblems,
-		TriedProblems:   _triedProblems,
-	}
-}
-func _packSerializeInspectUserInnerReply(user *user.User, _identities []string, _successProblems []uint, _triedProblems []uint) InspectUserInnerReply {
-
-	return InspectUserInnerReply{
-		Id:              user.ID,
-		NickName:        user.NickName,
-		UserName:        user.UserName,
-		LastLogin:       user.LastLogin,
-		Email:           user.Email,
-		Motto:           user.Motto,
-		Gender:          user.Gender,
-		Identities:      _identities,
-		SuccessProblems: _successProblems,
-		TriedProblems:   _triedProblems,
-	}
-}
-func PackSerializeInspectUserInnerReply(user []*user.User, _identities [][]string, _successProblems [][]uint, _triedProblems [][]uint) (pack []InspectUserInnerReply) {
-	for i := range user {
-		pack = append(pack, _packSerializeInspectUserInnerReply(user[i], _identities[i], _successProblems[i], _triedProblems[i]))
 	}
 	return
 }

@@ -13,7 +13,7 @@ import (
 	"net/http"
 )
 
-type Service struct {
+type Controller struct {
 	db       group.DB
 	userDB   user.DB
 	enforcer *external.Enforcer
@@ -21,12 +21,12 @@ type Service struct {
 	key      string
 }
 
-func (svc Service) GroupServiceSignatureXXX() interface{} {
+func (svc Controller) GroupControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
 	s.db = m.RequireImpl(new(group.DB)).(group.DB)
 	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
@@ -36,7 +36,7 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) ListGroup(c controller.MContext) {
+func (svc Controller) ListGroup(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -50,7 +50,7 @@ func (svc Service) ListGroup(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeListGroupReply(types.CodeOK, groups))
 }
 
-func (svc Service) CountGroup(c controller.MContext) {
+func (svc Controller) CountGroup(c controller.MContext) {
 	count, err := svc.db.Count()
 	if snippet.MaybeCountError(c, err) {
 		return
@@ -62,11 +62,11 @@ func (svc Service) CountGroup(c controller.MContext) {
 	})
 }
 
-func (svc Service) OnGroupCreate(id uint, id2 uint) error {
+func (svc Controller) OnGroupCreate(id uint, id2 uint) error {
 	return nil
 }
 
-func (svc Service) PostGroup(c controller.MContext) {
+func (svc Controller) PostGroup(c controller.MContext) {
 	var req = new(api.PostGroupRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -117,7 +117,7 @@ func (svc Service) PostGroup(c controller.MContext) {
 	})
 }
 
-func (svc Service) GetGroup(c controller.MContext) {
+func (svc Controller) GetGroup(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -135,7 +135,7 @@ func (svc Service) GetGroup(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetGroupReply(types.CodeOK, obj)) // GroupToGetReply(obj))
 }
 
-func (svc Service) DeleteGroup(c controller.MContext) {
+func (svc Controller) DeleteGroup(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -155,7 +155,7 @@ func (svc Service) DeleteGroup(c controller.MContext) {
 	}
 }
 
-func (svc Service) PutGroup(c controller.MContext) {
+func (svc Controller) PutGroup(c controller.MContext) {
 	var req = new(api.PutGroupRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -172,7 +172,7 @@ func (svc Service) PutGroup(c controller.MContext) {
 		c.JSON(http.StatusOK, &snippet.ResponseOK)
 	}
 }
-func (svc *Service) FillPutFields(group *group.Group, req *api.PutGroupRequest) (fields []string) {
+func (svc *Controller) FillPutFields(group *group.Group, req *api.PutGroupRequest) (fields []string) {
 	if len(req.Name) != 0 {
 		group.Name = req.Name
 		fields = append(fields, "name")

@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerAnnouncementService interface {
-	AnnouncementServiceSignatureXXX() interface{}
+type InnerAnnouncementController interface {
+	AnnouncementControllerSignatureXXX() interface{}
 	ListAnnouncement(c controller.MContext, req *api.ListAnnouncementRequest) (*api.ListAnnouncementReply, error)
 	CountAnnouncement(c controller.MContext, req *api.CountAnnouncementRequest) (*api.CountAnnouncementReply, error)
 	PostAnnouncement(c controller.MContext, req *api.PostAnnouncementRequest) (*api.PostAnnouncementReply, error)

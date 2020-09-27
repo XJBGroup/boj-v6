@@ -4,4 +4,4 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/abstract/control"
 )
 
-type Service = control.SubmissionService
+type Controller = control.SubmissionController

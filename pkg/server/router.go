@@ -27,7 +27,7 @@ func (rt routerTraits) AfterBuild(_ *api.RootRouter) {
 }
 
 func (rt routerTraits) ApplyAuth(r *api.RootRouter) {
-	as := r.AnnouncementService
+	as := r.AnnouncementController
 	as.Post.PostAnnouncement.Use(
 		as.Post.GetAuth().AdminOnly())
 	asi := as.IdGroup

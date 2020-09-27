@@ -1,7 +1,6 @@
 package submission
 
 import (
-	inner_control "github.com/Myriad-Dreamin/boj-v6/abstract/inner-control"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
@@ -18,7 +17,7 @@ import (
 	"path/filepath"
 )
 
-type Service struct {
+type Controller struct {
 	db                 submission.DB
 	problemDB          problem.DB
 	userDB             user.DB
@@ -29,11 +28,11 @@ type Service struct {
 	problemKey         string
 	dispatcher         submission.Dispatcher
 
-	inner inner_control.InnerSubmissionService
+	//inner inner_control.InnerSubmissionService
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.db = m.RequireImpl(new(submission.DB)).(submission.DB)
 	s.problemDB = m.RequireImpl(new(problem.DB)).(problem.DB)
 	s.userDB = m.RequireImpl(new(user.DB)).(user.DB)
@@ -44,15 +43,15 @@ func NewService(m module.Module) (*Service, error) {
 	s.problemKey = "pid"
 	s.key = "sid"
 
-	s.inner = m.RequireImpl(new(inner_control.InnerSubmissionService)).(inner_control.InnerSubmissionService)
+	//s.inner = m.RequireImpl(new(inner_control.InnerSubmissionController)).(inner_control.InnerSubmissionController)
 	return s, nil
 }
 
-func (svc *Service) SubmissionServiceSignatureXXX() interface{} {
+func (svc *Controller) SubmissionControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func (svc *Service) ListSubmission(c controller.MContext) {
+func (svc *Controller) ListSubmission(c controller.MContext) {
 	f := svc.ResolveFilter(c)
 	if c.IsAborted() {
 		return
@@ -69,7 +68,7 @@ func (svc *Service) ListSubmission(c controller.MContext) {
 	return
 }
 
-func (svc *Service) CountSubmission(c controller.MContext) {
+func (svc *Controller) CountSubmission(c controller.MContext) {
 	f := svc.ResolveFilter(c)
 	if c.IsAborted() {
 		return
@@ -86,7 +85,7 @@ func (svc *Service) CountSubmission(c controller.MContext) {
 	})
 }
 
-func (svc *Service) GetSubmission(c controller.MContext) {
+func (svc *Controller) GetSubmission(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -99,7 +98,7 @@ func (svc *Service) GetSubmission(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeGetSubmissionReply(types.CodeOK, api.SerializeGetSubmissionInnerReply(obj)))
 }
 
-func (svc *Service) DeleteSubmission(c controller.MContext) {
+func (svc *Controller) DeleteSubmission(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -128,7 +127,7 @@ func (svc *Service) DeleteSubmission(c controller.MContext) {
 	}
 }
 
-func (svc *Service) GetSubmissionContent(c controller.MContext) {
+func (svc *Controller) GetSubmissionContent(c controller.MContext) {
 	if c.IsAborted() {
 		return
 	}

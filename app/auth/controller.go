@@ -11,24 +11,24 @@ import (
 	"net/http"
 )
 
-type Service struct {
+type Controller struct {
 	enforcer *external.Enforcer
 	logger   external.Logger
 }
 
-func (svc Service) AuthServiceSignatureXXX() interface{} {
+func (svc Controller) AuthControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
 
 	return s, nil
 }
 
-func (svc Service) AddPolicy(c controller.MContext) {
+func (svc Controller) AddPolicy(c controller.MContext) {
 	var req = new(api.AddPolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -48,7 +48,7 @@ func (svc Service) AddPolicy(c controller.MContext) {
 	return
 }
 
-func (svc Service) RemovePolicy(c controller.MContext) {
+func (svc Controller) RemovePolicy(c controller.MContext) {
 	var req = new(api.RemovePolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -68,7 +68,7 @@ func (svc Service) RemovePolicy(c controller.MContext) {
 	return
 }
 
-func (svc Service) HasPolicy(c controller.MContext) {
+func (svc Controller) HasPolicy(c controller.MContext) {
 	var req = new(api.HasPolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -78,7 +78,7 @@ func (svc Service) HasPolicy(c controller.MContext) {
 		Data: svc.enforcer.HasPolicy(req.Subject, req.Object, req.Action)})
 }
 
-func (svc Service) AddGroupingPolicy(c controller.MContext) {
+func (svc Controller) AddGroupingPolicy(c controller.MContext) {
 	var req = new(api.AddGroupingPolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -96,7 +96,7 @@ func (svc Service) AddGroupingPolicy(c controller.MContext) {
 	}
 }
 
-func (svc Service) RemoveGroupingPolicy(c controller.MContext) {
+func (svc Controller) RemoveGroupingPolicy(c controller.MContext) {
 	var req = new(api.RemoveGroupingPolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return
@@ -115,7 +115,7 @@ func (svc Service) RemoveGroupingPolicy(c controller.MContext) {
 
 }
 
-func (svc Service) HasGroupingPolicy(c controller.MContext) {
+func (svc Controller) HasGroupingPolicy(c controller.MContext) {
 	var req = new(api.HasGroupingPolicyRequest)
 	if !ginhelper.BindRequest(c, req) {
 		return

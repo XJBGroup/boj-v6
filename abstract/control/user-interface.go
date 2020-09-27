@@ -4,8 +4,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type UserService interface {
-	UserServiceSignatureXXX() interface{}
+type UserController interface {
+	UserControllerSignatureXXX() interface{}
 	ListUser(c controller.MContext)
 	CountUser(c controller.MContext)
 	Register(c controller.MContext)

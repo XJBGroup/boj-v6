@@ -16,11 +16,11 @@ type ContestCategories struct {
 	IdGroup    artisan.Category
 }
 
-func DescribeContestService() artisan.ProposingService {
+func DescribeContestController() artisan.ProposingService {
 	var contestModel = new(contest.Contest)
 	var _contestModel = new(contest.Contest)
 
-	svc := &ContestCategories{
+	controller := &ContestCategories{
 		List: artisan.Ink().
 			Path("contest-list").
 			Method(artisan.GET, "ListContest",
@@ -98,14 +98,14 @@ func DescribeContestService() artisan.ProposingService {
 			),
 	}
 
-	svc.IdGroup = DescribeProblemCategory(svc.IdGroup, "Contest")
+	controller.IdGroup = DescribeProblemCategory(controller.IdGroup, "Contest")
 
-	svc.Name("ContestService").
+	controller.Name("ContestController").
 		UseModel(
 			artisan.Model(artisan.Name("contest"), &contestModel),
 			artisan.Model(artisan.Name("problem"), &problemModel),
 			artisan.Model(artisan.Name("problemUser"), &problemUserModel),
 			artisan.Model(artisan.Name("problemDesc"), &problemDescModel),
 		)
-	return svc
+	return controller
 }

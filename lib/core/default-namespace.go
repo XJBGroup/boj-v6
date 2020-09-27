@@ -37,9 +37,9 @@ var DefaultNamespace = ModulePathS{
 		HttpEngine:    globalHttpEngine,
 	},
 	Provider: providerS{
-		Model:   providerModel,
-		Service: providerService,
-		Router:  providerRouter,
+		Model:      providerModel,
+		Controller: providerService,
+		Router:     providerRouter,
 	},
 	Middleware: middlewareS{
 		JWT:       middlewareJWT,
@@ -68,9 +68,9 @@ type globalS struct {
 }
 
 type providerS struct {
-	Model   string
-	Service string
-	Router  string
+	Model      string
+	Controller string
+	Router     string
 }
 
 type ModulePathS struct {

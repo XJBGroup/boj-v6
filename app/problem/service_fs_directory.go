@@ -15,7 +15,7 @@ import (
 	"strconv"
 )
 
-func (svc Service) ProblemFSMkdir(c controller.MContext) {
+func (svc Controller) ProblemFSMkdir(c controller.MContext) {
 	var req api.ProblemFSMkdirRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -35,7 +35,7 @@ func (svc Service) ProblemFSMkdir(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeProblemFSMkdirReply(types.CodeOK))
 }
 
-func (svc Service) ProblemFSZipWrite(c controller.MContext) {
+func (svc Controller) ProblemFSZipWrite(c controller.MContext) {
 	var req api.ProblemFSZipWriteRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -126,7 +126,7 @@ func (svc Service) ProblemFSZipWrite(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeProblemFSZipWriteReply(types.CodeOK))
 }
 
-func (svc Service) ProblemFSZipRead(c controller.MContext) {
+func (svc Controller) ProblemFSZipRead(c controller.MContext) {
 	var req api.ProblemFSZipReadRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -193,7 +193,7 @@ func (svc Service) ProblemFSZipRead(c controller.MContext) {
 	//c.JSON(http.StatusOK, api.SerializeProblemFSZipReadReply(types.CodeOK))
 }
 
-func (svc Service) ProblemFSLS(c controller.MContext) {
+func (svc Controller) ProblemFSLS(c controller.MContext) {
 	var req api.ProblemFSLSRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -220,7 +220,7 @@ func (svc Service) ProblemFSLS(c controller.MContext) {
 	}
 }
 
-func (svc Service) ProblemFSWrites(c controller.MContext) {
+func (svc Controller) ProblemFSWrites(c controller.MContext) {
 	var req api.ProblemFSWritesRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {
@@ -258,7 +258,7 @@ func (svc Service) ProblemFSWrites(c controller.MContext) {
 	c.JSON(http.StatusOK, api.SerializeProblemFSWritesReply(types.CodeOK))
 }
 
-func (svc Service) ProblemFSRemoveAll(c controller.MContext) {
+func (svc Controller) ProblemFSRemoveAll(c controller.MContext) {
 	var req api.ProblemFSRemoveAllRequest
 	id, ok := svc.BindProblemFSRequest(c, &req)
 	if !ok {

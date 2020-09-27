@@ -1,7 +1,7 @@
 package api
 
 type AddPolicyRequest struct {
-	Subject string `json:"subject" form:"subject" binding:"required"`
+	Subject string `form:"subject" binding:"required" json:"subject"`
 	Object  string `json:"object" form:"object" binding:"required"`
 	Action  string `json:"action" form:"action" binding:"required"`
 }
@@ -13,8 +13,8 @@ type AddPolicyReply struct {
 
 type RemovePolicyRequest struct {
 	Subject string `json:"subject" form:"subject" binding:"required"`
-	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `json:"action" form:"action" binding:"required"`
+	Object  string `binding:"required" json:"object" form:"object"`
+	Action  string `binding:"required" json:"action" form:"action"`
 }
 
 type RemovePolicyReply struct {
@@ -60,7 +60,7 @@ type HasGroupingPolicyRequest struct {
 
 type HasGroupingPolicyReply struct {
 	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
+	Data bool `form:"data" json:"data"`
 }
 
 func PSerializeAddPolicyRequest(_subject string, _object string, _action string) *AddPolicyRequest {

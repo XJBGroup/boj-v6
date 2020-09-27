@@ -23,7 +23,7 @@ type CountAnnouncementReply struct {
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `binding:"required" json:"title" form:"title"`
+	Title   string `json:"title" form:"title" binding:"required"`
 	Content string `json:"content" form:"content" binding:"required"`
 }
 

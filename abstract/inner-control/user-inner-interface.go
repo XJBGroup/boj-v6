@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerUserService interface {
-	UserServiceSignatureXXX() interface{}
+type InnerUserController interface {
+	UserControllerSignatureXXX() interface{}
 	ListUser(c controller.MContext, req *api.ListUserRequest) (*api.ListUserReply, error)
 	CountUser(c controller.MContext, req *api.CountUserRequest) (*api.CountUserReply, error)
 	Register(c controller.MContext, req *api.RegisterRequest) (*api.RegisterReply, error)

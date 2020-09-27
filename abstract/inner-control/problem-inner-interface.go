@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerProblemService interface {
-	ProblemServiceSignatureXXX() interface{}
+type InnerProblemController interface {
+	ProblemControllerSignatureXXX() interface{}
 	ListProblem(c controller.MContext, req *api.ListProblemRequest) (*api.ListProblemReply, error)
 	CountProblem(c controller.MContext, req *api.CountProblemRequest) (*api.CountProblemReply, error)
 	PostProblem(c controller.MContext, req *api.PostProblemRequest) (*api.PostProblemReply, error)

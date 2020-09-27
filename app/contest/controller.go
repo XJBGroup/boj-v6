@@ -11,19 +11,19 @@ import (
 	"net/http"
 )
 
-type Service struct {
+type Controller struct {
 	enforcer *external.Enforcer
 	db       contest.DB
 	logger   external.Logger
 	key      string
 }
 
-func (svc Service) ContestServiceSignatureXXX() interface{} {
+func (svc Controller) ContestControllerSignatureXXX() interface{} {
 	return svc
 }
 
-func NewService(m module.Module) (*Service, error) {
-	s := new(Service)
+func NewController(m module.Module) (*Controller, error) {
+	s := new(Controller)
 	s.enforcer = m.RequireImpl(new(*external.Enforcer)).(*external.Enforcer)
 	s.db = m.RequireImpl(new(contest.DB)).(contest.DB)
 	s.logger = m.RequireImpl(new(external.Logger)).(external.Logger)
@@ -32,7 +32,7 @@ func NewService(m module.Module) (*Service, error) {
 	return s, nil
 }
 
-func (svc Service) ListContest(c controller.MContext) {
+func (svc Controller) ListContest(c controller.MContext) {
 	page, pageSize, ok := snippet.RosolvePageVariable(c)
 	if !ok {
 		return
@@ -47,7 +47,7 @@ func (svc Service) ListContest(c controller.MContext) {
 	return
 }
 
-func (svc Service) CountContest(c controller.MContext) {
+func (svc Controller) CountContest(c controller.MContext) {
 	count, err := svc.db.Count()
 	if snippet.MaybeCountError(c, err) {
 		return
@@ -59,7 +59,7 @@ func (svc Service) CountContest(c controller.MContext) {
 	})
 }
 
-func (svc Service) PostContest(c controller.MContext) {
+func (svc Controller) PostContest(c controller.MContext) {
 	var req = new(api.PostContestRequest)
 	if !snippet.BindRequest(c, req) {
 		return
@@ -83,7 +83,7 @@ func (svc Service) PostContest(c controller.MContext) {
 	}
 }
 
-func (svc Service) GetContest(c controller.MContext) {
+func (svc Controller) GetContest(c controller.MContext) {
 	id, ok := snippet.ParseUint(c, svc.key)
 	if !ok {
 		return
@@ -97,7 +97,7 @@ func (svc Service) GetContest(c controller.MContext) {
 		api.SerializeGetContestInnerReply(obj)))
 }
 
-func (svc Service) DeleteContest(c controller.MContext) {
+func (svc Controller) DeleteContest(c controller.MContext) {
 	obj := new(contest.Contest)
 	var ok bool
 	obj.ID, ok = snippet.ParseUint(c, svc.key)
@@ -111,7 +111,7 @@ func (svc Service) DeleteContest(c controller.MContext) {
 	}
 }
 
-func (svc Service) PutContest(c controller.MContext) {
+func (svc Controller) PutContest(c controller.MContext) {
 	var req = new(api.PutContestRequest)
 	id, ok := snippet.ParseUintAndBind(c, svc.key, req)
 	if !ok {
@@ -132,7 +132,7 @@ func (svc Service) PutContest(c controller.MContext) {
 	}
 }
 
-func (svc *Service) FillPutFields(contest *contest.Contest, req *api.PutContestRequest) (fields []string) {
+func (svc *Controller) FillPutFields(contest *contest.Contest, req *api.PutContestRequest) (fields []string) {
 	if len(req.Title) != 0 {
 		contest.Title = req.Title
 		fields = append(fields, "title")

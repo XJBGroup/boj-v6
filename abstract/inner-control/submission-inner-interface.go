@@ -5,8 +5,8 @@ import (
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
-type InnerSubmissionService interface {
-	SubmissionServiceSignatureXXX() interface{}
+type InnerSubmissionController interface {
+	SubmissionControllerSignatureXXX() interface{}
 	ListSubmission(c controller.MContext, req *api.ListSubmissionRequest) (*api.ListSubmissionReply, error)
 	CountSubmission(c controller.MContext, req *api.CountSubmissionRequest) (*api.CountSubmissionReply, error)
 	PostSubmission(c controller.MContext, req *api.PostSubmissionRequest) (*api.PostSubmissionReply, error)
