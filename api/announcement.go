@@ -11,7 +11,7 @@ type ListAnnouncementRequest struct {
 
 type ListAnnouncementReply struct {
 	Code int                         `json:"code" form:"code"`
-	Data []announcement.Announcement `json:"data" form:"data"`
+	Data []announcement.Announcement `form:"data" json:"data"`
 }
 
 type CountAnnouncementRequest struct {
@@ -23,7 +23,7 @@ type CountAnnouncementReply struct {
 }
 
 type PostAnnouncementRequest struct {
-	Title   string `json:"title" form:"title" binding:"required"`
+	Title   string `form:"title" binding:"required" json:"title"`
 	Content string `json:"content" form:"content" binding:"required"`
 }
 

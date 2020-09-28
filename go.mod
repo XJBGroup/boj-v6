@@ -33,5 +33,6 @@ require (
 	github.com/tidwall/gjson v1.6.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200204104054-c9f3fb736b72
+	gopkg.in/src-d/go-parse-utils.v1 v1.1.2 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )

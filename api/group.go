@@ -10,8 +10,8 @@ import (
 type ListGroupRequest = gorm_crud_dao.Filter
 
 type ListGroupReply struct {
-	Code int           `form:"code" json:"code"`
-	Data []group.Group `form:"data" json:"data"`
+	Code int           `json:"code" form:"code"`
+	Data []group.Group `json:"data" form:"data"`
 }
 
 type CountGroupRequest = gorm_crud_dao.Filter
@@ -22,10 +22,10 @@ type CountGroupReply struct {
 }
 
 type PostGroupRequest struct {
-	Name        string `json:"name" form:"name" binding:"required"`
+	Name        string `form:"name" binding:"required" json:"name"`
 	Description string `json:"description" form:"description" binding:"required"`
 	OwnerName   string `json:"owner_name" form:"owner_name"`
-	OwnerId     uint   `json:"owner_id" form:"owner_id"`
+	OwnerId     uint   `form:"owner_id" json:"owner_id"`
 }
 
 type PostGroupReply struct {
@@ -34,7 +34,7 @@ type PostGroupReply struct {
 }
 
 type PutGroupOwnerRequest struct {
-	OwnerId uint `form:"owner_id" binding:"required" json:"owner_id"`
+	OwnerId uint `json:"owner_id" form:"owner_id" binding:"required"`
 }
 
 type PutGroupOwnerReply struct {
@@ -52,11 +52,11 @@ type GetGroupMembersInnerReply struct {
 	Id                  uint      `json:"id" form:"id"`
 	Gender              uint8     `json:"gender" form:"gender"`
 	LastLogin           time.Time `json:"last_login" form:"last_login"`
-	UserName            string    `form:"user_name" json:"user_name"`
+	UserName            string    `json:"user_name" form:"user_name"`
 	NickName            string    `form:"nick_name" json:"nick_name"`
 	Email               string    `json:"email" form:"email"`
 	Motto               string    `json:"motto" form:"motto"`
-	SolvedProblemsCount int64     `form:"solved_problems_count" json:"solved_problems_count"`
+	SolvedProblemsCount int64     `json:"solved_problems_count" form:"solved_problems_count"`
 	TriedProblemsCount  int64     `json:"tried_problems_count" form:"tried_problems_count"`
 }
 

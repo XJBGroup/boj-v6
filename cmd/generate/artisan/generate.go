@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Myriad-Dreamin/artisan"
 	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
-	"io/ioutil"
 )
 
 var codeField = artisan.Param("code", new(types.ServiceCode))
@@ -25,24 +23,23 @@ func (m *Meta) NeedAuth() *Meta {
 	}
 }
 
-// todo move inner service generate
-func controllerMethods(controller artisan.ServiceDescription) (res string) {
-	res = fmt.Sprintf("    %sSignatureXXX() interface{}\n", controller.GetName())
-	for _, cat := range controller.GetCategories() {
-		res += _controllerMethods(cat)
-	}
-	return
-}
+//func controllerMethods(controller artisan.ServiceDescription) (res string) {
+//	res = fmt.Sprintf("    %sSignatureXXX() interface{}\n", controller.GetName())
+//	for _, cat := range controller.GetCategories() {
+//		res += _controllerMethods(cat)
+//	}
+//	return
+//}
 
-func _controllerMethods(controller artisan.CategoryDescription) (res string) {
-	for _, cat := range controller.GetCategories() {
-		res += _controllerMethods(cat)
-	}
-	for _, method := range controller.GetMethods() {
-		res += "    " + method.GetName() + "(c controller.MContext, req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
-	}
-	return
-}
+//func _controllerMethods(controller artisan.CategoryDescription) (res string) {
+//	for _, cat := range controller.GetCategories() {
+//		res += _controllerMethods(cat)
+//	}
+//	for _, method := range controller.GetMethods() {
+//		res += "    " + method.GetName() + "(c controller.MContext, req *api." + method.GetName() + "Request) (*api." + method.GetName() + "Reply, error) \n"
+//	}
+//	return
+//}
 
 func main() {
 	v1 := "v1"
@@ -81,18 +78,18 @@ func main() {
 			"abstract/control/"+tsk.name+"-interface.go").PublishInterface(
 			"control", controller.Opts))
 
-		sugar.HandlerError0(ioutil.WriteFile(
-			"abstract/inner-control/"+tsk.name+"-inner-interface.go",
-			[]byte(fmt.Sprintf(`
-package inner_control
-
-import (
-	"github.com/Myriad-Dreamin/boj-v6/api"
-    "github.com/Myriad-Dreamin/minimum-lib/controller"
-)
-
-type Inner%s interface {
-%s}`, subController.GetName(), controllerMethods(subController))), 0644))
+		//		sugar.HandlerError0(ioutil.WriteFile(
+		//			"abstract/inner-control/"+tsk.name+"-inner-interface.go",
+		//			[]byte(fmt.Sprintf(`
+		//package inner_control
+		//
+		//import (
+		//	"github.com/Myriad-Dreamin/boj-v6/api"
+		//    "github.com/Myriad-Dreamin/minimum-lib/controller"
+		//)
+		//
+		//type Inner%s interface {
+		//%s}`, subController.GetName(), controllerMethods(subController))), 0644))
 	}
 
 	sugar.HandlerError0(controller.Publish())
