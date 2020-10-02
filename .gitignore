@@ -3,3 +3,4 @@
 *.pyc
 .env
 .config.toml
+**/.cache

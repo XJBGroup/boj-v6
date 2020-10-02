@@ -7,8 +7,6 @@ import (
 	"sync"
 )
 
-type StubPackage string
-
 func (g *generator) parseAllImports(opts []interface{}) {
 
 	if len(g.packages) != 1 {
@@ -20,33 +18,14 @@ func (g *generator) parseAllImports(opts []interface{}) {
 		pkg = v
 	}
 
-	var stubPackage string
-
 	for i := range opts {
 		switch opt := opts[i].(type) {
 		case *ast.Package:
 			g.packages["builtin"] = opt
-		case StubPackage:
-			stubPackage = string(opt)
 		}
 	}
 
 	g.parseImports(pkg, 0)
-
-	g.stubImportSpecsMapping = make(map[string]map[*ast.File]string)
-
-	//for k, p := range g.packages {
-	//	g.stubImportSpecsMapping[k] = g.parseImportsStubMapping(p)
-	//}
-
-	stubPkg := g.packages[stubPackage]
-	if !resolveSerial(stubPkg, "Stub", &g.stubObject) {
-		panic("unresolved stub")
-	}
-
-	if !resolveSerial(stubPkg, "StubVariables", &g.stubVariableObject) {
-		panic("unresolved stub")
-	}
 
 	if pkg != nil {
 
@@ -133,6 +112,7 @@ func (g *generator) parseImports(pkg *ast.Package, depth int) {
 	wg.Wait()
 }
 
+
 func resolveSerial(pkg *ast.Package, name string, target **ast.Object) (resolved bool) {
 	for _, depFile := range pkg.Files {
 		if obj := depFile.Scope.Lookup(name); obj != nil {
@@ -174,22 +154,3 @@ func resolveFileImports(file *ast.File, importSpec *ast.ImportSpec, pkg *ast.Pac
 
 	file.Unresolved = file.Unresolved[0:i]
 }
-
-//func (g *generator) parseImportsStubMapping(p *ast.Package) (importSpecs map[*ast.File]string) {
-//	importSpecs = map[*ast.File]string{}
-//	for _, file := range p.Files {
-//		importSpecs[file] = "stub"
-//
-//		for _, importSpec := range file.Imports {
-//			if strings.HasSuffix(importSpec.Path.Value, "/stub\"") {
-//
-//				if importSpec.Name != nil {
-//					importSpecs[file] = importSpec.Name.Name
-//				} else {
-//					break
-//				}
-//			}
-//		}
-//	}
-//	return
-//}

@@ -4,7 +4,7 @@ build:
 	docker build -t myriaddreamin/boj-server:latest -f deployment/docker/Dockerfile .
 .PHONY: build
 
-up:
+up: build
 	docker-compose -f deployment/docker/docker-compose.yml up -d
 .PHONY: up
 

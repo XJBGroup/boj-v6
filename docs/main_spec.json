@@ -22,7 +22,7 @@
         "operationId": "PostAnnouncement",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "PostAnnouncementRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostAnnouncementRequest"
@@ -89,20 +89,16 @@
         "operationId": "ListAnnouncement",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int",
             "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int",
             "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -136,8 +132,10 @@
         "operationId": "GetAnnouncement",
         "parameters": [
           {
+            "type": "string",
             "name": "aid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -173,11 +171,13 @@
         "operationId": "PutAnnouncement",
         "parameters": [
           {
+            "type": "string",
             "name": "aid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutAnnouncementRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutAnnouncementRequest"
@@ -217,11 +217,13 @@
         "operationId": "DeleteAnnouncement",
         "parameters": [
           {
+            "type": "string",
             "name": "aid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteAnnouncementRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteAnnouncementRequest"
@@ -263,7 +265,7 @@
         "operationId": "PostComment",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "PostCommentRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostCommentRequest"
@@ -301,8 +303,33 @@
         "operationId": "CountComment",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "integer",
+            "format": "uint",
+            "name": "ref",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "no_reply",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint8",
+            "name": "ref_type",
+            "in": "query"
           }
         ],
         "responses": {
@@ -336,10 +363,33 @@
         "operationId": "ListComment",
         "parameters": [
           {
-            "in": "query",
-            "schema": {
-              "$ref": "#/definitions/comment.Filter"
-            }
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint8",
+            "name": "ref_type",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "ref",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "no_reply",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
           }
         ],
         "responses": {
@@ -373,8 +423,10 @@
         "operationId": "GetComment",
         "parameters": [
           {
+            "type": "string",
             "name": "cmid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -410,11 +462,13 @@
         "operationId": "PutComment",
         "parameters": [
           {
+            "type": "string",
             "name": "cmid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutCommentRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutCommentRequest"
@@ -454,11 +508,13 @@
         "operationId": "DeleteComment",
         "parameters": [
           {
+            "type": "string",
             "name": "cmid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteCommentRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteCommentRequest"
@@ -500,7 +556,7 @@
         "operationId": "PostContest",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "PostContestRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostContestRequest"
@@ -538,8 +594,27 @@
         "operationId": "CountContest",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
           }
         ],
         "responses": {
@@ -573,8 +648,27 @@
         "operationId": "ListContest",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -608,8 +702,10 @@
         "operationId": "GetContest",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -645,11 +741,13 @@
         "operationId": "PutContest",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutContestRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutContestRequest"
@@ -689,11 +787,13 @@
         "operationId": "DeleteContest",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteContestRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteContestRequest"
@@ -735,11 +835,13 @@
         "operationId": "PostContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PostContestProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostContestProblemRequest"
@@ -777,12 +879,33 @@
         "operationId": "CountContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
           }
         ],
         "responses": {
@@ -816,12 +939,33 @@
         "operationId": "ListContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -855,12 +999,16 @@
         "operationId": "GetContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -896,15 +1044,19 @@
         "operationId": "PutContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutContestProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutContestProblemRequest"
@@ -944,15 +1096,19 @@
         "operationId": "DeleteContestProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteContestProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteContestProblemRequest"
@@ -990,19 +1146,21 @@
         "operationId": "GetContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "name",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -1038,15 +1196,19 @@
         "operationId": "PutContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutContestProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutContestProblemDescRequest"
@@ -1086,15 +1248,19 @@
         "operationId": "PostContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PostContestProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostContestProblemDescRequest"
@@ -1134,15 +1300,19 @@
         "operationId": "DeleteContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteContestProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteContestProblemDescRequest"
@@ -1180,16 +1350,39 @@
         "operationId": "CountContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1223,16 +1416,39 @@
         "operationId": "ListContestProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1270,15 +1486,19 @@
         "operationId": "ChangeContestProblemDescriptionRef",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ChangeContestProblemDescriptionRefRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ChangeContestProblemDescriptionRefRequest"
@@ -1316,8 +1536,10 @@
         "operationId": "ListContestUsers",
         "parameters": [
           {
+            "type": "string",
             "name": "cid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -1355,7 +1577,7 @@
         "operationId": "PostGroup",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "PostGroupRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostGroupRequest"
@@ -1393,8 +1615,27 @@
         "operationId": "CountGroup",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1428,10 +1669,27 @@
         "operationId": "ListGroup",
         "parameters": [
           {
-            "in": "query",
-            "schema": {
-              "$ref": "#/definitions/gorm_crud_dao.Filter"
-            }
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1465,8 +1723,10 @@
         "operationId": "GetGroup",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -1502,11 +1762,13 @@
         "operationId": "PutGroup",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutGroupRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutGroupRequest"
@@ -1546,11 +1808,13 @@
         "operationId": "DeleteGroup",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteGroupRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteGroupRequest"
@@ -1592,11 +1856,13 @@
         "operationId": "PutGroupOwner",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutGroupOwnerRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutGroupOwnerRequest"
@@ -1634,12 +1900,33 @@
         "operationId": "GetGroupMembers",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1677,15 +1964,19 @@
         "operationId": "PostGroupMember",
         "parameters": [
           {
+            "type": "string",
             "name": "gid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PostGroupMemberRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostGroupMemberRequest"
@@ -1723,25 +2014,19 @@
         "operationId": "HasPolicy",
         "parameters": [
           {
+            "type": "string",
             "name": "subject",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           },
           {
+            "type": "string",
             "name": "object",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           },
           {
+            "type": "string",
             "name": "action",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -1777,7 +2062,7 @@
         "operationId": "AddPolicy",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "AddPolicyRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/AddPolicyRequest"
@@ -1817,7 +2102,7 @@
         "operationId": "RemovePolicy",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "RemovePolicyRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/RemovePolicyRequest"
@@ -1855,18 +2140,14 @@
         "operationId": "HasGroupingPolicy",
         "parameters": [
           {
+            "type": "string",
             "name": "subject",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           },
           {
+            "type": "string",
             "name": "group",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -1902,7 +2183,7 @@
         "operationId": "AddGroupingPolicy",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "AddGroupingPolicyRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/AddGroupingPolicyRequest"
@@ -1942,7 +2223,7 @@
         "operationId": "RemoveGroupingPolicy",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "RemoveGroupingPolicyRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/RemoveGroupingPolicyRequest"
@@ -1984,7 +2265,7 @@
         "operationId": "PostProblem",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "PostProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostProblemRequest"
@@ -2022,8 +2303,27 @@
         "operationId": "CountProblem",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "order",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2057,8 +2357,27 @@
         "operationId": "ListProblem",
         "parameters": [
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2092,8 +2411,10 @@
         "operationId": "GetProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -2129,11 +2450,13 @@
         "operationId": "PutProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutProblemRequest"
@@ -2173,11 +2496,13 @@
         "operationId": "DeleteProblem",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteProblemRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteProblemRequest"
@@ -2215,15 +2540,15 @@
         "operationId": "GetProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "name",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -2259,11 +2584,13 @@
         "operationId": "PutProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutProblemDescRequest"
@@ -2303,11 +2630,13 @@
         "operationId": "PostProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PostProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostProblemDescRequest"
@@ -2347,11 +2676,13 @@
         "operationId": "DeleteProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteProblemDescRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteProblemDescRequest"
@@ -2389,12 +2720,33 @@
         "operationId": "CountProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2428,12 +2780,33 @@
         "operationId": "ListProblemDesc",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "in": "query",
-            "schema": {}
+            "type": "string",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int",
+            "name": "page_size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "uint",
+            "name": "before_id",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2471,11 +2844,13 @@
         "operationId": "ChangeProblemDescriptionRef",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ChangeProblemDescriptionRefRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ChangeProblemDescriptionRefRequest"
@@ -2502,7 +2877,6 @@
         }
       }
     },
-    "/problem/{pid}/fs": {},
     "/problem/{pid}/fs/config": {
       "get": {
         "produces": [
@@ -2514,15 +2888,15 @@
         "operationId": "ProblemFSReadConfig",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "path",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -2558,11 +2932,13 @@
         "operationId": "ProblemFSPutConfig",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSPutConfigRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSPutConfigRequest"
@@ -2602,11 +2978,13 @@
         "operationId": "ProblemFSWriteConfig",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSWriteConfigRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSWriteConfigRequest"
@@ -2644,15 +3022,15 @@
         "operationId": "ProblemFSLS",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "path",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -2688,11 +3066,13 @@
         "operationId": "ProblemFSMkdir",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSMkdirRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSMkdirRequest"
@@ -2732,11 +3112,13 @@
         "operationId": "ProblemFSWrites",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSWritesRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSWritesRequest"
@@ -2776,11 +3158,13 @@
         "operationId": "ProblemFSRemoveAll",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSRemoveAllRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSRemoveAllRequest"
@@ -2818,15 +3202,15 @@
         "operationId": "ProblemFSZipRead",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "path",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -2862,11 +3246,13 @@
         "operationId": "ProblemFSZipWrite",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSZipWriteRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSZipWriteRequest"
@@ -2904,15 +3290,15 @@
         "operationId": "ProblemFSStat",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "path",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -2948,11 +3334,13 @@
         "operationId": "ProblemFSWrite",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSWriteRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSWriteRequest"
@@ -2992,11 +3380,13 @@
         "operationId": "ProblemFSRemove",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ProblemFSRemoveRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ProblemFSRemoveRequest"
@@ -3034,15 +3424,15 @@
         "operationId": "ProblemFSRead",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
+            "type": "string",
             "name": "path",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -3080,11 +3470,13 @@
         "operationId": "PostSubmission",
         "parameters": [
           {
+            "type": "string",
             "name": "pid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PostSubmissionRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PostSubmissionRequest"
@@ -3122,73 +3514,55 @@
         "operationId": "CountSubmission",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int",
             "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int",
             "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "mem_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "time_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "id_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint",
             "name": "by_user",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint",
             "name": "on_problem",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint8",
             "name": "with_language",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint8"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int64",
             "name": "has_status",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -3222,73 +3596,55 @@
         "operationId": "ListSubmission",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int",
             "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int",
             "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "mem_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "time_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "boolean",
             "name": "id_order",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint",
             "name": "by_user",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint",
             "name": "on_problem",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "uint8",
             "name": "with_language",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "uint8"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int64",
             "name": "has_status",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -3322,8 +3678,10 @@
         "operationId": "GetSubmission",
         "parameters": [
           {
+            "type": "string",
             "name": "sid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -3359,11 +3717,13 @@
         "operationId": "DeleteSubmission",
         "parameters": [
           {
+            "type": "string",
             "name": "sid",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteSubmissionRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteSubmissionRequest"
@@ -3401,8 +3761,10 @@
         "operationId": "GetSubmissionContent",
         "parameters": [
           {
+            "type": "string",
             "name": "sid",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -3436,20 +3798,16 @@
         "operationId": "CountUser",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int",
             "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int",
             "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -3483,20 +3841,16 @@
         "operationId": "ListUser",
         "parameters": [
           {
+            "type": "integer",
+            "format": "int",
             "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           },
           {
+            "type": "integer",
+            "format": "int",
             "name": "page_size",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int"
-            }
+            "in": "query"
           }
         ],
         "responses": {
@@ -3563,7 +3917,7 @@
         "operationId": "LoginUser",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "LoginUserRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/LoginUserRequest"
@@ -3605,7 +3959,7 @@
         "operationId": "Register",
         "parameters": [
           {
-            "name": "request.option0",
+            "name": "RegisterRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/RegisterRequest"
@@ -3643,8 +3997,10 @@
         "operationId": "GetUser",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -3680,11 +4036,13 @@
         "operationId": "PutUser",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "PutUserRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/PutUserRequest"
@@ -3724,11 +4082,13 @@
         "operationId": "DeleteUser",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "DeleteUserRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/DeleteUserRequest"
@@ -3770,11 +4130,13 @@
         "operationId": "BindEmail",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "BindEmailRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/BindEmailRequest"
@@ -3812,8 +4174,10 @@
         "operationId": "InspectUser",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -3851,11 +4215,13 @@
         "operationId": "ChangePassword",
         "parameters": [
           {
+            "type": "string",
             "name": "id",
-            "in": "path"
+            "in": "path",
+            "required": true
           },
           {
-            "name": "request.option0",
+            "name": "ChangePasswordRequest",
             "in": "body",
             "schema": {
               "$ref": "#/definitions/ChangePasswordRequest"
@@ -4298,7 +4664,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/announcement.Announcement"
+        }
       }
     },
     "GetCommentReply": {
@@ -4308,7 +4676,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/comment.Comment"
+        }
       }
     },
     "GetContestInnerReply": {
@@ -4500,7 +4870,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/group.Group"
+        }
       }
     },
     "GetProblemAuthorData": {
@@ -4827,7 +5199,9 @@
         },
         "data": {
           "type": "array",
-          "items": {}
+          "items": {
+            "$ref": "#/definitions/problem.Problem"
+          }
         }
       }
     },
@@ -5059,7 +5433,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/announcement.Announcement"
+        }
       }
     },
     "PostAnnouncementRequest": {
@@ -5080,7 +5456,9 @@
           "type": "integer",
           "format": "int"
         },
-        "comment": {}
+        "comment": {
+          "$ref": "#/definitions/comment.Comment"
+        }
       }
     },
     "PostCommentRequest": {
@@ -5138,7 +5516,9 @@
     "PostContestProblemRequest": {
       "type": "object",
       "properties": {
-        "config": {},
+        "config": {
+          "$ref": "#/definitions/problemconfig.ProblemConfig"
+        },
         "description": {
           "type": "string"
         },
@@ -5154,7 +5534,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/contest.Contest"
+        }
       }
     },
     "PostContestRequest": {
@@ -5391,7 +5773,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/problemconfig.ProblemConfig"
+        }
       }
     },
     "ProblemFSPutConfigRequest": {
@@ -5419,7 +5803,9 @@
           "type": "integer",
           "format": "int"
         },
-        "data": {}
+        "data": {
+          "$ref": "#/definitions/problemconfig.ProblemConfig"
+        }
       }
     },
     "ProblemFSReadReply": {
@@ -6320,12 +6706,6 @@
   },
   "tags": [
     {
-      "name": "GroupController"
-    },
-    {
-      "name": "UserController"
-    },
-    {
       "name": "AuthController"
     },
     {
@@ -6342,6 +6722,12 @@
     },
     {
       "name": "ContestController"
+    },
+    {
+      "name": "GroupController"
+    },
+    {
+      "name": "UserController"
     }
   ]
 }
