@@ -27,16 +27,14 @@ func TestIntegrate(t *testing.T) {
 	serverModule := make(module.Module)
 	unwrap_func_sqlite.Register(serverModule)
 
-	sugar.WithFile(func(logFile *os.File) {
-		var options = []server.Option{
-			server.OptionRouterLoggerWriter{
-				Writer: logFile,
-			},
-			server.CopyOptionModule{
-				Module: serverModule,
-			},
-		}
+	var options = []server.Option{
+		server.OptionRouterLoggerWriter{
+			Writer: os.Stdout,
+		},
+		server.CopyOptionModule{
+			Module: serverModule,
+		},
+	}
 
-		sugar.HandlerError0(server.Mock(options...).HttpEngine.Run(":23336"))
-	}, "./test/integrate-test/test.log")
+	sugar.HandlerError0(server.Mock(options...).HttpEngine.Run(":23336"))
 }

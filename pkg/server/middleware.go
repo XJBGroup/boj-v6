@@ -32,8 +32,8 @@ func (srv *Server) PrepareMiddleware() bool {
 		//AllowAllOrigins: true,
 		AllowOriginFunc: func(origin string) bool { return true },
 		AllowOrigins: []string{
-			"http://myriaddreamin.com:80", "https://myriaddreamin.com:80",
-			"http://www.myriaddreamin.com:80", "https://www.myriaddreamin.com:80"},
+			"http://10.105.242.62:23338", "https://10.105.242.62:23338",
+			"http://localhost:23338", "https://localhost:23338"},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"X-Total-Count"},

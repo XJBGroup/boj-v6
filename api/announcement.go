@@ -18,13 +18,13 @@ type CountAnnouncementRequest struct {
 }
 
 type CountAnnouncementReply struct {
-	Code int   `json:"code" form:"code"`
+	Code int   `form:"code" json:"code"`
 	Data int64 `json:"data" form:"data"`
 }
 
 type PostAnnouncementRequest struct {
 	Title   string `json:"title" form:"title" binding:"required"`
-	Content string `binding:"required" json:"content" form:"content"`
+	Content string `json:"content" form:"content" binding:"required"`
 }
 
 type PostAnnouncementReply struct {

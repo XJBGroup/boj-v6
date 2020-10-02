@@ -26,7 +26,7 @@ RUN go mod download
 ADD . .
 
 # Build codes
-RUN env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags '-extldflags "-static"' -v -o ./server ./cmd/server
+RUN env go build -v -o ./server ./cmd/server
 
 RUN mv server /boj-server-bin
 
@@ -34,12 +34,13 @@ RUN mv server /boj-server-bin
 FROM amd64/alpine
 
 # set alpine apk source to ustc mirror
-RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 
 WORKDIR /
 RUN apk add -U tzdata
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
 COPY --from=build-env /boj-server-bin /server
+ADD docs/main_spec.json docs/
 COPY deployment/docker/run.sh /run.sh
 COPY config.toml /config.toml
 # COPY rbac.conf /rbac.conf

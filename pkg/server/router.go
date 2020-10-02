@@ -81,14 +81,14 @@ func (srv *Server) BuildRouter(mock bool) bool {
 	srv.HttpEngine.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 		Output: srv.LoggerWriter,
 	}), gin.Recovery())
-	if !mock {
+	//if !mock {
 
-		srv.HttpEngine.Use(srv.corsMW)
-	}
+	srv.HttpEngine.Use(srv.corsMW)
+	//}
 
 	srv.Router = api.NewRootRouter(newTraitsHelper(srv.Module))
 
-	srv.Router.GetRouter().StaticFile("/swagger/main_spec.json", "doc/main_spec.json")
+	srv.Router.GetRouter().StaticFile("/swagger/main_spec.json", "docs/main_spec.json")
 
 	srv.Module.Provide(config.ModulePath.Global.HttpEngine, srv.HttpEngine)
 	return true

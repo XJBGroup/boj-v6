@@ -5,7 +5,7 @@ build:
 .PHONY: build
 
 up:
-	docker-compose -f deployment/docker/docker-compose.yml up
+	docker-compose -f deployment/docker/docker-compose.yml up -d
 .PHONY: up
 
 down:

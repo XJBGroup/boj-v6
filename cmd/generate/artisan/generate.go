@@ -89,7 +89,7 @@ func main() {
 	//b, err = yaml.Marshal(conv)
 	//sugar.HandlerError0(err)
 
-	sugar.HandlerError0(ioutil.WriteFile("doc/main_spec.json", b, 0644))
+	sugar.HandlerError0(ioutil.WriteFile("docs/main_spec.json", b, 0644))
 
 	for _, tsk := range meta {
 		subController := controller.GetService(tsk.cate)

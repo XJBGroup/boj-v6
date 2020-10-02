@@ -25,7 +25,7 @@ type PostCommentRequest struct {
 
 type PostCommentReply struct {
 	Code    int              `json:"code" form:"code"`
-	Comment *comment.Comment `json:"comment" form:"comment"`
+	Comment *comment.Comment `form:"comment" json:"comment"`
 }
 
 type GetCommentRequest struct {
@@ -33,12 +33,12 @@ type GetCommentRequest struct {
 
 type GetCommentReply struct {
 	Code int              `json:"code" form:"code"`
-	Data *comment.Comment `form:"data" json:"data"`
+	Data *comment.Comment `json:"data" form:"data"`
 }
 
 type PutCommentRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `form:"content" json:"content"`
+	Content string `json:"content" form:"content"`
 }
 
 type PutCommentReply struct {

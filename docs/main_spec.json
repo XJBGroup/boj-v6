@@ -51,9 +51,6 @@
     },
     "/announcement-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -61,15 +58,6 @@
           "AnnouncementController"
         ],
         "operationId": "CountAnnouncement",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountAnnouncementRequest"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "the request is served and a response is returned.",
@@ -92,9 +80,6 @@
     },
     "/announcement-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -104,10 +89,19 @@
         "operationId": "ListAnnouncement",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "page",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ListAnnouncementRequest"
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int"
             }
           }
         ],
@@ -131,11 +125,8 @@
         }
       }
     },
-    "/announcement/:aid": {
+    "/announcement/{aid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -145,11 +136,8 @@
         "operationId": "GetAnnouncement",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetAnnouncementRequest"
-            }
+            "name": "aid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -184,6 +172,10 @@
         ],
         "operationId": "PutAnnouncement",
         "parameters": [
+          {
+            "name": "aid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -224,6 +216,10 @@
         ],
         "operationId": "DeleteAnnouncement",
         "parameters": [
+          {
+            "name": "aid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -296,9 +292,6 @@
     },
     "/comment-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -308,11 +301,8 @@
         "operationId": "CountComment",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountCommentRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -337,9 +327,6 @@
     },
     "/comment-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -349,10 +336,9 @@
         "operationId": "ListComment",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ListCommentRequest"
+              "$ref": "#/definitions/comment.Filter"
             }
           }
         ],
@@ -376,11 +362,8 @@
         }
       }
     },
-    "/comment/:cmid": {
+    "/comment/{cmid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -390,11 +373,8 @@
         "operationId": "GetComment",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetCommentRequest"
-            }
+            "name": "cmid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -429,6 +409,10 @@
         ],
         "operationId": "PutComment",
         "parameters": [
+          {
+            "name": "cmid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -469,6 +453,10 @@
         ],
         "operationId": "DeleteComment",
         "parameters": [
+          {
+            "name": "cmid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -541,9 +529,6 @@
     },
     "/contest-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -553,11 +538,8 @@
         "operationId": "CountContest",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountContestRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -582,9 +564,6 @@
     },
     "/contest-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -594,11 +573,8 @@
         "operationId": "ListContest",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListContestRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -621,11 +597,8 @@
         }
       }
     },
-    "/contest/:cid": {
+    "/contest/{cid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -635,11 +608,8 @@
         "operationId": "GetContest",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetContestRequest"
-            }
+            "name": "cid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -674,6 +644,10 @@
         ],
         "operationId": "PutContest",
         "parameters": [
+          {
+            "name": "cid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -715,6 +689,10 @@
         "operationId": "DeleteContest",
         "parameters": [
           {
+            "name": "cid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -742,7 +720,7 @@
         }
       }
     },
-    "/contest/:cid/problem": {
+    "/contest/{cid}/problem": {
       "post": {
         "consumes": [
           "application/json",
@@ -756,6 +734,10 @@
         ],
         "operationId": "PostContestProblem",
         "parameters": [
+          {
+            "name": "cid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -784,11 +766,8 @@
         }
       }
     },
-    "/contest/:cid/problem-count": {
+    "/contest/{cid}/problem-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -798,11 +777,12 @@
         "operationId": "CountContestProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountContestProblemRequest"
-            }
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -825,11 +805,8 @@
         }
       }
     },
-    "/contest/:cid/problem-list": {
+    "/contest/{cid}/problem-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -839,11 +816,12 @@
         "operationId": "ListContestProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListContestProblemRequest"
-            }
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -866,11 +844,8 @@
         }
       }
     },
-    "/contest/:cid/problem/:pid": {
+    "/contest/{cid}/problem/{pid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -880,11 +855,12 @@
         "operationId": "GetContestProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetContestProblemRequest"
-            }
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -919,6 +895,14 @@
         ],
         "operationId": "PutContestProblem",
         "parameters": [
+          {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -960,6 +944,14 @@
         "operationId": "DeleteContestProblem",
         "parameters": [
           {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -987,11 +979,8 @@
         }
       }
     },
-    "/contest/:cid/problem/:pid/desc": {
+    "/contest/{cid}/problem/{pid}/desc": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1001,10 +990,18 @@
         "operationId": "GetContestProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "name",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/GetContestProblemDescRequest"
+              "type": "string"
             }
           }
         ],
@@ -1040,6 +1037,14 @@
         ],
         "operationId": "PutContestProblemDesc",
         "parameters": [
+          {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -1081,6 +1086,14 @@
         "operationId": "PostContestProblemDesc",
         "parameters": [
           {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -1121,6 +1134,14 @@
         "operationId": "DeleteContestProblemDesc",
         "parameters": [
           {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -1148,11 +1169,8 @@
         }
       }
     },
-    "/contest/:cid/problem/:pid/desc-count": {
+    "/contest/{cid}/problem/{pid}/desc-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1162,11 +1180,16 @@
         "operationId": "CountContestProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountContestProblemDescRequest"
-            }
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -1189,11 +1212,8 @@
         }
       }
     },
-    "/contest/:cid/problem/:pid/desc-list": {
+    "/contest/{cid}/problem/{pid}/desc-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1203,11 +1223,16 @@
         "operationId": "ListContestProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListContestProblemDescRequest"
-            }
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -1230,7 +1255,7 @@
         }
       }
     },
-    "/contest/:cid/problem/:pid/desc/ref": {
+    "/contest/{cid}/problem/{pid}/desc/ref": {
       "post": {
         "consumes": [
           "application/json",
@@ -1244,6 +1269,14 @@
         ],
         "operationId": "ChangeContestProblemDescriptionRef",
         "parameters": [
+          {
+            "name": "cid",
+            "in": "path"
+          },
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -1272,11 +1305,8 @@
         }
       }
     },
-    "/contest/:cid/user-list": {
+    "/contest/{cid}/user-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1286,11 +1316,8 @@
         "operationId": "ListContestUsers",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListContestUsersRequest"
-            }
+            "name": "cid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -1357,9 +1384,6 @@
     },
     "/group-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1369,11 +1393,8 @@
         "operationId": "CountGroup",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountGroupRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -1398,9 +1419,6 @@
     },
     "/group-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1410,10 +1428,9 @@
         "operationId": "ListGroup",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ListGroupRequest"
+              "$ref": "#/definitions/gorm_crud_dao.Filter"
             }
           }
         ],
@@ -1437,11 +1454,8 @@
         }
       }
     },
-    "/group/:gid": {
+    "/group/{gid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1451,11 +1465,8 @@
         "operationId": "GetGroup",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetGroupRequest"
-            }
+            "name": "gid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -1490,6 +1501,10 @@
         ],
         "operationId": "PutGroup",
         "parameters": [
+          {
+            "name": "gid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -1531,6 +1546,10 @@
         "operationId": "DeleteGroup",
         "parameters": [
           {
+            "name": "gid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -1558,7 +1577,7 @@
         }
       }
     },
-    "/group/:gid/owner": {
+    "/group/{gid}/owner": {
       "put": {
         "consumes": [
           "application/json",
@@ -1572,6 +1591,10 @@
         ],
         "operationId": "PutGroupOwner",
         "parameters": [
+          {
+            "name": "gid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -1600,11 +1623,8 @@
         }
       }
     },
-    "/group/:gid/user-list": {
+    "/group/{gid}/user-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1614,11 +1634,12 @@
         "operationId": "GetGroupMembers",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetGroupMembersRequest"
-            }
+            "name": "gid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -1641,7 +1662,7 @@
         }
       }
     },
-    "/group/:gid/user/:id": {
+    "/group/{gid}/user/{id}": {
       "post": {
         "consumes": [
           "application/json",
@@ -1655,6 +1676,14 @@
         ],
         "operationId": "PostGroupMember",
         "parameters": [
+          {
+            "name": "gid",
+            "in": "path"
+          },
+          {
+            "name": "id",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -1685,9 +1714,6 @@
     },
     "/policy": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1697,10 +1723,24 @@
         "operationId": "HasPolicy",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "subject",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/HasPolicyRequest"
+              "type": "string"
+            }
+          },
+          {
+            "name": "object",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1806,9 +1846,6 @@
     },
     "/policy/group": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1818,10 +1855,17 @@
         "operationId": "HasGroupingPolicy",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "subject",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/HasGroupingPolicyRequest"
+              "type": "string"
+            }
+          },
+          {
+            "name": "group",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1969,9 +2013,6 @@
     },
     "/problem-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -1981,11 +2022,8 @@
         "operationId": "CountProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountProblemRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -2010,9 +2048,6 @@
     },
     "/problem-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2022,11 +2057,8 @@
         "operationId": "ListProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListProblemRequest"
-            }
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -2049,11 +2081,8 @@
         }
       }
     },
-    "/problem/:pid": {
+    "/problem/{pid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2063,11 +2092,8 @@
         "operationId": "GetProblem",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetProblemRequest"
-            }
+            "name": "pid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -2102,6 +2128,10 @@
         ],
         "operationId": "PutProblem",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2143,6 +2173,10 @@
         "operationId": "DeleteProblem",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2170,11 +2204,8 @@
         }
       }
     },
-    "/problem/:pid/desc": {
+    "/problem/{pid}/desc": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2184,10 +2215,14 @@
         "operationId": "GetProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "name",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/GetProblemDescRequest"
+              "type": "string"
             }
           }
         ],
@@ -2223,6 +2258,10 @@
         ],
         "operationId": "PutProblemDesc",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2264,6 +2303,10 @@
         "operationId": "PostProblemDesc",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2304,6 +2347,10 @@
         "operationId": "DeleteProblemDesc",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2331,11 +2378,8 @@
         }
       }
     },
-    "/problem/:pid/desc-count": {
+    "/problem/{pid}/desc-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2345,11 +2389,12 @@
         "operationId": "CountProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/CountProblemDescRequest"
-            }
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -2372,11 +2417,8 @@
         }
       }
     },
-    "/problem/:pid/desc-list": {
+    "/problem/{pid}/desc-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2386,11 +2428,12 @@
         "operationId": "ListProblemDesc",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ListProblemDescRequest"
-            }
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -2413,7 +2456,7 @@
         }
       }
     },
-    "/problem/:pid/desc/ref": {
+    "/problem/{pid}/desc/ref": {
       "post": {
         "consumes": [
           "application/json",
@@ -2427,6 +2470,10 @@
         ],
         "operationId": "ChangeProblemDescriptionRef",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2455,12 +2502,9 @@
         }
       }
     },
-    "/problem/:pid/fs": {},
-    "/problem/:pid/fs/config": {
+    "/problem/{pid}/fs": {},
+    "/problem/{pid}/fs/config": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2470,10 +2514,14 @@
         "operationId": "ProblemFSReadConfig",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ProblemFSReadConfigRequest"
+              "type": "string"
             }
           }
         ],
@@ -2509,6 +2557,10 @@
         ],
         "operationId": "ProblemFSPutConfig",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2550,6 +2602,10 @@
         "operationId": "ProblemFSWriteConfig",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2577,11 +2633,8 @@
         }
       }
     },
-    "/problem/:pid/fs/directory": {
+    "/problem/{pid}/fs/directory": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2591,10 +2644,14 @@
         "operationId": "ProblemFSLS",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ProblemFSLSRequest"
+              "type": "string"
             }
           }
         ],
@@ -2630,6 +2687,10 @@
         ],
         "operationId": "ProblemFSMkdir",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2671,6 +2732,10 @@
         "operationId": "ProblemFSWrites",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2711,6 +2776,10 @@
         "operationId": "ProblemFSRemoveAll",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2738,11 +2807,8 @@
         }
       }
     },
-    "/problem/:pid/fs/directory/zip": {
+    "/problem/{pid}/fs/directory/zip": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2752,10 +2818,14 @@
         "operationId": "ProblemFSZipRead",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ProblemFSZipReadRequest"
+              "type": "string"
             }
           }
         ],
@@ -2792,6 +2862,10 @@
         "operationId": "ProblemFSZipWrite",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2819,11 +2893,8 @@
         }
       }
     },
-    "/problem/:pid/fs/file": {
+    "/problem/{pid}/fs/file": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2833,10 +2904,14 @@
         "operationId": "ProblemFSStat",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ProblemFSStatRequest"
+              "type": "string"
             }
           }
         ],
@@ -2872,6 +2947,10 @@
         ],
         "operationId": "ProblemFSWrite",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -2913,6 +2992,10 @@
         "operationId": "ProblemFSRemove",
         "parameters": [
           {
+            "name": "pid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -2940,11 +3023,8 @@
         }
       }
     },
-    "/problem/:pid/fs/file/content": {
+    "/problem/{pid}/fs/file/content": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -2954,10 +3034,14 @@
         "operationId": "ProblemFSRead",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "pid",
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ProblemFSReadRequest"
+              "type": "string"
             }
           }
         ],
@@ -2981,7 +3065,7 @@
         }
       }
     },
-    "/problem/:pid/submission": {
+    "/problem/{pid}/submission": {
       "post": {
         "consumes": [
           "application/json",
@@ -2995,6 +3079,10 @@
         ],
         "operationId": "PostSubmission",
         "parameters": [
+          {
+            "name": "pid",
+            "in": "path"
+          },
           {
             "name": "request.option0",
             "in": "body",
@@ -3025,9 +3113,6 @@
     },
     "/submission-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3037,10 +3122,72 @@
         "operationId": "CountSubmission",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "page",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/CountSubmissionRequest"
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "mem_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "time_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "id_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "by_user",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "on_problem",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "with_language",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint8"
+            }
+          },
+          {
+            "name": "has_status",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -3066,9 +3213,6 @@
     },
     "/submission-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3078,10 +3222,72 @@
         "operationId": "ListSubmission",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "page",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ListSubmissionRequest"
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "mem_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "time_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "id_order",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "by_user",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "on_problem",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint"
+            }
+          },
+          {
+            "name": "with_language",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "uint8"
+            }
+          },
+          {
+            "name": "has_status",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -3105,11 +3311,8 @@
         }
       }
     },
-    "/submission/:sid": {
+    "/submission/{sid}": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3119,11 +3322,8 @@
         "operationId": "GetSubmission",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetSubmissionRequest"
-            }
+            "name": "sid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -3159,6 +3359,10 @@
         "operationId": "DeleteSubmission",
         "parameters": [
           {
+            "name": "sid",
+            "in": "path"
+          },
+          {
             "name": "request.option0",
             "in": "body",
             "schema": {
@@ -3186,11 +3390,8 @@
         }
       }
     },
-    "/submission/:sid/content": {
+    "/submission/{sid}/content": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3200,11 +3401,8 @@
         "operationId": "GetSubmissionContent",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetSubmissionContentRequest"
-            }
+            "name": "sid",
+            "in": "path"
           }
         ],
         "responses": {
@@ -3229,9 +3427,6 @@
     },
     "/user-count": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3241,10 +3436,19 @@
         "operationId": "CountUser",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "page",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/CountUserRequest"
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int"
             }
           }
         ],
@@ -3270,9 +3474,6 @@
     },
     "/user-list": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3282,10 +3483,19 @@
         "operationId": "ListUser",
         "parameters": [
           {
-            "name": "request.option0",
-            "in": "body",
+            "name": "page",
+            "in": "query",
             "schema": {
-              "$ref": "#/definitions/ListUserRequest"
+              "type": "integer",
+              "format": "int"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int"
             }
           }
         ],
@@ -3311,9 +3521,6 @@
     },
     "/user-token": {
       "get": {
-        "consumes": [
-          "querystring"
-        ],
         "produces": [
           "application/json"
         ],
@@ -3321,15 +3528,6 @@
           "UserController"
         ],
         "operationId": "RefreshToken",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/RefreshTokenRequest"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "the request is served and a response is returned.",
@@ -3340,252 +3538,6 @@
                 },
                 {
                   "$ref": "#/definitions/RefreshTokenReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      }
-    },
-    "/user/:id": {
-      "get": {
-        "consumes": [
-          "querystring"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "GetUser",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/GetUserRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/GetUserReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      },
-      "put": {
-        "consumes": [
-          "application/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "PutUser",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/PutUserRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/PutUserReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      },
-      "delete": {
-        "consumes": [
-          "application/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "DeleteUser",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/DeleteUserRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/DeleteUserReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      }
-    },
-    "/user/:id/email": {
-      "put": {
-        "consumes": [
-          "application/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "BindEmail",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/BindEmailRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/BindEmailReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      }
-    },
-    "/user/:id/inspect": {
-      "get": {
-        "consumes": [
-          "querystring"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "InspectUser",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/InspectUserRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/InspectUserReply"
-                }
-              ]
-            }
-          },
-          "500": {
-            "description": "the request is serving. however, the backend crashed and no response is returned."
-          }
-        }
-      }
-    },
-    "/user/:id/password": {
-      "put": {
-        "consumes": [
-          "application/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "UserController"
-        ],
-        "operationId": "ChangePassword",
-        "parameters": [
-          {
-            "name": "request.option0",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/ChangePasswordRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "the request is served and a response is returned.",
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/genericResponse"
-                },
-                {
-                  "$ref": "#/definitions/ChangePasswordReply"
                 }
               ]
             }
@@ -3670,6 +3622,256 @@
                 },
                 {
                   "$ref": "#/definitions/RegisterReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/GetUserReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "PutUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "request.option0",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PutUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/PutUserReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "request.option0",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/DeleteUserReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      }
+    },
+    "/user/{id}/email": {
+      "put": {
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "BindEmail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "request.option0",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/BindEmailRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/BindEmailReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      }
+    },
+    "/user/{id}/inspect": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "InspectUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/InspectUserReply"
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "the request is serving. however, the backend crashed and no response is returned."
+          }
+        }
+      }
+    },
+    "/user/{id}/password": {
+      "put": {
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "UserController"
+        ],
+        "operationId": "ChangePassword",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "request.option0",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ChangePasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request is served and a response is returned.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/genericResponse"
+                },
+                {
+                  "$ref": "#/definitions/ChangePasswordReply"
                 }
               ]
             }
@@ -3833,9 +4035,6 @@
         }
       }
     },
-    "CountAnnouncementRequest": {
-      "type": "object"
-    },
     "CountCommentReply": {
       "type": "object",
       "properties": {
@@ -3849,12 +4048,6 @@
         }
       }
     },
-    "CountCommentRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "CountContestProblemDescReply": {
       "type": "object",
       "properties": {
@@ -3866,12 +4059,6 @@
           "type": "integer",
           "format": "int64"
         }
-      }
-    },
-    "CountContestProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
       }
     },
     "CountContestProblemReply": {
@@ -3890,12 +4077,6 @@
         }
       }
     },
-    "CountContestProblemRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "CountContestReply": {
       "type": "object",
       "properties": {
@@ -3912,12 +4093,6 @@
         }
       }
     },
-    "CountContestRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "CountGroupReply": {
       "type": "object",
       "properties": {
@@ -3931,12 +4106,6 @@
         }
       }
     },
-    "CountGroupRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "CountProblemDescReply": {
       "type": "object",
       "properties": {
@@ -3948,12 +4117,6 @@
           "type": "integer",
           "format": "int64"
         }
-      }
-    },
-    "CountProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
       }
     },
     "CountProblemReply": {
@@ -3972,12 +4135,6 @@
         }
       }
     },
-    "CountProblemRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "CountSubmissionReply": {
       "type": "object",
       "properties": {
@@ -3991,44 +4148,6 @@
         }
       }
     },
-    "CountSubmissionRequest": {
-      "type": "object",
-      "properties": {
-        "by_user": {
-          "type": "integer",
-          "format": "uint"
-        },
-        "has_status": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "id_order": {
-          "type": "boolean"
-        },
-        "mem_order": {
-          "type": "boolean"
-        },
-        "on_problem": {
-          "type": "integer",
-          "format": "uint"
-        },
-        "page": {
-          "type": "integer",
-          "format": "int"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int"
-        },
-        "time_order": {
-          "type": "boolean"
-        },
-        "with_language": {
-          "type": "integer",
-          "format": "uint8"
-        }
-      }
-    },
     "CountUserReply": {
       "type": "object",
       "properties": {
@@ -4039,19 +4158,6 @@
         "data": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "CountUserRequest": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer",
-          "format": "int"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int"
         }
       }
     },
@@ -4195,9 +4301,6 @@
         "data": {}
       }
     },
-    "GetAnnouncementRequest": {
-      "type": "object"
-    },
     "GetCommentReply": {
       "type": "object",
       "properties": {
@@ -4207,9 +4310,6 @@
         },
         "data": {}
       }
-    },
-    "GetCommentRequest": {
-      "type": "object"
     },
     "GetContestInnerReply": {
       "type": "object",
@@ -4317,14 +4417,6 @@
         }
       }
     },
-    "GetContestProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "GetContestProblemReply": {
       "type": "object",
       "properties": {
@@ -4337,9 +4429,6 @@
         }
       }
     },
-    "GetContestProblemRequest": {
-      "type": "object"
-    },
     "GetContestReply": {
       "type": "object",
       "properties": {
@@ -4351,9 +4440,6 @@
           "$ref": "#/definitions/GetContestInnerReply"
         }
       }
-    },
-    "GetContestRequest": {
-      "type": "object"
     },
     "GetGroupMembersInnerReply": {
       "type": "object",
@@ -4407,12 +4493,6 @@
         }
       }
     },
-    "GetGroupMembersRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "GetGroupReply": {
       "type": "object",
       "properties": {
@@ -4422,9 +4502,6 @@
         },
         "data": {}
       }
-    },
-    "GetGroupRequest": {
-      "type": "object"
     },
     "GetProblemAuthorData": {
       "type": "object",
@@ -4494,14 +4571,6 @@
         }
       }
     },
-    "GetProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "GetProblemReply": {
       "type": "object",
       "properties": {
@@ -4514,9 +4583,6 @@
         }
       }
     },
-    "GetProblemRequest": {
-      "type": "object"
-    },
     "GetSubmissionContentReply": {
       "type": "object",
       "properties": {
@@ -4525,9 +4591,6 @@
           "format": "int"
         }
       }
-    },
-    "GetSubmissionContentRequest": {
-      "type": "object"
     },
     "GetSubmissionInnerReply": {
       "type": "object",
@@ -4590,9 +4653,6 @@
         }
       }
     },
-    "GetSubmissionRequest": {
-      "type": "object"
-    },
     "GetUserInnerReply": {
       "type": "object",
       "properties": {
@@ -4628,9 +4688,6 @@
         }
       }
     },
-    "GetUserRequest": {
-      "type": "object"
-    },
     "HasGroupingPolicyReply": {
       "type": "object",
       "properties": {
@@ -4643,17 +4700,6 @@
         }
       }
     },
-    "HasGroupingPolicyRequest": {
-      "type": "object",
-      "properties": {
-        "group": {
-          "type": "string"
-        },
-        "subject": {
-          "type": "string"
-        }
-      }
-    },
     "HasPolicyReply": {
       "type": "object",
       "properties": {
@@ -4663,20 +4709,6 @@
         },
         "data": {
           "type": "boolean"
-        }
-      }
-    },
-    "HasPolicyRequest": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "object": {
-          "type": "string"
-        },
-        "subject": {
-          "type": "string"
         }
       }
     },
@@ -4741,9 +4773,6 @@
         }
       }
     },
-    "InspectUserRequest": {
-      "type": "object"
-    },
     "ListAnnouncementReply": {
       "type": "object",
       "properties": {
@@ -4756,19 +4785,6 @@
           "items": {
             "$ref": "#/definitions/announcement.Announcement"
           }
-        }
-      }
-    },
-    "ListAnnouncementRequest": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer",
-          "format": "int"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int"
         }
       }
     },
@@ -4787,14 +4803,6 @@
         }
       }
     },
-    "ListCommentRequest": {
-      "type": "object",
-      "properties": {
-        "": {
-          "$ref": "#/definitions/comment.Filter"
-        }
-      }
-    },
     "ListContestProblemDescReply": {
       "type": "object",
       "properties": {
@@ -4810,12 +4818,6 @@
         }
       }
     },
-    "ListContestProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "ListContestProblemReply": {
       "type": "object",
       "properties": {
@@ -4827,12 +4829,6 @@
           "type": "array",
           "items": {}
         }
-      }
-    },
-    "ListContestProblemRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
       }
     },
     "ListContestReply": {
@@ -4850,12 +4846,6 @@
         }
       }
     },
-    "ListContestRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "ListContestUsersReply": {
       "type": "object",
       "properties": {
@@ -4871,9 +4861,6 @@
         }
       }
     },
-    "ListContestUsersRequest": {
-      "type": "object"
-    },
     "ListGroupReply": {
       "type": "object",
       "properties": {
@@ -4887,12 +4874,6 @@
             "$ref": "#/definitions/group.Group"
           }
         }
-      }
-    },
-    "ListGroupRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
       }
     },
     "ListProblemDescReply": {
@@ -4910,12 +4891,6 @@
         }
       }
     },
-    "ListProblemDescRequest": {
-      "type": "object",
-      "properties": {
-        "": {}
-      }
-    },
     "ListProblemReply": {
       "type": "object",
       "properties": {
@@ -4928,14 +4903,6 @@
           "items": {
             "$ref": "#/definitions/problem.Problem"
           }
-        }
-      }
-    },
-    "ListProblemRequest": {
-      "type": "object",
-      "properties": {
-        "": {
-          "$ref": "#/definitions/gorm_crud_dao.Filter"
         }
       }
     },
@@ -5003,44 +4970,6 @@
         }
       }
     },
-    "ListSubmissionRequest": {
-      "type": "object",
-      "properties": {
-        "by_user": {
-          "type": "integer",
-          "format": "uint"
-        },
-        "has_status": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "id_order": {
-          "type": "boolean"
-        },
-        "mem_order": {
-          "type": "boolean"
-        },
-        "on_problem": {
-          "type": "integer",
-          "format": "uint"
-        },
-        "page": {
-          "type": "integer",
-          "format": "int"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int"
-        },
-        "time_order": {
-          "type": "boolean"
-        },
-        "with_language": {
-          "type": "integer",
-          "format": "uint8"
-        }
-      }
-    },
     "ListUserInnerReply": {
       "type": "object",
       "properties": {
@@ -5090,19 +5019,6 @@
           "items": {
             "$ref": "#/definitions/ListUserInnerReply"
           }
-        }
-      }
-    },
-    "ListUserRequest": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer",
-          "format": "int"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int"
         }
       }
     },
@@ -5451,14 +5367,6 @@
         }
       }
     },
-    "ProblemFSLSRequest": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        }
-      }
-    },
     "ProblemFSMkdirReply": {
       "type": "object",
       "properties": {
@@ -5514,24 +5422,8 @@
         "data": {}
       }
     },
-    "ProblemFSReadConfigRequest": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        }
-      }
-    },
     "ProblemFSReadReply": {
       "type": "object"
-    },
-    "ProblemFSReadRequest": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        }
-      }
     },
     "ProblemFSRemoveAllReply": {
       "type": "object",
@@ -5604,14 +5496,6 @@
         }
       }
     },
-    "ProblemFSStatRequest": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        }
-      }
-    },
     "ProblemFSWriteConfigReply": {
       "type": "object",
       "properties": {
@@ -5669,14 +5553,6 @@
         "code": {
           "type": "integer",
           "format": "int"
-        }
-      }
-    },
-    "ProblemFSZipReadRequest": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
         }
       }
     },
@@ -5928,9 +5804,6 @@
           "$ref": "#/definitions/UserRefreshTokenData"
         }
       }
-    },
-    "RefreshTokenRequest": {
-      "type": "object"
     },
     "RegisterReply": {
       "type": "object",
@@ -6447,6 +6320,12 @@
   },
   "tags": [
     {
+      "name": "GroupController"
+    },
+    {
+      "name": "UserController"
+    },
+    {
       "name": "AuthController"
     },
     {
@@ -6463,12 +6342,6 @@
     },
     {
       "name": "ContestController"
-    },
-    {
-      "name": "GroupController"
-    },
-    {
-      "name": "UserController"
     }
   ]
 }

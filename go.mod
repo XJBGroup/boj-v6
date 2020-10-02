@@ -2,13 +2,13 @@ module github.com/Myriad-Dreamin/boj-v6
 
 go 1.14
 
-replace github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002034950-8932684abe2e => ../artisan/extension/artisan-swagger
+replace github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002091442-eaef85105b24 => ../artisan/extension/artisan-swagger
 
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586
-	github.com/Myriad-Dreamin/artisan/artisan-core v0.0.0-20201002054049-75d6a0a6ce76
-	github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002034950-8932684abe2e
+	github.com/Myriad-Dreamin/artisan/artisan-core v0.0.0-20201002091442-eaef85105b24
+	github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002091442-eaef85105b24
 	github.com/Myriad-Dreamin/core-oj v1.0.1
 	github.com/Myriad-Dreamin/dorm v0.0.0-20191205101004-33dbc61bb34e
 	github.com/Myriad-Dreamin/functional-go v0.0.0-20191104092509-c2b7f373dd31
