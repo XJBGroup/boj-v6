@@ -1,4 +1,4 @@
-package unwrap_func_sqlite
+package unwrap_func_mysql
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/types"

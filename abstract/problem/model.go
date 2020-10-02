@@ -5,10 +5,10 @@ import (
 )
 
 type Problem struct {
-	ID             uint `gorm:"primary_key" json:"id"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      *time.Time `sql:"index"`
+	ID             uint       `gorm:"primary_key" json:"id"`
+	CreatedAt      time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt      *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 	Title          string     `dorm:"title" gorm:"type:varchar(50);column:title;default:'Untitled';not null" json:"title"`
 	DescriptionRef string     `dorm:"description_ref" gorm:"column:description_ref;type:varchar(100);default:'default';not null" json:"tmpl_name"`
 	AuthorID       uint       `dorm:"author_id" gorm:"column:author_id;not null" json:"author_id"`

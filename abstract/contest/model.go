@@ -5,10 +5,10 @@ import (
 )
 
 type Contest struct {
-	ID                  uint `gorm:"primary_key" json:"id"`
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	DeletedAt           *time.Time    `sql:"index"`
+	ID                  uint          `gorm:"primary_key" json:"id"`
+	CreatedAt           time.Time     `json:"created_at" form:"created_at"`
+	UpdatedAt           time.Time     `json:"updated_at" form:"updated_at"`
+	DeletedAt           *time.Time    `sql:"index" json:"deleted_at" form:"deleted_at"`
 	ContestType         string        `gorm:"column:contest_type;type:char(5);not null" json:"contest_type"`
 	Title               string        `gorm:"type:varchar(128);column:title;default:'Untitled';not null" json:"title"`
 	Description         string        `gorm:"column:description;type:text;not null" json:"description"`

@@ -23,13 +23,13 @@ type ListSubmissionReply struct {
 }
 
 type ListSubmissionInnerReply struct {
-	Id         uint      `form:"id" json:"id"`
+	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
 	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
-	RunTime    int64     `json:"run_time" form:"run_time"`
+	RunTime    int64     `form:"run_time" json:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
 	Language   uint8     `json:"language" form:"language"`
@@ -43,7 +43,7 @@ type CountSubmissionRequest struct {
 	TimeOrder    *bool `json:"time_order" form:"time_order"`
 	IdOrder      *bool `form:"id_order" json:"id_order"`
 	ByUser       uint  `json:"by_user" form:"by_user"`
-	OnProblem    uint  `form:"on_problem" json:"on_problem"`
+	OnProblem    uint  `json:"on_problem" form:"on_problem"`
 	WithLanguage uint8 `json:"with_language" form:"with_language"`
 	HasStatus    int64 `json:"has_status" form:"has_status"`
 }
@@ -55,14 +55,14 @@ type CountSubmissionReply struct {
 
 type PostSubmissionRequest struct {
 	Pid         uint   `json:"pid" form:"pid" route-param:"-"`
-	Information string `form:"information" json:"information"`
-	Shared      uint8  `form:"shared" json:"shared"`
-	Language    string `form:"language" binding:"required" json:"language"`
-	Code        string `form:"code" binding:"required" json:"code"`
+	Information string `json:"information" form:"information"`
+	Shared      uint8  `json:"shared" form:"shared"`
+	Language    string `json:"language" form:"language" binding:"required"`
+	Code        string `json:"code" form:"code" binding:"required"`
 }
 
 type PostSubmissionReply struct {
-	Code int                `json:"code" form:"code"`
+	Code int                `form:"code" json:"code"`
 	Data PostSubmissionData `json:"data" form:"data"`
 }
 
@@ -82,20 +82,20 @@ type GetSubmissionRequest struct {
 
 type GetSubmissionReply struct {
 	Code int                     `json:"code" form:"code"`
-	Data GetSubmissionInnerReply `json:"data" form:"data"`
+	Data GetSubmissionInnerReply `form:"data" json:"data"`
 }
 
 type GetSubmissionInnerReply struct {
 	Id         uint      `json:"id" form:"id"`
 	CreatedAt  time.Time `json:"created_at" form:"created_at"`
-	ProblemId  uint      `form:"problem_id" json:"problem_id"`
+	ProblemId  uint      `json:"problem_id" form:"problem_id"`
 	UserId     uint      `json:"user_id" form:"user_id"`
 	Score      int64     `json:"score" form:"score"`
 	Status     int64     `json:"status" form:"status"`
 	RunTime    int64     `json:"run_time" form:"run_time"`
 	RunMemory  int64     `json:"run_memory" form:"run_memory"`
 	CodeLength int       `json:"code_length" form:"code_length"`
-	Language   uint8     `json:"language" form:"language"`
+	Language   uint8     `form:"language" json:"language"`
 	Shared     uint8     `json:"shared" form:"shared"`
 }
 

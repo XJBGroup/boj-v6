@@ -1,10 +1,10 @@
 package main
 
-import "github.com/Myriad-Dreamin/artisan"
+import "github.com/Myriad-Dreamin/artisan/artisan-core"
 
-func StdReply(description ...interface{}) artisan.ReplyObject {
-	return artisan.Reply(
+func StdReply(description ...interface{}) artisan_core.ReplyObject {
+	return artisan_core.Reply(
 		codeField,
-		artisan.Param("data", description...),
+		artisan_core.Param("data", description...),
 	)
 }

@@ -5,10 +5,10 @@ import (
 )
 
 type Group struct {
-	ID          uint `gorm:"primary_key" json:"id"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   *time.Time `sql:"index"`
+	ID          uint       `gorm:"primary_key" json:"id"`
+	CreatedAt   time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt   *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 	Name        string     `gorm:"type:varchar(128);column:name;default:'anonymous group';unique;not null" json:"name"`
 	Description string     `gorm:"column:description;type:text;not null" json:"description"`
 	//Owner       User   `gorm:"ForeignKey:OwnerID;AssociationForeignKey:ID"`

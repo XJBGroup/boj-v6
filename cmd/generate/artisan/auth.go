@@ -1,72 +1,72 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 )
 
 type AuthCategories struct {
-	artisan.VirtualService
+	artisan_core.VirtualService
 
-	Policy         artisan.Category
-	GroupingPolicy artisan.Category
+	Policy         artisan_core.Category
+	GroupingPolicy artisan_core.Category
 }
 
-func DescribeAuthController() artisan.ProposingService {
+func DescribeAuthController() artisan_core.ProposingService {
 
 	controller := &AuthCategories{
-		Policy: artisan.Ink().Path("/policy").Method(
-			artisan.POST, "AddPolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("object", artisan.String, required),
-				artisan.Param("action", artisan.String, required),
+		Policy: artisan_core.Ink().Path("/policy").Method(
+			artisan_core.POST, "AddPolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("object", artisan_core.String, required),
+				artisan_core.Param("action", artisan_core.String, required),
 			),
-			artisan.Reply(
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		).Method(
-			artisan.DELETE, "RemovePolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("object", artisan.String, required),
-				artisan.Param("action", artisan.String, required)),
-			artisan.Reply(
+			artisan_core.DELETE, "RemovePolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("object", artisan_core.String, required),
+				artisan_core.Param("action", artisan_core.String, required)),
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		).Method(
-			artisan.GET, "HasPolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("object", artisan.String, required),
-				artisan.Param("action", artisan.String, required)),
-			artisan.Reply(
+			artisan_core.GET, "HasPolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("object", artisan_core.String, required),
+				artisan_core.Param("action", artisan_core.String, required)),
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		),
-		GroupingPolicy: artisan.Ink().Path("/policy/group").Method(
-			artisan.POST, "AddGroupingPolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("group", artisan.String, required)),
-			artisan.Reply(
+		GroupingPolicy: artisan_core.Ink().Path("/policy/group").Method(
+			artisan_core.POST, "AddGroupingPolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("group", artisan_core.String, required)),
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		).Method(
-			artisan.DELETE, "RemoveGroupingPolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("group", artisan.String, required)),
-			artisan.Reply(
+			artisan_core.DELETE, "RemoveGroupingPolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("group", artisan_core.String, required)),
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		).Method(
-			artisan.GET, "HasGroupingPolicy",
-			artisan.Request(
-				artisan.Param("subject", artisan.String, required),
-				artisan.Param("group", artisan.String, required)),
-			artisan.Reply(
+			artisan_core.GET, "HasGroupingPolicy",
+			artisan_core.Request(
+				artisan_core.Param("subject", artisan_core.String, required),
+				artisan_core.Param("group", artisan_core.String, required)),
+			artisan_core.Reply(
 				codeField,
-				artisan.Param("data", artisan.Bool)),
+				artisan_core.Param("data", artisan_core.Bool)),
 		),
 	}
 	controller.Name("AuthController")

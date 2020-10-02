@@ -2,10 +2,13 @@ module github.com/Myriad-Dreamin/boj-v6
 
 go 1.14
 
+replace github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002034950-8932684abe2e => ../artisan/extension/artisan-swagger
+
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586
-	github.com/Myriad-Dreamin/artisan v0.8.2-0.20200713140024-9b39f94f1491
+	github.com/Myriad-Dreamin/artisan/artisan-core v0.0.0-20201002054049-75d6a0a6ce76
+	github.com/Myriad-Dreamin/artisan/extension/artisan-swagger v0.0.0-20201002034950-8932684abe2e
 	github.com/Myriad-Dreamin/core-oj v1.0.1
 	github.com/Myriad-Dreamin/dorm v0.0.0-20191205101004-33dbc61bb34e
 	github.com/Myriad-Dreamin/functional-go v0.0.0-20191104092509-c2b7f373dd31
@@ -19,6 +22,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-openapi/spec v0.19.9
 	github.com/go-playground/assert/v2 v2.0.1
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gomodule/redigo v2.0.0+incompatible
@@ -33,6 +37,5 @@ require (
 	github.com/tidwall/gjson v1.6.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200204104054-c9f3fb736b72
-	gopkg.in/src-d/go-parse-utils.v1 v1.1.2 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )

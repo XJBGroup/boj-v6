@@ -36,8 +36,6 @@ func (g *generator) autoBindController(ctrl interface{}) {
 
 	// obj.Decl for auto injection
 
-	methods := g.getMethods(parsedPackage, obj)
-
 	var on = func(stmt ast.Stmt, err error) {
 		if err == nil {
 			return
@@ -56,13 +54,12 @@ func (g *generator) autoBindController(ctrl interface{}) {
 		}
 	}
 
-	for _, method := range methods {
-		// g.printNode(method)
-		var localName = map[string]*ast.Ident{}
-		_ = localName
+	for _, method := range g.getMethods(parsedPackage, obj) {
+		g.methodScope.reset()
 		for _, stmt := range method.Body.List {
+			g.methodScope.methodParsingStmt = stmt
 			g.stmtScope.reset()
-			g.stmtScope.stmtParsingNode = stmt
+			//g.stmtScope.stmtParsingNode = stmt
 			switch stmt := stmt.(type) {
 			case *ast.AssignStmt:
 				on(stmt, g.tryParseLRShapeStmt(obj, stmt.Lhs, stmt.Rhs))
@@ -94,7 +91,11 @@ func (g *generator) autoBindController(ctrl interface{}) {
 				panicGenerateError("not parsed stmt", stmt)
 			}
 		}
+		fmt.Printf("var ctx = new(")
+		g.printNode(method.Name)
+		fmt.Printf("Context)\n")
 		fmt.Println(strings.Join(g.methodStmts, "\n"))
+		//fmt.Println(strings.Join())
 		break
 	}
 }

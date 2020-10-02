@@ -1,4 +1,4 @@
-package tests
+package server_test
 
 import (
 	"github.com/Myriad-Dreamin/boj-v6/test/tester"

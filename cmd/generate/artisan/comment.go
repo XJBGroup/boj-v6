@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/comment"
 )
 
 type CommentCategories struct {
-	artisan.VirtualService
-	List       artisan.Category
-	Count      artisan.Category
-	Post       artisan.Category
-	GetContent artisan.Category
-	IdGroup    artisan.Category
+	artisan_core.VirtualService
+	List       artisan_core.Category
+	Count      artisan_core.Category
+	Post       artisan_core.Category
+	GetContent artisan_core.Category
+	IdGroup    artisan_core.Category
 }
 
 //
@@ -23,62 +23,62 @@ type CommentCategories struct {
 //	NoReply bool
 //}
 
-func DescribeCommentController() artisan.ProposingService {
+func DescribeCommentController() artisan_core.ProposingService {
 	var commentModel = new(comment.Comment)
 	var _commentModel = new(comment.Comment)
 
 	controller := &CommentCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("comment-list").
-			Method(artisan.GET, "ListComment",
-				artisan.QT("ListCommentRequest", comment.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListComment",
+				artisan_core.QT("ListCommentRequest", comment.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", _commentModel)),
+					artisan_core.ArrayParam(artisan_core.Param("data", _commentModel)),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("comment-count").
-			Method(artisan.GET, "CountComment",
-				artisan.QT("CountCommentRequest", comment.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountComment",
+				artisan_core.QT("CountCommentRequest", comment.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Int64),
+					artisan_core.Param("data", artisan_core.Int64),
 				),
 			),
-		Post: artisan.Ink().
+		Post: artisan_core.Ink().
 			Path("comment").
-			Method(artisan.POST, "PostComment",
-				artisan.Request(
-					artisan.SPsC(&commentModel.Title, &commentModel.Content),
+			Method(artisan_core.POST, "PostComment",
+				artisan_core.Request(
+					artisan_core.SPsC(&commentModel.Title, &commentModel.Content),
 				),
-				artisan.Reply(
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("comment", &commentModel),
+					artisan_core.Param("comment", &commentModel),
 				),
 			),
-		IdGroup: artisan.Ink().
-			Path("comment/:cmid").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("comment/:cmid").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "comment:cmid",
 		}}).
-			Method(artisan.GET, "GetComment",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetComment",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &commentModel),
+					artisan_core.Param("data", &commentModel),
 				)).
-			Method(artisan.PUT, "PutComment",
-				artisan.Request(
-					artisan.SPsC(&commentModel.Title, &commentModel.Content),
+			Method(artisan_core.PUT, "PutComment",
+				artisan_core.Request(
+					artisan_core.SPsC(&commentModel.Title, &commentModel.Content),
 				),
-				artisan.Reply(codeField),
+				artisan_core.Reply(codeField),
 			).
-			Method(artisan.DELETE, "DeleteComment",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteComment",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			),
 	}
 	controller.Name("CommentController").
-		UseModel(artisan.Model(artisan.Name("comment"), &commentModel))
+		UseModel(artisan_core.Model(artisan_core.Name("comment"), &commentModel))
 	return controller
 }

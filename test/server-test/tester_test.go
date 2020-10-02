@@ -1,4 +1,4 @@
-package tests
+package server_test
 
 import (
 	unwrap_func_sqlite "github.com/Myriad-Dreamin/boj-v6/lib/unwrap_func/sqlite"

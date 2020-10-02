@@ -5,10 +5,10 @@ import (
 )
 
 type Submission struct {
-	ID           uint `gorm:"primary_key" json:"id"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    *time.Time `sql:"index"`
+	ID           uint       `gorm:"primary_key" json:"id"`
+	CreatedAt    time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt    *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 	ProblemID    uint       `gorm:"column:problem_id;default:0;not null;force" json:"problem_id"`
 	UserID       uint       `gorm:"column:user_id;not null;force" form:"user_id" json:"user_id" binding:"required"`
 	Score        int64      `gorm:"column:score;default:0;not null;force" json:"score"`

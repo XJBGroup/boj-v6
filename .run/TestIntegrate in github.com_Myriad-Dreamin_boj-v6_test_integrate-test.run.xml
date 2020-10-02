@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="TestIntegrate in github.com/Myriad-Dreamin/boj-v6/test/integrate-test"
+                   type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
+        <module name="boj-v6"/>
+        <working_directory value="$PROJECT_DIR$"/>
+        <framework value="gotest"/>
+        <kind value="PACKAGE"/>
+        <package value="github.com/Myriad-Dreamin/boj-v6/test/integrate-test"/>
+        <directory value="$PROJECT_DIR$"/>
+        <filePath value="$PROJECT_DIR$"/>
+        <pattern value="^\QTestIntegrate\E$"/>
+        <method v="2"/>
+    </configuration>
+</component>

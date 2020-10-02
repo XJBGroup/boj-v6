@@ -1,83 +1,83 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/announcement"
 )
 
 type AnnouncementCategories struct {
-	artisan.VirtualService
-	List       artisan.Category
-	Count      artisan.Category
-	Post       artisan.Category
-	GetContent artisan.Category
-	IdGroup    artisan.Category
+	artisan_core.VirtualService
+	List       artisan_core.Category
+	Count      artisan_core.Category
+	Post       artisan_core.Category
+	GetContent artisan_core.Category
+	IdGroup    artisan_core.Category
 }
 
-func DescribeAnnouncementController() artisan.ProposingService {
+func DescribeAnnouncementController() artisan_core.ProposingService {
 	var announcementModel = new(announcement.Announcement)
 	var _announcementModel = new(announcement.Announcement)
 
 	var listParams = []interface{}{
-		artisan.Param("page", artisan.Int),
-		artisan.Param("page_size", artisan.Int),
+		artisan_core.Param("page", artisan_core.Int),
+		artisan_core.Param("page_size", artisan_core.Int),
 	}
 
-	var announcementFilter = artisan.Object(
+	var announcementFilter = artisan_core.Object(
 		append(listParams, "ListAnnouncementRequest")...)
 
 	controller := &AnnouncementCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("announcement-list").
-			Method(artisan.GET, "ListAnnouncement",
-				artisan.Request(announcementFilter),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListAnnouncement",
+				artisan_core.Request(announcementFilter),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", _announcementModel)),
+					artisan_core.ArrayParam(artisan_core.Param("data", _announcementModel)),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("announcement-count").
-			Method(artisan.GET, "CountAnnouncement",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountAnnouncement",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Int64),
+					artisan_core.Param("data", artisan_core.Int64),
 				),
 			),
-		Post: artisan.Ink().
+		Post: artisan_core.Ink().
 			Path("announcement").
-			Method(artisan.POST, "PostAnnouncement", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.SnakeParam(&announcementModel.Title, required),
-					artisan.SnakeParam(&announcementModel.Content, required),
+			Method(artisan_core.POST, "PostAnnouncement", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.SnakeParam(&announcementModel.Title, required),
+					artisan_core.SnakeParam(&announcementModel.Content, required),
 				),
-				artisan.Reply(
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &announcementModel),
+					artisan_core.Param("data", &announcementModel),
 				),
 			),
-		IdGroup: artisan.Ink().
-			Path("announcement/:aid").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("announcement/:aid").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "announcement:aid",
 		}}).
-			Method(artisan.GET, "GetAnnouncement",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetAnnouncement",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &announcementModel),
+					artisan_core.Param("data", &announcementModel),
 				)).
-			Method(artisan.PUT, "PutAnnouncement", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.SPsC(&announcementModel.Title, &announcementModel.Content),
+			Method(artisan_core.PUT, "PutAnnouncement", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.SPsC(&announcementModel.Title, &announcementModel.Content),
 				),
-				artisan.Reply(codeField),
+				artisan_core.Reply(codeField),
 			).
-			Method(artisan.DELETE, "DeleteAnnouncement", artisan.AuthMeta("~"),
-				artisan.Request(), artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteAnnouncement", artisan_core.AuthMeta("~"),
+				artisan_core.Request(), artisan_core.Reply(codeField),
 			),
 	}
 	controller.Name("AnnouncementController").
-		UseModel(artisan.Model(artisan.Name("announcement"), &announcementModel))
+		UseModel(artisan_core.Model(artisan_core.Name("announcement"), &announcementModel))
 	return controller
 }

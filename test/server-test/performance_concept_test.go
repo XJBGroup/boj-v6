@@ -1,4 +1,4 @@
-package tests
+package server_test
 
 //func createSet() int {
 //	var a = map[string]interface{}{}

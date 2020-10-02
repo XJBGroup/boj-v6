@@ -12,24 +12,24 @@ type AddPolicyReply struct {
 }
 
 type RemovePolicyRequest struct {
-	Subject string `form:"subject" binding:"required" json:"subject"`
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
 	Action  string `json:"action" form:"action" binding:"required"`
 }
 
 type RemovePolicyReply struct {
 	Code int  `json:"code" form:"code"`
-	Data bool `json:"data" form:"data"`
+	Data bool `form:"data" json:"data"`
 }
 
 type HasPolicyRequest struct {
-	Subject string `binding:"required" json:"subject" form:"subject"`
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Object  string `json:"object" form:"object" binding:"required"`
-	Action  string `json:"action" form:"action" binding:"required"`
+	Action  string `form:"action" binding:"required" json:"action"`
 }
 
 type HasPolicyReply struct {
-	Code int  `form:"code" json:"code"`
+	Code int  `json:"code" form:"code"`
 	Data bool `json:"data" form:"data"`
 }
 
@@ -44,7 +44,7 @@ type AddGroupingPolicyReply struct {
 }
 
 type RemoveGroupingPolicyRequest struct {
-	Subject string `binding:"required" json:"subject" form:"subject"`
+	Subject string `json:"subject" form:"subject" binding:"required"`
 	Group   string `json:"group" form:"group" binding:"required"`
 }
 

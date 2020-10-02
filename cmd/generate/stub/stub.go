@@ -11,8 +11,10 @@ type Stub interface {
 
 	GetID() *uint
 	GetIDKeyed(string) *uint
+
 	AbortIf(bool)
 	Bind(request interface{}) Promise
+	Next() Promise
 
 	Await(Promise) func(func())
 	Emit(name string, eventArgs ...interface{})
@@ -29,6 +31,7 @@ type Promise interface {
 
 	Then(func()) Promise
 	Catch(func()) Promise
+	Finally(func()) Promise
 	ThenDo(f interface{}) Promise
 	CatchDo(f interface{}) Promise
 }

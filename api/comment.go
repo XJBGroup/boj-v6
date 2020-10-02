@@ -15,7 +15,7 @@ type CountCommentRequest = comment.Filter
 
 type CountCommentReply struct {
 	Code int   `json:"code" form:"code"`
-	Data int64 `json:"data" form:"data"`
+	Data int64 `form:"data" json:"data"`
 }
 
 type PostCommentRequest struct {
@@ -24,7 +24,7 @@ type PostCommentRequest struct {
 }
 
 type PostCommentReply struct {
-	Code    int              `form:"code" json:"code"`
+	Code    int              `json:"code" form:"code"`
 	Comment *comment.Comment `json:"comment" form:"comment"`
 }
 
@@ -33,12 +33,12 @@ type GetCommentRequest struct {
 
 type GetCommentReply struct {
 	Code int              `json:"code" form:"code"`
-	Data *comment.Comment `json:"data" form:"data"`
+	Data *comment.Comment `form:"data" json:"data"`
 }
 
 type PutCommentRequest struct {
 	Title   string `json:"title" form:"title"`
-	Content string `json:"content" form:"content"`
+	Content string `form:"content" json:"content"`
 }
 
 type PutCommentReply struct {

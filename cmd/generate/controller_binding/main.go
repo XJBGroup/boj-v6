@@ -1,9 +1,7 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"go/ast"
-	"go/parser"
 	"go/token"
 	"sync"
 )
@@ -39,78 +37,11 @@ func (g *generator) findInScopes(p *ast.Package, name string) *ast.Object {
 
 	for _, file := range p.Files {
 		obj := file.Scope.Lookup(name)
-		if obj != nil {
-			if obj.Decl == nil {
-				panic("todo")
-			}
-
-			if ts, ok := obj.Decl.(*ast.TypeSpec); !ok {
-				panic("todo")
-			} else {
-				if st, ok := ts.Type.(*ast.StructType); !ok {
-					panic("todo")
-				} else {
-					for _, f := range st.Fields.List {
-
-						if sel, ok := f.Type.(*ast.SelectorExpr); ok {
-							chain := g.unwrapSelectorChain(sel)
-
-							p := chain[len(chain)-1].Obj.Decl.(*ast.ImportSpec).Path.Value
-							p = p[1 : len(p)-1]
-							if p != "github.com/Myriad-Dreamin/boj-v6/cmd/generate/stub" {
-								continue
-							}
-
-							var fillCheck = func(object *ast.Object) {
-
-								if chain[0].Obj == nil {
-									chain[0].Obj = object
-								}
-								if chain[0].Obj != object {
-									panicGenerateError("not equal...", chain[0])
-								}
-							}
-
-							switch chain[0].Name {
-							case "Stub":
-								fillCheck(g.stubObject)
-							case "StubVariables":
-								fillCheck(g.stubVariableObject)
-							default:
-								panic("todo")
-							}
-
-							for _, name := range f.Names {
-								g.stubFieldInfo[name.Name] = chain[0].Obj
-							}
-							//if len(chain) == 2 {
-							//	var stubType = StubTypeLength
-							//	switch chain[0].Name {
-							//	case "Stub":
-							//		stubType = StubTypeStub
-							//	case "StubVariables":
-							//		stubType = StubTypeStubVariables
-							//	default:
-							//		panic("todo")
-							//	}
-							//	if len(f.Names) == 0 {
-							//		stubTypes[stubType] = append(stubTypes[stubType], chain[0].Name)
-							//	} else {
-							//		for _, n := range f.Names {
-							//			stubTypes[stubType] = append(stubTypes[stubType], n.Name)
-							//		}
-							//	}
-							//
-							//} else {
-							//	panic("todo")
-							//}
-						}
-					}
-				}
-			}
-
-			return obj
+		if obj == nil {
+			continue
 		}
+
+		return g.checkFillStubFields(obj)
 	}
 	return nil
 }
@@ -162,13 +93,6 @@ func (g *generator) tryParseLRShapeStmt_(obj *ast.Object, identifiers []*ast.Ide
 	return notParsedStmt(nil)
 }
 
-func (g *generator) addLocal(ident *ast.Ident) {
-	if g.localName == nil {
-		g.localName = make(map[string]*ast.Ident)
-	}
-	g.localName[ident.Name] = ident
-}
-
 func (g *generator) tryParseLRShapeStmt(obj *ast.Object, lhs, rhs []ast.Expr) error {
 	if len(rhs) == 1 {
 		var identifiers []*ast.Ident
@@ -196,10 +120,14 @@ func (g *generator) tryParseCallExpr(obj *ast.Object, lhs []*ast.Ident, rhs *ast
 		// todo find local function
 		switch fnExpr.Name {
 		case "new":
-			// todo: type insert
-			//g.printAstNode(lhs)
-			//g.printAstNode(rhs.Args)
-			return notParsedStmt(rhs)
+
+			if len(lhs) != 1 {
+				panicGenerateError("want single variable assigning 1 variable", rhs)
+				return notParsedStmt(rhs)
+			}
+
+			g.appendStmt(g.methodParsingStmt)
+			return nil
 		}
 
 		return notParsedStmt(rhs)
@@ -212,21 +140,6 @@ func (g *generator) tryParseCallExpr(obj *ast.Object, lhs []*ast.Ident, rhs *ast
 	}
 	panicUnknownAt(rhs.Fun)
 	return unknownAt(rhs.Fun)
-}
-
-func (g *generator) evalStubParseChain(fieldName string) (parserChainMap ParseChainedMap, _ error) {
-	if obj := g.getStubFieldByName(fieldName); obj != nil {
-		switch obj {
-		case g.stubObject:
-			parserChainMap = selfStubFilter
-		default:
-			panicUnknownAt(g.stmtParsingNode)
-			return nil, unknownAt(g.stmtParsingNode)
-		}
-	} else {
-		return nil, notParsedStmt(g.stmtParsingNode)
-	}
-	return parserChainMap, nil
 }
 
 func (g *generator) tryParseSelfCalling(lhs []*ast.Ident, fnExpr *ast.CallExpr) (err error) {
@@ -287,36 +200,6 @@ func (g *generator) functionIsMethodOfType(obj *ast.Object, fnExpr *ast.Selector
 		}
 	}
 	return unknownAt(fnExpr)
-}
-
-func (g *generator) resolveBuiltIn() *ast.Package {
-
-	pkgName := "builtin"
-	pkg, err := parsePkg(pkgName, g.fileSet, parser.ParseComments|parser.DeclarationErrors)
-	sugar.HandlerError0(err)
-	return pkg
-}
-
-func (g *generator) resolvePackageObject(file *ast.File) {
-	i := 0
-	for _, ident := range file.Unresolved {
-		var resolved = false
-
-		for _, importSpec := range file.Imports {
-			if importSpec.Name != nil && importSpec.Name.Name == ident.Name {
-				ident.Obj = ast.NewObj(ast.Pkg, importSpec.Name.Name)
-				ident.Obj.Decl = importSpec
-				resolved = true
-				break
-			}
-		}
-
-		if !resolved {
-			file.Unresolved[i] = ident
-			i++
-		}
-	}
-	file.Unresolved = file.Unresolved[0:i]
 }
 
 func main() {

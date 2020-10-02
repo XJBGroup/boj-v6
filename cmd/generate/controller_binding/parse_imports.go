@@ -64,7 +64,7 @@ func (g *generator) parseAllImports(opts []interface{}) {
 }
 
 func (g *generator) parseImports(pkg *ast.Package, depth int) {
-	if depth > 2 {
+	if depth > 0 {
 		return
 	}
 

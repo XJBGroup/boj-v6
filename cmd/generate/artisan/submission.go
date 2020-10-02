@@ -1,113 +1,113 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 )
 
 type SubmissionCategories struct {
-	artisan.VirtualService
-	List       artisan.Category
-	Count      artisan.Category
-	Post       artisan.Category
-	GetContent artisan.Category
-	IdGroup    artisan.Category
+	artisan_core.VirtualService
+	List       artisan_core.Category
+	Count      artisan_core.Category
+	Post       artisan_core.Category
+	GetContent artisan_core.Category
+	IdGroup    artisan_core.Category
 }
 
-func DescribeSubmissionController() artisan.ProposingService {
+func DescribeSubmissionController() artisan_core.ProposingService {
 	var submissionModel = new(submission.Submission)
 	var valueSubmissionModel submission.Submission
 
 	var listParams = []interface{}{
-		artisan.Param("page", artisan.Int),
-		artisan.Param("page_size", artisan.Int),
-		artisan.Param("mem_order", new(*bool)),
-		artisan.Param("time_order", new(*bool)),
-		artisan.Param("id_order", new(*bool)),
-		artisan.Param("by_user", artisan.Uint),
-		artisan.Param("on_problem", artisan.Uint),
-		artisan.Param("with_language", artisan.Uint8),
-		artisan.Param("has_status", artisan.Int64),
+		artisan_core.Param("page", artisan_core.Int),
+		artisan_core.Param("page_size", artisan_core.Int),
+		artisan_core.Param("mem_order", new(*bool)),
+		artisan_core.Param("time_order", new(*bool)),
+		artisan_core.Param("id_order", new(*bool)),
+		artisan_core.Param("by_user", artisan_core.Uint),
+		artisan_core.Param("on_problem", artisan_core.Uint),
+		artisan_core.Param("with_language", artisan_core.Uint8),
+		artisan_core.Param("has_status", artisan_core.Int64),
 	}
 
-	var submissionFilter = func(name string) artisan.SerializeObject {
-		return artisan.Object(
+	var submissionFilter = func(name string) artisan_core.SerializeObject {
+		return artisan_core.Object(
 			append(listParams, name)...)
 	}
 
 	controller := &SubmissionCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("submission-list").
-			Method(artisan.GET, "ListSubmission",
-				artisan.Request(submissionFilter("ListSubmissionRequest")),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListSubmission",
+				artisan_core.Request(submissionFilter("ListSubmissionRequest")),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", artisan.Object(
+					artisan_core.ArrayParam(artisan_core.Param("data", artisan_core.Object(
 						"ListSubmissionInnerReply",
-						artisan.SPsC(
+						artisan_core.SPsC(
 							&valueSubmissionModel.ID, &valueSubmissionModel.CreatedAt, &valueSubmissionModel.ProblemID,
 							&valueSubmissionModel.UserID, &valueSubmissionModel.Score, &valueSubmissionModel.Status,
 							&valueSubmissionModel.RunTime, &valueSubmissionModel.RunMemory, &valueSubmissionModel.CodeLength,
 							&valueSubmissionModel.Language, &valueSubmissionModel.Shared)))),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("submission-count").
-			Method(artisan.GET, "CountSubmission",
-				artisan.Request(submissionFilter("CountSubmissionRequest")),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountSubmission",
+				artisan_core.Request(submissionFilter("CountSubmissionRequest")),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Int64),
+					artisan_core.Param("data", artisan_core.Int64),
 				),
 			),
-		Post: artisan.Ink().
-			Path("/problem/:pid/submission").Meta(&Meta{artisan.RouterMeta{
+		Post: artisan_core.Ink().
+			Path("/problem/:pid/submission").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "problem:pid",
 		}}).
-			Method(artisan.POST, "PostSubmission", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.Param("pid", artisan.Uint, routeParam),
-					artisan.SPsC(&submissionModel.Information, &submissionModel.Shared),
-					artisan.Param("language", artisan.String, required),
-					artisan.Param("code", artisan.String, required),
+			Method(artisan_core.POST, "PostSubmission", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.Param("pid", artisan_core.Uint, routeParam),
+					artisan_core.SPsC(&submissionModel.Information, &submissionModel.Shared),
+					artisan_core.Param("language", artisan_core.String, required),
+					artisan_core.Param("code", artisan_core.String, required),
 				),
-				artisan.Reply(
+				artisan_core.Reply(
 					codeField,
-					StdReply(artisan.Object(
+					StdReply(artisan_core.Object(
 						"PostSubmissionData",
-						artisan.SnakeParam(&submissionModel.ID),
+						artisan_core.SnakeParam(&submissionModel.ID),
 					)),
 				),
 			),
-		IdGroup: artisan.Ink().
-			Path("submission/:sid").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("submission/:sid").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "submission:sid",
 		}}).
-			Method(artisan.GET, "GetSubmission",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetSubmission",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Object("GetSubmissionInnerReply",
-						artisan.SPsC(
+					artisan_core.Param("data", artisan_core.Object("GetSubmissionInnerReply",
+						artisan_core.SPsC(
 							&submissionModel.ID, &submissionModel.CreatedAt, &submissionModel.ProblemID,
 							&submissionModel.UserID, &submissionModel.Score, &submissionModel.Status,
 							&submissionModel.RunTime, &submissionModel.RunMemory, &submissionModel.CodeLength,
 							&submissionModel.Language, &submissionModel.Shared)),
 					),
 				)).
-			SubCate("/content", artisan.Ink().WithName("GetSubmissionContent").
-				Method(artisan.GET, "GetSubmissionContent",
-					artisan.Request(),
-					artisan.Reply(codeField),
+			SubCate("/content", artisan_core.Ink().WithName("GetSubmissionContent").
+				Method(artisan_core.GET, "GetSubmissionContent",
+					artisan_core.Request(),
+					artisan_core.Reply(codeField),
 				),
 			).
-			Method(artisan.DELETE, "DeleteSubmission",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteSubmission",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			),
 	}
 	controller.Name("SubmissionController").
-		UseModel(artisan.Model(artisan.Name("submission"), &submissionModel),
-			artisan.Model(artisan.Name("valueSubmission"), &valueSubmissionModel))
+		UseModel(artisan_core.Model(artisan_core.Name("submission"), &submissionModel),
+			artisan_core.Model(artisan_core.Name("valueSubmission"), &valueSubmissionModel))
 	return controller
 }

@@ -5,10 +5,10 @@ import (
 )
 
 type Comment struct {
-	ID            uint `gorm:"primary_key" json:"id"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	DeletedAt     *time.Time `sql:"index"`
+	ID            uint       `gorm:"primary_key" json:"id"`
+	CreatedAt     time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt     *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 	ReferenceType uint8      `gorm:"column:ref_t;not null"`
 	Reference     uint       `gorm:"column:ref;not null"`
 	ReplyID       uint       `gorm:"column:rid;default:0;not null"`

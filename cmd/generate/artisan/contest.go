@@ -1,100 +1,100 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/contest"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
 type ContestCategories struct {
-	artisan.VirtualService
-	List       artisan.Category
-	Count      artisan.Category
-	Post       artisan.Category
-	GetContent artisan.Category
-	IdGroup    artisan.Category
+	artisan_core.VirtualService
+	List       artisan_core.Category
+	Count      artisan_core.Category
+	Post       artisan_core.Category
+	GetContent artisan_core.Category
+	IdGroup    artisan_core.Category
 }
 
-func DescribeContestController() artisan.ProposingService {
+func DescribeContestController() artisan_core.ProposingService {
 	var contestModel = new(contest.Contest)
 	var _contestModel = new(contest.Contest)
 
 	controller := &ContestCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("contest-list").
-			Method(artisan.GET, "ListContest",
-				artisan.QT("ListContestRequest", mytraits.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListContest",
+				artisan_core.QT("ListContestRequest", mytraits.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", _contestModel)),
+					artisan_core.ArrayParam(artisan_core.Param("data", _contestModel)),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("contest-count").
-			Method(artisan.GET, "CountContest",
-				artisan.QT("CountContestRequest", mytraits.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountContest",
+				artisan_core.QT("CountContestRequest", mytraits.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", new(int))),
+					artisan_core.ArrayParam(artisan_core.Param("data", new(int))),
 				),
 			),
-		Post: artisan.Ink().
+		Post: artisan_core.Ink().
 			Path("contest").
-			Method(artisan.POST, "PostContest", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.SnakeParam(&contestModel.Title, required),
-					artisan.SnakeParam(&contestModel.Description, required),
-					artisan.SnakeParam(&contestModel.StartAt, required),
-					artisan.SnakeParam(&contestModel.EndDuration, required),
-					artisan.SnakeParam(&contestModel.BoardFrozenDuration, required),
+			Method(artisan_core.POST, "PostContest", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.SnakeParam(&contestModel.Title, required),
+					artisan_core.SnakeParam(&contestModel.Description, required),
+					artisan_core.SnakeParam(&contestModel.StartAt, required),
+					artisan_core.SnakeParam(&contestModel.EndDuration, required),
+					artisan_core.SnakeParam(&contestModel.BoardFrozenDuration, required),
 				),
-				artisan.Reply(
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &contestModel),
+					artisan_core.Param("data", &contestModel),
 				),
 			),
-		IdGroup: artisan.Ink().
-			Path("contest/:cid").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("contest/:cid").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "contest:cid",
 		}}).
-			Method(artisan.GET, "GetContest",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetContest",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Object("GetContestInnerReply",
-						artisan.SPsC(
+					artisan_core.Param("data", artisan_core.Object("GetContestInnerReply",
+						artisan_core.SPsC(
 							&contestModel.ID, &contestModel.Title, &contestModel.StartAt, &contestModel.CreatedAt,
 							&contestModel.BoardFrozenDuration, &contestModel.EndDuration, &contestModel.Description,
 							&contestModel.AuthorID, &contestModel.ContestType),
 					)),
 				),
 			).
-			SubCate("/user-list", artisan.Ink().WithName("ListContestUsers").
-				Method(artisan.GET, "ListContestUsers",
-					artisan.Request(),
-					artisan.Reply(
+			SubCate("/user-list", artisan_core.Ink().WithName("ListContestUsers").
+				Method(artisan_core.GET, "ListContestUsers",
+					artisan_core.Request(),
+					artisan_core.Reply(
 						codeField,
-						artisan.ArrayParam(artisan.Param("data", new(user.User))),
+						artisan_core.ArrayParam(artisan_core.Param("data", new(user.User))),
 					),
 				),
 			).
 			// todo: user management
-			Method(artisan.PUT, "PutContest", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.SnakeParam(&contestModel.Title),
-					artisan.SnakeParam(&contestModel.Description),
-					artisan.SnakeParam(&contestModel.StartAt),
-					artisan.SnakeParam(&contestModel.EndDuration),
-					artisan.SnakeParam(&contestModel.BoardFrozenDuration),
-					artisan.SnakeParam(&contestModel.ConfigPath),
-					artisan.SnakeParam(&contestModel.RolePath),
+			Method(artisan_core.PUT, "PutContest", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.SnakeParam(&contestModel.Title),
+					artisan_core.SnakeParam(&contestModel.Description),
+					artisan_core.SnakeParam(&contestModel.StartAt),
+					artisan_core.SnakeParam(&contestModel.EndDuration),
+					artisan_core.SnakeParam(&contestModel.BoardFrozenDuration),
+					artisan_core.SnakeParam(&contestModel.ConfigPath),
+					artisan_core.SnakeParam(&contestModel.RolePath),
 				),
-				artisan.Reply(codeField),
+				artisan_core.Reply(codeField),
 			).
-			Method(artisan.DELETE, "DeleteContest",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteContest",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			),
 	}
 
@@ -102,10 +102,10 @@ func DescribeContestController() artisan.ProposingService {
 
 	controller.Name("ContestController").
 		UseModel(
-			artisan.Model(artisan.Name("contest"), &contestModel),
-			artisan.Model(artisan.Name("problem"), &problemModel),
-			artisan.Model(artisan.Name("problemUser"), &problemUserModel),
-			artisan.Model(artisan.Name("problemDesc"), &problemDescModel),
+			artisan_core.Model(artisan_core.Name("contest"), &contestModel),
+			artisan_core.Model(artisan_core.Name("problem"), &problemModel),
+			artisan_core.Model(artisan_core.Name("problemUser"), &problemUserModel),
+			artisan_core.Model(artisan_core.Name("problemDesc"), &problemDescModel),
 		)
 	return controller
 }

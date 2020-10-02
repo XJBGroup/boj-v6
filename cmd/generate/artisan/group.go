@@ -1,94 +1,94 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/group"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 	"github.com/Myriad-Dreamin/go-model-traits/example-traits"
 )
 
 type GroupCategories struct {
-	artisan.VirtualService
-	List       artisan.Category
-	Count      artisan.Category
-	Post       artisan.Category
-	GetContent artisan.Category
-	IdGroup    artisan.Category
+	artisan_core.VirtualService
+	List       artisan_core.Category
+	Count      artisan_core.Category
+	Post       artisan_core.Category
+	GetContent artisan_core.Category
+	IdGroup    artisan_core.Category
 }
 
-func DescribeGroupController() artisan.ProposingService {
+func DescribeGroupController() artisan_core.ProposingService {
 	var groupModel = new(group.Group)
 	var _groupModel = new(group.Group)
 	var valueUserModel user.User
 
 	controller := &GroupCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("group-list").
-			Method(artisan.GET, "ListGroup",
-				artisan.QT("ListGroupRequest", mytraits.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListGroup",
+				artisan_core.QT("ListGroupRequest", mytraits.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data", _groupModel)),
+					artisan_core.ArrayParam(artisan_core.Param("data", _groupModel)),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("group-count").
-			Method(artisan.GET, "CountGroup",
-				artisan.QT("CountGroupRequest", mytraits.Filter{}),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountGroup",
+				artisan_core.QT("CountGroupRequest", mytraits.Filter{}),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Int64),
+					artisan_core.Param("data", artisan_core.Int64),
 				),
 			),
-		Post: artisan.Ink().
+		Post: artisan_core.Ink().
 			Path("group").
-			Method(artisan.POST, "PostGroup", artisan.AuthMeta("~"),
-				artisan.Request(
-					artisan.SnakeParam(&groupModel.Name, required),
-					artisan.SnakeParam(&groupModel.Description, required),
-					artisan.Param("owner_name", artisan.String),
-					artisan.SnakeParam(&groupModel.OwnerID),
+			Method(artisan_core.POST, "PostGroup", artisan_core.AuthMeta("~"),
+				artisan_core.Request(
+					artisan_core.SnakeParam(&groupModel.Name, required),
+					artisan_core.SnakeParam(&groupModel.Description, required),
+					artisan_core.Param("owner_name", artisan_core.String),
+					artisan_core.SnakeParam(&groupModel.OwnerID),
 				),
-				artisan.Reply(
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &groupModel.ID),
+					artisan_core.Param("data", &groupModel.ID),
 				),
 			),
-		IdGroup: artisan.Ink().
-			Path("group/:gid").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("group/:gid").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "group:gid",
 		}}).
-			Method(artisan.GET, "GetGroup",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetGroup",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", &groupModel),
+					artisan_core.Param("data", &groupModel),
 				)).
-			Method(artisan.PUT, "PutGroup",
-				artisan.Request(
-					artisan.SnakeParam(&groupModel.Name),
-					artisan.SnakeParam(&groupModel.Description),
+			Method(artisan_core.PUT, "PutGroup",
+				artisan_core.Request(
+					artisan_core.SnakeParam(&groupModel.Name),
+					artisan_core.SnakeParam(&groupModel.Description),
 				),
-				artisan.Reply(codeField),
+				artisan_core.Reply(codeField),
 			).
-			Method(artisan.DELETE, "DeleteGroup",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteGroup",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			).
-			SubCate("/owner", artisan.Ink().WithName("Owner").
-				Method(artisan.PUT, "PutGroupOwner",
-					artisan.Request(
-						artisan.SnakeParam(&groupModel.OwnerID, required)),
-					artisan.Reply(codeField),
+			SubCate("/owner", artisan_core.Ink().WithName("Owner").
+				Method(artisan_core.PUT, "PutGroupOwner",
+					artisan_core.Request(
+						artisan_core.SnakeParam(&groupModel.OwnerID, required)),
+					artisan_core.Reply(codeField),
 				),
 			).
-			SubCate("/user-list", artisan.Ink().WithName("UserList").
-				Method(artisan.GET, "GetGroupMembers",
-					artisan.QT("GetGroupMembersRequest", mytraits.Filter{}),
-					artisan.Reply(
+			SubCate("/user-list", artisan_core.Ink().WithName("UserList").
+				Method(artisan_core.GET, "GetGroupMembers",
+					artisan_core.QT("GetGroupMembersRequest", mytraits.Filter{}),
+					artisan_core.Reply(
 						codeField,
-						artisan.ArrayParam(artisan.Param("data",
-							artisan.Object("GetGroupMembersInnerReply", artisan.SPsC(
+						artisan_core.ArrayParam(artisan_core.Param("data",
+							artisan_core.Object("GetGroupMembersInnerReply", artisan_core.SPsC(
 								&valueUserModel.ID,
 								&valueUserModel.Gender,
 								&valueUserModel.LastLogin,
@@ -102,16 +102,16 @@ func DescribeGroupController() artisan.ProposingService {
 					),
 				),
 			).
-			SubCate("user/:id", artisan.Ink().WithName("User").Meta(&Meta{artisan.RouterMeta{
+			SubCate("user/:id", artisan_core.Ink().WithName("User").Meta(&Meta{artisan_core.RouterMeta{
 				RuntimeRouterMeta: "user:id",
-			}}).Method(artisan.POST, "PostGroupMember",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			}}).Method(artisan_core.POST, "PostGroupMember",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			)),
 		// todo: post user by name
 	}
 	controller.Name("GroupController").
-		UseModel(artisan.Model(artisan.Name("group"), &groupModel),
-			artisan.Model(artisan.Name("valueUser"), &valueUserModel))
+		UseModel(artisan_core.Model(artisan_core.Name("group"), &groupModel),
+			artisan_core.Model(artisan_core.Name("valueUser"), &valueUserModel))
 	return controller
 }

@@ -1,10 +1,11 @@
 package model
 
 import (
-	"github.com/Myriad-Dreamin/boj-v6/abstract/problem"
+	problem "github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/api"
 	"github.com/Myriad-Dreamin/boj-v6/cmd/generate/stub"
+	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
 
@@ -15,6 +16,7 @@ type Sc struct {
 	key string
 
 	problemDB problem.DB
+	logStash  external.Logger
 }
 
 func (svc Sc) PostSubmission(c controller.MContext) {
@@ -24,10 +26,14 @@ func (svc Sc) PostSubmission(c controller.MContext) {
 	svc.Binder.Bind(request)
 
 	var response *api.GetSubmissionReply
-	var s *submission.Submission
-	svc.Binder.Context(s).Serve(id, request, response)
+	var s = new(submission.Submission)
+
+	svc.Binder.Context(s).Serve(id, request, response).Catch(func() {
+		svc.logStash.Info("Serve request failed", "context", c, "data", request)
+	})
 
 	svc.Binder.EmitSelf(s, request.Code)
+
 }
 
 func (svc Sc) SubmissionControllerSignatureXXX() interface{} {

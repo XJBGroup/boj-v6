@@ -1,46 +1,46 @@
 package main
 
 import (
-	"github.com/Myriad-Dreamin/artisan"
+	"github.com/Myriad-Dreamin/artisan/artisan-core"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/user"
 )
 
 type UserCategories struct {
-	artisan.VirtualService
-	List  artisan.Category
-	Count artisan.Category
-	//ListNameLike artisan.Category
-	Register     artisan.Category
-	Login        artisan.Category
-	RefreshToken artisan.Category
-	GetContent   artisan.Category
-	Inspect      artisan.Category
-	IdGroup      artisan.Category
+	artisan_core.VirtualService
+	List  artisan_core.Category
+	Count artisan_core.Category
+	//ListNameLike artisan_core.Category
+	Register     artisan_core.Category
+	Login        artisan_core.Category
+	RefreshToken artisan_core.Category
+	GetContent   artisan_core.Category
+	Inspect      artisan_core.Category
+	IdGroup      artisan_core.Category
 }
 
-func DescribeUserController() artisan.ProposingService {
+func DescribeUserController() artisan_core.ProposingService {
 	var userModel = new(user.User)
 	var _valueUserModel user.User
 
 	var listParams = []interface{}{
-		artisan.Param("page", artisan.Int),
-		artisan.Param("page_size", artisan.Int),
+		artisan_core.Param("page", artisan_core.Int),
+		artisan_core.Param("page_size", artisan_core.Int),
 	}
 
-	var userFilter = func(name string) artisan.SerializeObject {
-		return artisan.Object(
+	var userFilter = func(name string) artisan_core.SerializeObject {
+		return artisan_core.Object(
 			append(listParams, name)...)
 	}
 
 	controller := &UserCategories{
-		List: artisan.Ink().
+		List: artisan_core.Ink().
 			Path("user-list").
-			Method(artisan.GET, "ListUser",
-				artisan.Request(userFilter("ListUserRequest")),
-				artisan.Reply(
+			Method(artisan_core.GET, "ListUser",
+				artisan_core.Request(userFilter("ListUserRequest")),
+				artisan_core.Reply(
 					codeField,
-					artisan.ArrayParam(artisan.Param("data",
-						artisan.Object("ListUserInnerReply", artisan.SPsC(
+					artisan_core.ArrayParam(artisan_core.Param("data",
+						artisan_core.Object("ListUserInnerReply", artisan_core.SPsC(
 							&_valueUserModel.ID,
 							&_valueUserModel.Gender,
 							&_valueUserModel.LastLogin,
@@ -53,128 +53,128 @@ func DescribeUserController() artisan.ProposingService {
 						)))),
 				),
 			),
-		Count: artisan.Ink().
+		Count: artisan_core.Ink().
 			Path("user-count").
-			Method(artisan.GET, "CountUser",
-				artisan.Request(userFilter("CountUserRequest")),
-				artisan.Reply(
+			Method(artisan_core.GET, "CountUser",
+				artisan_core.Request(userFilter("CountUserRequest")),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Int64),
+					artisan_core.Param("data", artisan_core.Int64),
 				),
 			),
-		Register: artisan.Ink().
+		Register: artisan_core.Ink().
 			Path("user/register").
-			Method(artisan.POST, "Register",
-				artisan.Request(
+			Method(artisan_core.POST, "Register",
+				artisan_core.Request(
 					// UserName: 注册用户的名字
-					artisan.SnakeParam(&userModel.UserName, required),
+					artisan_core.SnakeParam(&userModel.UserName, required),
 					// Password: 密码
-					artisan.SnakeParam(&userModel.Password, required),
+					artisan_core.SnakeParam(&userModel.Password, required),
 					// NickName: 昵称
-					artisan.SnakeParam(&userModel.NickName, required),
+					artisan_core.SnakeParam(&userModel.NickName, required),
 					// Gender: 0表示保密, 1表示女, 2表示男, 3~255表示其他
-					artisan.SnakeParam(&userModel.Gender),
+					artisan_core.SnakeParam(&userModel.Gender),
 				),
-				StdReply(artisan.Object(
+				StdReply(artisan_core.Object(
 					"UserRegisterData",
-					artisan.SnakeParam(&userModel.ID),
+					artisan_core.SnakeParam(&userModel.ID),
 				)),
 			),
-		Login: artisan.Ink().
+		Login: artisan_core.Ink().
 			Path("user/login").
-			Method(artisan.POST, "LoginUser",
-				artisan.Request(
-					artisan.SPsC(
+			Method(artisan_core.POST, "LoginUser",
+				artisan_core.Request(
+					artisan_core.SPsC(
 						&userModel.ID, &userModel.UserName, &userModel.Email,
 					),
-					artisan.SnakeParam(&userModel.Password, required),
+					artisan_core.SnakeParam(&userModel.Password, required),
 				),
-				StdReply(artisan.Object(
+				StdReply(artisan_core.Object(
 					"UserLoginData",
-					artisan.SnakeParam(&userModel.ID),
-					artisan.SnakeParam(&userModel.Email),
-					artisan.SnakeParam(&userModel.UserName),
-					artisan.SnakeParam(&userModel.NickName),
-					artisan.Param("refresh_token", artisan.String),
-					artisan.Param("token", artisan.String),
-					artisan.Param("identities", artisan.Strings),
+					artisan_core.SnakeParam(&userModel.ID),
+					artisan_core.SnakeParam(&userModel.Email),
+					artisan_core.SnakeParam(&userModel.UserName),
+					artisan_core.SnakeParam(&userModel.NickName),
+					artisan_core.Param("refresh_token", artisan_core.String),
+					artisan_core.Param("token", artisan_core.String),
+					artisan_core.Param("identities", artisan_core.Strings),
 				)),
 			),
-		RefreshToken: artisan.Ink().
+		RefreshToken: artisan_core.Ink().
 			Path("user-token").
-			Method(artisan.GET, "RefreshToken",
-				artisan.Request(),
-				StdReply(artisan.Object(
+			Method(artisan_core.GET, "RefreshToken",
+				artisan_core.Request(),
+				StdReply(artisan_core.Object(
 					"UserRefreshTokenData",
-					artisan.Param("token", artisan.String),
+					artisan_core.Param("token", artisan_core.String),
 				)),
 			),
 
-		IdGroup: artisan.Ink().
-			Path("user/:id").Meta(&Meta{artisan.RouterMeta{
+		IdGroup: artisan_core.Ink().
+			Path("user/:id").Meta(&Meta{artisan_core.RouterMeta{
 			RuntimeRouterMeta: "user:id",
 		}}).
-			Method(artisan.GET, "GetUser",
-				artisan.Request(),
-				artisan.Reply(
+			Method(artisan_core.GET, "GetUser",
+				artisan_core.Request(),
+				artisan_core.Reply(
 					codeField,
-					artisan.Param("data", artisan.Object("GetUserInnerReply",
-						artisan.SPsC(
+					artisan_core.Param("data", artisan_core.Object("GetUserInnerReply",
+						artisan_core.SPsC(
 							&userModel.ID, &userModel.NickName,
 							&userModel.LastLogin, &userModel.Motto,
 							&userModel.Gender),
 					),
 					))).
-			Method(artisan.PUT, "PutUser",
-				artisan.Request(
-					artisan.SPsC(
+			Method(artisan_core.PUT, "PutUser",
+				artisan_core.Request(
+					artisan_core.SPsC(
 						// Gender: 0表示保密, 1表示女, 2表示男, 255表示不修改
 						&userModel.Gender, &userModel.NickName, &userModel.Motto)),
-				artisan.Reply(codeField),
+				artisan_core.Reply(codeField),
 			).
-			SubCate("/email", artisan.Ink().WithName("Email").
-				Method(artisan.PUT, "BindEmail",
-					artisan.Request(
+			SubCate("/email", artisan_core.Ink().WithName("Email").
+				Method(artisan_core.PUT, "BindEmail",
+					artisan_core.Request(
 						// Email: 邮箱
-						artisan.SnakeParam(&userModel.Email, artisan.Tag("binding", "email"))),
-					artisan.Reply(codeField),
+						artisan_core.SnakeParam(&userModel.Email, artisan_core.Tag("binding", "email"))),
+					artisan_core.Reply(codeField),
 				),
 			).
-			SubCate("/password", artisan.Ink().WithName("ChangePassword").
-				Method(artisan.PUT, "ChangePassword",
-					artisan.Request(
+			SubCate("/password", artisan_core.Ink().WithName("ChangePassword").
+				Method(artisan_core.PUT, "ChangePassword",
+					artisan_core.Request(
 						// Old Password: 旧密码
-						artisan.Param("old_password", artisan.String, required),
+						artisan_core.Param("old_password", artisan_core.String, required),
 						// New Password: 新密码
-						artisan.Param("new_password", artisan.String, required),
+						artisan_core.Param("new_password", artisan_core.String, required),
 					),
-					artisan.Reply(codeField),
+					artisan_core.Reply(codeField),
 				),
 			).
-			SubCate("/inspect", artisan.Ink().WithName("Inspect").
-				Method(artisan.GET, "InspectUser",
-					artisan.Request(),
-					artisan.Reply(
+			SubCate("/inspect", artisan_core.Ink().WithName("Inspect").
+				Method(artisan_core.GET, "InspectUser",
+					artisan_core.Request(),
+					artisan_core.Reply(
 						codeField,
-						artisan.Param("data", artisan.Object("InspectUserInnerReply",
-							artisan.SPsC(
+						artisan_core.Param("data", artisan_core.Object("InspectUserInnerReply",
+							artisan_core.SPsC(
 								&userModel.ID, &userModel.NickName, &userModel.UserName,
 								&userModel.LastLogin, &userModel.Email, &userModel.Motto,
 								&userModel.Gender),
-							artisan.Param("identities", artisan.Strings),
-							artisan.Param("success_problems", new([]uint)),
-							artisan.Param("tried_problems", new([]uint)),
+							artisan_core.Param("identities", artisan_core.Strings),
+							artisan_core.Param("success_problems", new([]uint)),
+							artisan_core.Param("tried_problems", new([]uint)),
 						),
 						),
 					)),
 			).
-			Method(artisan.DELETE, "DeleteUser",
-				artisan.Request(),
-				artisan.Reply(codeField),
+			Method(artisan_core.DELETE, "DeleteUser",
+				artisan_core.Request(),
+				artisan_core.Reply(codeField),
 			),
 	}
 	controller.Name("UserController").
-		UseModel(artisan.Model(artisan.Name("user"), &userModel),
-			artisan.Model(artisan.Name("valueUser"), &_valueUserModel))
+		UseModel(artisan_core.Model(artisan_core.Name("user"), &userModel),
+			artisan_core.Model(artisan_core.Name("valueUser"), &_valueUserModel))
 	return controller
 }

@@ -5,10 +5,10 @@ import (
 )
 
 type Announcement struct {
-	ID             uint `gorm:"primary_key" json:"id"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      *time.Time `sql:"index"`
+	ID             uint       `gorm:"primary_key" json:"id"`
+	CreatedAt      time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt      *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 	Title          string     `gorm:"column:title;default:'Untitled';not null" json:"title"`
 	Content        string     `gorm:"column:content;not null" json:"content"`
 	Author         uint       `gorm:"column:author_id;not null" json:"author_id"`                // author_id

@@ -3,10 +3,10 @@ package user
 import "time"
 
 type User struct {
-	ID        uint `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at" form:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at" form:"updated_at"`
+	DeletedAt *time.Time `sql:"index" json:"deleted_at" form:"deleted_at"`
 
 	UserName string `dorm:"user_name" gorm:"type:varchar(30);column:user_name;not null;unique" json:"user_name"` // todo: regex
 	NickName string `dorm:"nick_name" gorm:"type:varchar(30);column:nick_name;not null;unique" json:"nick_name"` // todo: regex

@@ -19,11 +19,18 @@ func init() {
 
 			panicOnInvoking(lhs, 1, fnExpr, 0)
 
+			g.addContext(lhs[0])
+
 			var stmt = fmt.Sprintf(`
-%v, ok := snippet.ParseUint(c, ctrl.key)
+ctx.%v, ok = snippet.ParseUint(c, ctrl.key)
 if !ok {
 	return
 }`, lhs[0].Name)
+
+			if !g.hasOkDeclared {
+				stmt = "var ok bool\n" + stmt
+				g.hasOkDeclared = true
+			}
 			g.methodStmts = append(g.methodStmts, stmt)
 
 			return nil, nil
@@ -32,28 +39,37 @@ if !ok {
 			panicOnInvoking(lhs, 0, fnExpr, 1)
 			node := g.formatNode(fnExpr.Args[0])
 
+			g.addContext(fnExpr.Args[0].(*ast.Ident))
+
 			var stmt = fmt.Sprintf(`
-if !snippet.BindRequest(c, %v) {
+ctx.%v = %v
+if !snippet.BindRequest(c, ctx.%v) {
 	return
-}`, node)
+}`, node, node, node)
 			g.methodStmts = append(g.methodStmts, stmt)
 
 			return nil, nil
 		},
 		"Context": func(g *generator, lhs []*ast.Ident, fnExpr *ast.CallExpr) (ParseChainedMap, error) {
-			var args []*ast.Ident
 			for _, v := range fnExpr.Args {
 				switch exp := v.(type) {
 				case *ast.Ident:
-					args = append(args, exp)
+
+					g.addContext(exp)
+
+					var b = bytes.NewBuffer(make([]byte, 15))
+
+					b.WriteString("ctx.")
+					g.printNode_(b, v)
+					b.WriteString(" = ")
+					g.printNode_(b, v)
+					g.methodStmts = append(g.methodStmts, b.String())
 				case *ast.StarExpr:
 					return nil, unknownAt(v)
 				default:
 					return nil, unknownAt(v)
 				}
 			}
-
-			g.contextVars = append(g.contextVars, args...)
 			return selfInvokingStubFilter, nil
 		},
 
@@ -75,14 +91,16 @@ if !snippet.BindRequest(c, %v) {
 			var b = bytes.NewBuffer(make([]byte, 30))
 			if !g.hasErrorDeclared {
 				b.WriteString("var err error\n")
+				g.hasErrorDeclared = true
 			}
 
 			g.printNode_(b, output)
-			b.WriteString(", err = svc.service.Do(")
+			b.WriteString(", err = svc.service.Do(ctx, ")
 			for _, input := range inputs {
 				// todo: context ?
-				g.printNode_(b, input)
-				b.WriteString(", ")
+				if _, ok := g.contextVars[input.(*ast.Ident).Name]; !ok {
+					panicGenerateError("todo", input)
+				}
 			}
 			b.WriteString(")\nif err != nil {\n    snippet.DoReport(err)\n}")
 

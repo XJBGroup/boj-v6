@@ -87,6 +87,9 @@ func (srv *Server) BuildRouter(mock bool) bool {
 	}
 
 	srv.Router = api.NewRootRouter(newTraitsHelper(srv.Module))
+
+	srv.Router.GetRouter().StaticFile("/swagger/main_spec.json", "doc/main_spec.json")
+
 	srv.Module.Provide(config.ModulePath.Global.HttpEngine, srv.HttpEngine)
 	return true
 }
