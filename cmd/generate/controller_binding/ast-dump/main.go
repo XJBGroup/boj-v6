@@ -86,6 +86,7 @@ type FilePos struct {
 	Line   int `yaml:"l"`
 	Column int `yaml:"c"`
 	Offset int `yaml:"o"`
+	Length int `yaml:"s"`
 }
 
 type ImportStmt struct {
@@ -99,7 +100,9 @@ type Obj struct {
 	Type string `yaml:"t"`
 }
 
-type Stmt interface{}
+type Stmt interface {
+	GetPos() *FilePos
+}
 
 const (
 	ExpTypeBinary = "b"
@@ -112,124 +115,131 @@ const (
 	ExpTypeIf     = "i"
 )
 
+type BaseExp struct {
+	Pos  FilePos `yaml:"p"`
+	Type string  `yaml:"t"`
+}
+
+func (b *BaseExp) GetPos() *FilePos {
+	return &b.Pos
+}
+
 type BlockExp struct {
-	Type  string `yaml:"t"`
-	Block []Stmt `yaml:"b"`
+	BaseExp `yaml:",inline"`
+	Block   []Stmt `yaml:"b"`
 }
 
 func createBlock(block []Stmt) Stmt {
-	return BlockExp{Type: ExpTypeBlock, Block: block}
+	return &BlockExp{BaseExp: BaseExp{Type: ExpTypeBlock}, Block: block}
 }
 
 func createSelect(block []Stmt) Stmt {
-	return BlockExp{Type: ExpTypeSelect, Block: block}
+	return &BlockExp{BaseExp: BaseExp{Type: ExpTypeSelect}, Block: block}
 }
 
 type GenExp struct {
-	Type string `yaml:"t"`
-	Spec []Stmt `yaml:"s"`
+	BaseExp `yaml:",inline"`
+	Spec    []Stmt `yaml:"s"`
 }
 
-
 func createGen(s string, spec []Stmt) Stmt {
-	return GenExp{
-		Type: s,
-		Spec: spec,
+	return &GenExp{
+		BaseExp: BaseExp{Type: s},
+		Spec:    spec,
 	}
 }
 
 type AssignExp struct {
-	Type string `yaml:"t"`
-	Lhs  []Stmt `yaml:"l"`
-	Rhs  []Stmt `yaml:"r"`
+	BaseExp `yaml:",inline"`
+	Lhs     []Stmt `yaml:"l"`
+	Rhs     []Stmt `yaml:"r"`
 }
 
 func createAssign(lhs, rhs []Stmt) Stmt {
-	return AssignExp{Type: ExpTypeAssign, Lhs: lhs, Rhs: rhs}
+	return &AssignExp{BaseExp: BaseExp{Type: ExpTypeAssign}, Lhs: lhs, Rhs: rhs}
 }
 
 type OpaqueExp struct {
-	Type   string `yaml:"t"`
-	Opaque string `yaml:"o"`
+	BaseExp `yaml:",inline"`
+	Opaque  string `yaml:"o"`
 }
 
 func createOpaque(o string) Stmt {
-	return OpaqueExp{Type: ExpTypeOpaque, Opaque: o}
+	return &OpaqueExp{BaseExp: BaseExp{Type: ExpTypeOpaque}, Opaque: o}
 }
 
 type BinaryExp struct {
-	Type     string `yaml:"t"`
+	BaseExp  `yaml:",inline"`
 	Operator string `yaml:"o"`
 	Lhs      Stmt   `yaml:"l"`
 	Rhs      Stmt   `yaml:"r"`
 }
 
 func createBinary(o string, l, r Stmt) Stmt {
-	return BinaryExp{Type: ExpTypeBinary, Operator: o, Lhs: l, Rhs: r}
+	return &BinaryExp{BaseExp: BaseExp{Type: ExpTypeBinary}, Operator: o, Lhs: l, Rhs: r}
 }
 
 type IfExp struct {
-	Type     string `yaml:"t"`
-	Init      Stmt   `yaml:"i"`
-	Cond      Stmt   `yaml:"c"`
-	Else Stmt `yaml:"e"`
-	Body      []Stmt   `yaml:"b"`
+	BaseExp `yaml:",inline"`
+	Init    Stmt   `yaml:"i"`
+	Cond    Stmt   `yaml:"c"`
+	Else    Stmt   `yaml:"e"`
+	Body    []Stmt `yaml:"b"`
 }
 
 func createIf(i, c, e Stmt, b []Stmt) Stmt {
-	return IfExp{Type: ExpTypeIf, Init: i, Cond: c, Else: e, Body: b}
+	return &IfExp{BaseExp: BaseExp{Type: ExpTypeIf}, Init: i, Cond: c, Else: e, Body: b}
 }
 
 type UnaryExp struct {
-	Type     string `yaml:"t"`
+	BaseExp  `yaml:",inline"`
 	Operator string `yaml:"o"`
 	Lhs      Stmt   `yaml:"l"`
 }
 
 func createUnary(o string, l Stmt) Stmt {
-	return UnaryExp{Type: ExpTypeUnary, Operator: o, Lhs: l}
+	return &UnaryExp{BaseExp: BaseExp{Type: ExpTypeUnary}, Operator: o, Lhs: l}
 }
 
 type CallExp struct {
-	Type     string `yaml:"t"`
+	BaseExp  `yaml:",inline"`
 	Callee   string `yaml:"c"`
 	Variadic bool   `yaml:"v"`
-	In       []Stmt  `yaml:"i"`
+	In       []Stmt `yaml:"i"`
 }
 
 func createCall(callee string, isV token.Pos, in []Stmt) Stmt {
-
-	return CallExp{Type: ExpTypeCall, Variadic: isV != token.NoPos, Callee: callee, In: in}
+	return &CallExp{BaseExp: BaseExp{Type: ExpTypeCall}, Variadic: isV != token.NoPos, Callee: callee, In: in}
 }
 
-type FuncBody []Stmt
-
 type FuncDesc struct {
-	FilePos FilePos  `yaml:"sp"`
-	EndPos  FilePos  `yaml:"ep"`
-	Recv    Obj      `yaml:"r"`
-	In      []Obj    `yaml:"in"`
-	Out     []Obj    `yaml:"out"`
-	Body    FuncBody `yaml:"body"`
+	Pos  FilePos  `yaml:"p"`
+	Recv Obj      `yaml:"r"`
+	Name string   `yaml:"n"`
+	In   []Obj    `yaml:"in"`
+	Out  []Obj    `yaml:"out"`
+	Body Stmt `yaml:"body"`
 }
 
 type DumperContext struct {
 	fileSet *token.FileSet `yaml:"-"`
 	pkg     *ast.Package   `yaml:"-"`
 
-	FilesMapping map[string]int `yaml:"file_mapping"`
+	RevFilesMapping map[string]int `yaml:"-"`
+	FilesMapping    map[int]string `yaml:"file_mapping"`
 
-	ImportStmts []ImportStmt `yaml:"imports"`
-	FuncDescriptions []FuncDesc `yaml:"functions"`
+	ImportStmts      []ImportStmt `yaml:"imports"`
+	FuncDescriptions []FuncDesc   `yaml:"functions"`
 }
 
-func (d *DumperContext) ToPos(pos token.Pos) FilePos {
-	position := d.fileSet.Position(pos)
+func (d *DumperContext) ToPos(pos ast.Node) FilePos {
+	position := d.fileSet.Position(pos.Pos())
 	return FilePos{
-		File:   d.FilesMapping[position.Filename],
+		File:   d.RevFilesMapping[position.Filename],
 		Line:   position.Line,
 		Column: position.Column,
 		Offset: position.Offset,
+		Length: d.fileSet.Position(pos.End()).Offset - position.Offset,
 	}
 }
 
@@ -242,15 +252,14 @@ func (d *DumperContext) Visit(node ast.Node) (w ast.Visitor) {
 		}
 
 		d.ImportStmts = append(d.ImportStmts, ImportStmt{
-			FilePos: d.ToPos(n.Pos()),
+			FilePos: d.ToPos(n),
 			Alias:   alias,
 			Path:    n.Path.Value[1 : len(n.Path.Value)-1],
 		})
 	case *ast.FuncDecl:
 		//n.Name
 		var fn FuncDesc
-		fn.FilePos = d.ToPos(n.Pos())
-		fn.EndPos = d.ToPos(n.End())
+		fn.Pos = d.ToPos(n)
 
 		for _, r := range n.Recv.List {
 			fn.Recv = Obj{
@@ -258,6 +267,8 @@ func (d *DumperContext) Visit(node ast.Node) (w ast.Visitor) {
 				Type: d.stringifyNode(r.Type),
 			}
 		}
+
+		fn.Name = n.Name.Name
 
 		if n.Type.Params != nil {
 			for _, ps := range n.Type.Params.List {
@@ -284,9 +295,7 @@ func (d *DumperContext) Visit(node ast.Node) (w ast.Visitor) {
 			}
 		}
 
-		for _, stmt := range n.Body.List {
-			fn.Body = append(fn.Body, d.parseStmt(stmt))
-		}
+		fn.Body = d.parseStmt(n.Body)
 
 		d.FuncDescriptions = append(d.FuncDescriptions, fn)
 	}
@@ -298,8 +307,13 @@ func (d *DumperContext) stringifyNode(expr ast.Node) string {
 	sugar.HandlerError0(printer.Fprint(b, d.fileSet, expr))
 	return b.String()
 }
-
 func (d *DumperContext) parseStmt(stmt ast.Stmt) Stmt {
+	var s = d.parseStmt_(stmt)
+	*s.GetPos() = d.ToPos(stmt)
+	return s
+}
+
+func (d *DumperContext) parseStmt_(stmt ast.Stmt) Stmt {
 	switch stmt := stmt.(type) {
 	case *ast.IncDecStmt:
 		return createUnary(
@@ -379,7 +393,7 @@ func (d *DumperContext) parseDeclExp(decl ast.Decl) Stmt {
 	switch decl := decl.(type) {
 	case *ast.GenDecl:
 		var specs []Stmt
-		for _, rawSpec:= range decl.Specs {
+		for _, rawSpec := range decl.Specs {
 			specs = append(specs, d.parseSpec(rawSpec))
 		}
 
@@ -464,14 +478,16 @@ func main() {
 	}
 
 	dumperContext := &DumperContext{
-		fileSet:      fileSet,
-		pkg:          pkg,
-		FilesMapping: map[string]int{},
+		fileSet:         fileSet,
+		pkg:             pkg,
+		RevFilesMapping: map[string]int{},
+		FilesMapping:    map[int]string{},
 	}
 
 	sort.Strings(s)
 	for i := range s {
-		dumperContext.FilesMapping[s[i]] = i
+		dumperContext.RevFilesMapping[s[i]] = i
+		dumperContext.FilesMapping[i] = s[i]
 	}
 
 	//g := &generator{fileSet: fileSet, packages: map[string]*ast.Package{
@@ -490,10 +506,10 @@ func main() {
 
 	ast.Walk(dumperContext, pkg)
 
-	var path = filepath.Join(cachePath, pkgName + ".yaml")
+	var path = filepath.Join(cachePath, pkgName)
 	sugar.HandlerError0(os.MkdirAll(filepath.Dir(path), 0666))
 	var f *os.File
-	f, err = os.OpenFile(path, os.O_WRONLY | os.O_CREATE, 0666)
+	f, err = os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
 	sugar.HandlerError0(err)
 	defer f.Close()
 
