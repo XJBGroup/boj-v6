@@ -105,14 +105,18 @@ type Stmt interface {
 }
 
 const (
-	ExpTypeBinary = "b"
-	ExpTypeUnary  = "u"
-	ExpTypeCall   = "c"
-	ExpTypeOpaque = "o"
-	ExpTypeAssign = "a"
-	ExpTypeBlock  = "k"
-	ExpTypeSelect = "s"
-	ExpTypeIf     = "i"
+	ExpTypeBinary    = "b"
+	ExpTypeUnary     = "u"
+	ExpTypeCall      = "c"
+	ExpTypeOpaque    = "o"
+	ExpTypeAssign    = "a"
+	ExpTypeBlock     = "k"
+	ExpTypeSelect    = "s"
+	ExpTypeIf        = "i"
+	ExpTypeIdent     = "id"
+	ExpTypeTypeSpec  = "t"
+	ExpTypeValueSpec = "v"
+	ExpTypeSelector  = "l"
 )
 
 type BaseExp struct {
@@ -135,6 +139,16 @@ func createBlock(block []Stmt) Stmt {
 
 func createSelect(block []Stmt) Stmt {
 	return &BlockExp{BaseExp: BaseExp{Type: ExpTypeSelect}, Block: block}
+}
+
+type SelectorExp struct {
+	BaseExp  `yaml:",inline"`
+	X Stmt   `yaml:"x"`
+	Sel     string `yaml:"n"`
+}
+
+func createSelector(x Stmt, sel string) Stmt {
+	return &SelectorExp{BaseExp: BaseExp{Type: ExpTypeSelector}, X: x, Sel: sel}
 }
 
 type GenExp struct {
@@ -166,6 +180,37 @@ type OpaqueExp struct {
 
 func createOpaque(o string) Stmt {
 	return &OpaqueExp{BaseExp: BaseExp{Type: ExpTypeOpaque}, Opaque: o}
+}
+
+type TypeSpecExp struct {
+	BaseExp  `yaml:",inline"`
+	Name     string `yaml:"n"`
+	TypeSpec Stmt   `yaml:"ts"`
+}
+
+func createTypeSpec(name string, t Stmt) Stmt {
+	return &TypeSpecExp{BaseExp: BaseExp{Type: ExpTypeTypeSpec}, Name: name, TypeSpec: t}
+}
+
+type ValueSpecExp struct {
+	BaseExp  `yaml:",inline"`
+	Names    []string `yaml:"l"`
+	Values   []Stmt   `yaml:"r"`
+	TypeSpec Stmt     `yaml:"ts"`
+}
+
+func createValueSpec(names []string, t Stmt, rhs []Stmt) Stmt {
+
+	return &ValueSpecExp{BaseExp: BaseExp{Type: ExpTypeValueSpec}, Names: names, TypeSpec: t, Values: rhs}
+}
+
+type IdentExp struct {
+	BaseExp `yaml:",inline"`
+	Obj     `yaml:"o"`
+}
+
+func createIdent(obj Obj) Stmt {
+	return &IdentExp{BaseExp: BaseExp{Type: ExpTypeIdent}, Obj: obj}
 }
 
 type BinaryExp struct {
@@ -203,22 +248,22 @@ func createUnary(o string, l Stmt) Stmt {
 
 type CallExp struct {
 	BaseExp  `yaml:",inline"`
-	Callee   string `yaml:"c"`
+	Callee   Stmt   `yaml:"c"`
 	Variadic bool   `yaml:"v"`
 	In       []Stmt `yaml:"i"`
 }
 
-func createCall(callee string, isV token.Pos, in []Stmt) Stmt {
+func createCall(callee Stmt, isV token.Pos, in []Stmt) Stmt {
 	return &CallExp{BaseExp: BaseExp{Type: ExpTypeCall}, Variadic: isV != token.NoPos, Callee: callee, In: in}
 }
 
 type FuncDesc struct {
-	Pos  FilePos  `yaml:"p"`
-	Recv Obj      `yaml:"r"`
-	Name string   `yaml:"n"`
-	In   []Obj    `yaml:"in"`
-	Out  []Obj    `yaml:"out"`
-	Body Stmt `yaml:"body"`
+	Pos  FilePos `yaml:"p"`
+	Recv Obj     `yaml:"r"`
+	Name string  `yaml:"n"`
+	In   []Obj   `yaml:"in"`
+	Out  []Obj   `yaml:"out"`
+	Body Stmt    `yaml:"body"`
 }
 
 type DumperContext struct {
@@ -307,9 +352,28 @@ func (d *DumperContext) stringifyNode(expr ast.Node) string {
 	sugar.HandlerError0(printer.Fprint(b, d.fileSet, expr))
 	return b.String()
 }
+
 func (d *DumperContext) parseStmt(stmt ast.Stmt) Stmt {
 	var s = d.parseStmt_(stmt)
 	*s.GetPos() = d.ToPos(stmt)
+	return s
+}
+
+func (d *DumperContext) parseDeclExp(decl ast.Decl) Stmt {
+	var s = d.parseDeclExp_(decl)
+	//*s.GetPos() = d.ToPos(decl)
+	return s
+}
+
+func (d *DumperContext) parseExp(x ast.Expr) Stmt {
+	var s = d.parseExp_(x)
+	*s.GetPos() = d.ToPos(x)
+	return s
+}
+
+func (d *DumperContext) parseSpec(spec ast.Spec) Stmt {
+	var s = d.parseSpec_(spec)
+	*s.GetPos() = d.ToPos(spec)
 	return s
 }
 
@@ -389,7 +453,7 @@ func (d *DumperContext) parseStmt_(stmt ast.Stmt) Stmt {
 	}
 }
 
-func (d *DumperContext) parseDeclExp(decl ast.Decl) Stmt {
+func (d *DumperContext) parseDeclExp_(decl ast.Decl) Stmt {
 	switch decl := decl.(type) {
 	case *ast.GenDecl:
 		var specs []Stmt
@@ -407,12 +471,16 @@ func (d *DumperContext) parseDeclExp(decl ast.Decl) Stmt {
 	}
 }
 
-func (d *DumperContext) parseExp(x ast.Expr) Stmt {
+func (d *DumperContext) parseExp_(x ast.Expr) Stmt {
 	switch exp := x.(type) {
 	case *ast.SelectorExpr:
-		return createOpaque(d.stringifyNode(exp))
+		return createSelector(d.parseExp(exp.X), exp.Sel.Name)
 	case *ast.Ident:
-		return createOpaque(d.stringifyNode(exp))
+		if exp.Obj == nil || exp.Obj.Type == nil {
+			return createIdent(Obj{Type: "", Name: exp.Name})
+		} else {
+			return createIdent(Obj{Type: d.stringifyNode(exp.Obj.Type.(ast.Node)), Name: exp.Name})
+		}
 	case *ast.BasicLit:
 		return createOpaque(d.stringifyNode(exp))
 
@@ -425,7 +493,7 @@ func (d *DumperContext) parseExp(x ast.Expr) Stmt {
 		}
 
 		return createCall(
-			d.stringifyNode(exp.Fun), exp.Ellipsis, block)
+			d.parseExp(exp.Fun), exp.Ellipsis, block)
 	case *ast.BinaryExpr:
 		return createBinary(
 			exp.Op.String(), d.parseExp(exp.X), d.parseExp(exp.Y))
@@ -454,8 +522,31 @@ func (d *DumperContext) parseExp(x ast.Expr) Stmt {
 	}
 }
 
-func (d *DumperContext) parseSpec(specs ast.Spec) Stmt {
-	return createOpaque(d.stringifyNode(specs))
+func (d *DumperContext) parseSpec_(spec ast.Spec) Stmt {
+	switch spec := spec.(type) {
+	case *ast.ValueSpec:
+		var names []string
+		for _, name := range spec.Names {
+			names = append(names, name.Name)
+		}
+		var ts Stmt
+		if spec.Type != nil {
+			ts = d.parseExp(spec.Type)
+		}
+
+		var rhs []Stmt
+		for _, v := range spec.Values {
+			rhs = append(rhs, d.parseExp(v))
+		}
+
+		return createValueSpec(names, ts, rhs)
+	case *ast.TypeSpec:
+		return createTypeSpec(spec.Name.Name, d.parseExp(spec.Type))
+	case *ast.ImportSpec:
+		panic("invalid stmt " + reflect.TypeOf(spec).String())
+	default:
+		panic("want process " + reflect.TypeOf(spec).String())
+	}
 }
 
 type NullReader struct{}
@@ -465,7 +556,13 @@ func (n2 NullReader) Write(p []byte) (n int, err error) {
 }
 
 func main() {
-	pkgName, cachePath := os.Args[1], os.Args[2]
+	var pkgName, cachePath string
+	if len(os.Args) == 1 {
+		pkgName = "github.com/Myriad-Dreamin/boj-v6/cmd/generate/controller_binding/inner/model"
+		cachePath = ".cache/ast_dump"
+	} else {
+		pkgName, cachePath = os.Args[1], os.Args[2]
+	}
 
 	var fileSet = token.NewFileSet()
 

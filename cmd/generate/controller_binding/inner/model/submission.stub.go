@@ -4,10 +4,13 @@ import (
 	problem "github.com/Myriad-Dreamin/boj-v6/abstract/problem"
 	"github.com/Myriad-Dreamin/boj-v6/abstract/submission"
 	"github.com/Myriad-Dreamin/boj-v6/api"
+	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/cmd/generate/stub"
 	"github.com/Myriad-Dreamin/boj-v6/external"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
 )
+
+var _ = snippet.AuthenticatePassword
 
 type Sc struct {
 	stub.StubVariables

@@ -17,8 +17,8 @@ type Stub interface {
 	Next() Promise
 
 	Await(Promise) func(func())
-	Emit(name string, eventArgs ...interface{})
-	EmitSelf(eventArgs ...interface{})
+	Emit(name string, eventArgs ...interface{}) Promise
+	EmitSelf(eventArgs ...interface{}) Promise
 }
 
 type StubVariables struct {
@@ -27,8 +27,6 @@ type StubVariables struct {
 }
 
 type Promise interface {
-	Stub
-
 	Then(func()) Promise
 	Catch(func()) Promise
 	Finally(func()) Promise
