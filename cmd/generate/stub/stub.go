@@ -9,13 +9,14 @@ type InvokingStub interface {
 type Stub interface {
 	InvokingStub
 
-	GetID() *uint
-	GetIDKeyed(string) *uint
+	GetID() uint
+	GetIDKeyed(string) uint
 
 	AbortIf(cond bool, args ...interface{})
 	AbortIfHint(cond bool, hint int, args ...interface{})
 	Bind(request interface{}) Promise
 
+	OnErr(err error, handler func(err error) error)
 	//Next() Promise
 	//Await(Promise) func(func())
 	//Emit(name string, eventArgs ...interface{}) Promise
@@ -25,6 +26,11 @@ type Stub interface {
 type StubVariables struct {
 	Ok  bool
 	Err error
+
+	Int64 int64
+	Int int
+	Uint64 uint64
+	Uint uint
 }
 
 type Promise interface {

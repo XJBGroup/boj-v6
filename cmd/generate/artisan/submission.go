@@ -106,7 +106,7 @@ func DescribeSubmissionController() artisan_core.ProposingService {
 				artisan_core.Reply(codeField),
 			),
 	}
-	controller.Name("SubmissionController").
+	controller.Name("Controller").
 		UseModel(artisan_core.Model(artisan_core.Name("submission"), &submissionModel),
 			artisan_core.Model(artisan_core.Name("valueSubmission"), &valueSubmissionModel))
 	return controller

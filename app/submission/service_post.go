@@ -170,39 +170,3 @@ func (svc Controller) PostSubmission(c controller.MContext) {
 		Code: strings.NewReader(req.Code),
 	})
 }
-
-func WriteToFileSystem(directory string, fullPath string, code string) (err error) {
-
-	if _, err = os.Stat(directory); err != nil {
-		if !os.IsNotExist(err) {
-			return nil
-		}
-
-		// todo: 处于安全考虑，需要合理商量控制一下perm
-		err = os.Mkdir(directory, 0777)
-		if err != nil {
-			return err
-		}
-	}
-
-	if _, err = os.Stat(fullPath); err != nil {
-		if !os.IsNotExist(err) {
-			return nil
-		}
-
-		var f *os.File
-		f, err = os.Create(fullPath)
-		if err != nil {
-			return err
-		}
-		_, err = f.WriteString(code)
-		if err != nil {
-			return err
-		}
-		err = f.Close()
-		if err != nil {
-			return err
-		}
-	}
-	return
-}
