@@ -204,6 +204,14 @@ func DoReport(c controller.MContext, err error) bool {
 	return err != nil
 }
 
+func DoReportHintRaw(c controller.MContext, err string, hint int, args ...interface{}) {
+	c.AbortWithStatusJSON(http.StatusOK, &serial.ErrorSerializer{
+		Code:   hint,
+		ErrorS: err,
+		Params: args,
+	})
+}
+
 func MaybeSelectErrorWithTip_(anyObj interface{}, err error, missError string) error {
 	if err != nil {
 		return &serial.ErrorSerializer{

@@ -7,7 +7,10 @@ import (
 	"github.com/Myriad-Dreamin/boj-v6/app/snippet"
 	"github.com/Myriad-Dreamin/boj-v6/cmd/generate/stub"
 	"github.com/Myriad-Dreamin/boj-v6/external"
+	"github.com/Myriad-Dreamin/boj-v6/types"
 	"github.com/Myriad-Dreamin/minimum-lib/controller"
+	"github.com/Myriad-Dreamin/minimum-lib/module"
+	"net/http"
 )
 
 var _ = snippet.AuthenticatePassword
@@ -17,9 +20,12 @@ type Sc struct {
 	Binder stub.Stub
 
 	key string
+	serviceName string
 
 	problemDB problem.DB
 	logStash  external.Logger
+
+	resolver module.Module
 }
 
 func (svc Sc) PostSubmission(c controller.MContext) {
@@ -28,15 +34,18 @@ func (svc Sc) PostSubmission(c controller.MContext) {
 	var request = new(api.PostSubmissionRequest)
 	svc.Binder.Bind(request)
 
+	svc.Binder.AbortIfHint(request.Language == "", types.CodeBindError)
+
 	var response *api.GetSubmissionReply
 	var s = new(submission.Submission)
 
-	svc.Binder.Context(s).Serve(id, request, response).Catch(func() {
-		svc.logStash.Info("Serve request failed", "context", c, "data", request)
+	svc.Binder.Context(s).Serve(id, request, response).CatchRef(func(err error) {
+		svc.logStash.Info("Serve request failed", "context", c, "data", request, "err", err)
+	}).Then(func() {
+		c.JSON(http.StatusOK, response)
 	})
 
-	svc.Binder.EmitSelf(s, request.Code)
-
+	svc.Binder.ServeKeyed("PostDo", id, response)
 }
 
 func (svc Sc) SubmissionControllerSignatureXXX() interface{} {
@@ -63,6 +72,7 @@ func (svc Sc) GetSubmission(c controller.MContext) {
 
 	var response *api.GetSubmissionReply
 	svc.Binder.Serve(id, request, response)
+	c.JSON(http.StatusOK, response)
 }
 
 func (svc Sc) DeleteSubmission(c controller.MContext) {

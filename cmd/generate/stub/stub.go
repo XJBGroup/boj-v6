@@ -3,7 +3,7 @@ package stub
 type InvokingStub interface {
 	Context(...interface{}) InvokingStub
 	Serve(args ...interface{}) Promise
-	ServeKeyed(args ...interface{}) Promise
+	ServeKeyed(key string, args ...interface{}) Promise
 }
 
 type Stub interface {
@@ -12,13 +12,14 @@ type Stub interface {
 	GetID() *uint
 	GetIDKeyed(string) *uint
 
-	AbortIf(bool)
+	AbortIf(cond bool, args ...interface{})
+	AbortIfHint(cond bool, hint int, args ...interface{})
 	Bind(request interface{}) Promise
-	Next() Promise
 
-	Await(Promise) func(func())
-	Emit(name string, eventArgs ...interface{}) Promise
-	EmitSelf(eventArgs ...interface{}) Promise
+	//Next() Promise
+	//Await(Promise) func(func())
+	//Emit(name string, eventArgs ...interface{}) Promise
+	//EmitSelf(eventArgs ...interface{}) Promise
 }
 
 type StubVariables struct {
@@ -30,6 +31,7 @@ type Promise interface {
 	Then(func()) Promise
 	Catch(func()) Promise
 	Finally(func()) Promise
-	ThenDo(f interface{}) Promise
-	CatchDo(f interface{}) Promise
+	ThenRef(referableFunc interface{}) Promise
+	CatchRef(referableFunc interface{}) Promise
+	FinallyRef(referableFunc interface{}) Promise
 }

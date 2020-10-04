@@ -17,7 +17,6 @@ require (
 	github.com/Myriad-Dreamin/go-model-traits v0.0.0-20191209220601-85cd28b274b0
 	github.com/Myriad-Dreamin/go-parse-package v1.0.1
 	github.com/Myriad-Dreamin/minimum-lib v0.0.0-20200719050009-6377966ced3b
-	github.com/XJBGroup/Sphinx-Core/client/go-sphinx-client v0.0.0-20200929071008-8c2237b89162
 	github.com/alecthomas/participle v0.5.0
 	github.com/casbin/casbin/v2 v2.8.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -29,8 +28,9 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/go-querystring v1.0.0
 	github.com/jinzhu/gorm v1.9.14
-	github.com/kr/pretty v0.2.0 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.0
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pelletier/go-toml v1.8.0
 	github.com/spf13/afero v1.1.2
 	github.com/stretchr/testify v1.6.1
@@ -38,6 +38,8 @@ require (
 	github.com/tidwall/gjson v1.6.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+	golang.org/x/net v0.0.0-20200528225125-3c3fba18258b // indirect
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.3.0
-	gopkg.in/yaml.v3 v3.0.0-20200601152816-913338de1bd2
+	gopkg.in/yaml.v3 v3.0.0-20200601152816-913338de1bd2 // indirect
 )
