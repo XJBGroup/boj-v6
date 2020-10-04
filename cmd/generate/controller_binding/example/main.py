@@ -3,6 +3,7 @@ import re
 from config import LoaderConfig, ModuleConfig, ParseConfig, GolangPackConfig
 from golang_pack import GolangPack
 from loader.stub import StubLoader
+from plugin import CopySourcePlugin
 
 if __name__ == '__main__':
     GolangPack.register_loader('stub-loader', StubLoader)
@@ -12,8 +13,8 @@ if __name__ == '__main__':
         version='v0.5.0',
         description='golang pack test config',
         local_toolset='..',
-        local_package='F:/work/boj-v6',
-        src='cmd/generate/model',
+        local_package='../../../../',
+        src='cmd/generate/model/submission',
         output='app/generated_controller',
         module=ModuleConfig(
             loaders=[
@@ -21,8 +22,11 @@ if __name__ == '__main__':
             ]
         ),
         parse=ParseConfig(
-            force_update=True,
+            force_update=False,
         ),
+        plugins=[
+            CopySourcePlugin(),
+        ]
     ))
 
     golang_pack.once()

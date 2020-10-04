@@ -5,9 +5,9 @@ from typing import List, Union
 
 from binding_global import current_path
 from config import GolangPackConfig
-from utils.cache_io import cached_io
 from go_ast import FuncDesc
 from tools import GolangToolsConfig, GolangToolsImpl, AstDumperImpl
+from utils.cache_io import cached_io
 
 
 class GolangPack(object):
@@ -67,10 +67,12 @@ class GolangPack(object):
         if go_mod is not None:
             go_mod = os.path.abspath(go_mod)
         if self.config.local_package:
+            self.config.local_package = os.path.abspath(self.config.local_package)
+            if not os.path.exists(self.config.local_package):
+                raise FileNotFoundError(f'{self.config.local_package} is not exists')
             self.do_config_golang_local_package(go_mod)
 
     def do_config_golang_local_package(self, go_mod):
-        self.config.local_package = os.path.abspath(self.config.local_package)
         self.config.package = self.toolset.read_golang_module_name(self.config.local_package)
         pkg_path = Path(self.config.package)
         self.config.src = str(pkg_path.joinpath(self.config.src)).replace('\\', '/')
@@ -108,11 +110,11 @@ class GolangPack(object):
 
         replaces, requires = '\n    '.join(replaces), '\n    '.join(requires),
 
-        open(target_go_mod, 'w').write(f"""// GOLANG PACK GENERATED, DO NOT EDIT...
+        open(target_go_mod, 'wb').write(f"""// GOLANG PACK GENERATED, DO NOT EDIT...
 module local-golang-pack-module\n\ngo {main_version}.{major}\n
-replace(\n    {replaces}\n)\n
-require(\n    {requires}\n)\n
-""")
+replace (\n    {replaces}\n)\n
+require (\n    {requires}\n)\n
+""".encode())
 
         # ignore generated file
         ignore_file = os.path.join(current_path, '.gitignore')
@@ -146,11 +148,17 @@ require(\n    {requires}\n)\n
             file_function_mapping[desc.pos.file] = desc_list = file_function_mapping.get(desc.pos.file, [])
             desc_list.append(desc)
 
+        for plugin in self.config.plugins:
+            plugin.before_loader(self.config)
+
         for k, funcs in file_function_mapping.items():
             for loader in loaders:
                 if loader.test.match(k):
                     self.invoke_loader(loader, k, funcs)
                     break
+
+        for plugin in self.config.plugins:
+            plugin.after_loader(self.config)
 
     # inner methods
 
@@ -174,7 +182,7 @@ require(\n    {requires}\n)\n
         source_pieces.append(source[last_index:])
         dir_name = os.path.dirname(target_file)
         os.makedirs(dir_name, exist_ok=True)
-        cached_io.open_write(target_file, ''.join(source_pieces), 'w')
+        cached_io.open_write_bytes(target_file, (''.join(source_pieces)), 'wb')
         self.toolset.go_fmt([target_file])
 
     def eval_file(self, file, target):

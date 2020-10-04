@@ -1,10 +1,9 @@
 from typing import List
 
 import go_ast.decorator
-from .decorator import use_file_mapping
-
-from utils.cache_io import cached_io
 from utils import simplify_path
+from utils.cache_io import cached_io
+from .decorator import use_file_mapping
 
 
 class Object(object):
@@ -17,6 +16,9 @@ class Object(object):
 
     def __repr__(self):
         return f'{self.name}(T:{self.type})'
+
+    def __str__(self):
+        return self.name
 
     @staticmethod
     def create(name, t):
@@ -51,7 +53,7 @@ class WithFilePos(object):
     @property
     def body_content(self):
         if self.pos is None:
-            raise KeyError("in memory stmt has no file position")
+            raise KeyError(f"in memory stmt({self.__class__.__name__}) has no file position")
         f = cached_io.open_read(self.pos.file)
         return f[self.pos.offset:self.pos.offset + self.pos.length]
 
@@ -72,9 +74,14 @@ class WithFilePos(object):
 class FilesMapping(object):
     def __init__(self, doc_tree):
         self.mapping = doc_tree
+        self.mapping_key_type = int
+        for k in self.mapping:
+            if isinstance(k, str):
+                self.mapping_key_type = str
+            break
 
     def __getitem__(self, k):
-        return simplify_path(self.mapping[k])
+        return simplify_path(self.mapping[self.mapping_key_type(k)])
 
 
 @use_file_mapping('items')
@@ -112,16 +119,29 @@ class Stmt(WithFilePos):
         return Stmt.polymorphic[doc_tree['t']](doc_tree)
 
 
-@use_file_mapping
+@use_file_mapping('lhs', 'rhs')
 class BinaryExp(Stmt):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
+        self.o = doc_tree['o']
+        self.lhs = Stmt.create_stmt(doc_tree['l'])  # type: Stmt
+        self.rhs = Stmt.create_stmt(doc_tree['r'])  # type: Stmt
+
+    def __str__(self):
+        return str(self.lhs) + self.o + str(self.rhs)
 
 
-@use_file_mapping
+@use_file_mapping('lhs')
 class UnaryExp(Stmt):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
+        self.o = doc_tree['o']
+        self.lhs = Stmt.create_stmt(doc_tree['l'])  # type: Stmt
+
+    def __str__(self):
+        if len(self.o) == 2:
+            return str(self.lhs) + self.o
+        return self.o + str(self.lhs)
 
 
 @use_file_mapping('callee', 'ins')
@@ -130,7 +150,7 @@ class CallExp(Stmt):
         super().__init__(doc_tree)
         self.callee = Stmt.create_stmt(doc_tree['c'])  # type: Stmt
         self.variadic = doc_tree['v']
-        self.ins = list(map(Stmt.create_stmt, doc_tree['i']))  # type: List[Stmt]
+        self.ins = list(map(Stmt.create_stmt, doc_tree.get('i') or []))  # type: List[Stmt]
 
 
 @use_file_mapping
@@ -155,9 +175,10 @@ class AssignExp(Stmt):
         super().__init__(doc_tree)
         self.lhs = list(map(Stmt.create_stmt, doc_tree['l']))  # type: List[Stmt]
         self.rhs = list(map(Stmt.create_stmt, doc_tree['r']))  # type: List[Stmt]
+        self.tok = doc_tree['o']
 
     def __str__(self):
-        return (','.join(map(str, self.lhs))) + " := " + (','.join(map(str, self.rhs)))
+        return (','.join(map(str, self.lhs))) + f" {self.tok} " + (','.join(map(str, self.rhs)))
 
 
 @use_file_mapping('items')
@@ -203,7 +224,7 @@ class VarSpecExp(Stmt):
         super().__init__(doc_tree)
         self.names = doc_tree['l']
         if 'r' in doc_tree:
-            self.values = list(map(Stmt.create_stmt, doc_tree['r']))  # type: List[Stmt]
+            self.values = list(map(Stmt.create_stmt, doc_tree.get('r') or []))  # type: List[Stmt]
         else:
             self.values = []
         if doc_tree.get('ts'):
@@ -260,8 +281,8 @@ class FuncDesc(WithFilePos):
         super().__init__(doc_tree)
         self.recv = Object(doc_tree['r'])
         self.name = doc_tree['n']
-        self.ins = list(map(Object, doc_tree['in']))
-        self.outs = list(map(Object, doc_tree['out']))
+        self.ins = list(map(Object, doc_tree.get('in') or []))
+        self.outs = list(map(Object, doc_tree.get('out') or []))
         self.body = FuncBody(doc_tree['body'])
 
     def __repr__(self):

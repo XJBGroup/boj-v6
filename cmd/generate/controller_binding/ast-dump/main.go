@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"go/ast"
@@ -82,22 +84,22 @@ type generator struct {
 }
 
 type FilePos struct {
-	File   int `yaml:"f"`
-	Line   int `yaml:"l"`
-	Column int `yaml:"c"`
-	Offset int `yaml:"o"`
-	Length int `yaml:"s"`
+	File   int `yaml:"f" json:"f"`
+	Line   int `yaml:"l" json:"l"`
+	Column int `yaml:"c" json:"c"`
+	Offset int `yaml:"o" json:"o"`
+	Length int `yaml:"s" json:"s"`
 }
 
 type ImportStmt struct {
-	FilePos FilePos `yaml:"p"`
-	Alias   string  `yaml:"alias"`
-	Path    string  `yaml:"path"`
+	FilePos FilePos `yaml:"p" json:"p"`
+	Alias   string  `yaml:"alias" json:"alias"`
+	Path    string  `yaml:"path" json:"path"`
 }
 
 type Obj struct {
-	Name string `yaml:"n"`
-	Type string `yaml:"t"`
+	Name string `yaml:"n" json:"n"`
+	Type string `yaml:"t" json:"t"`
 }
 
 type Stmt interface {
@@ -120,8 +122,8 @@ const (
 )
 
 type BaseExp struct {
-	Pos  FilePos `yaml:"p"`
-	Type string  `yaml:"t"`
+	Pos  FilePos `yaml:"p" json:"p"`
+	Type string  `yaml:"t" json:"t"`
 }
 
 func (b *BaseExp) GetPos() *FilePos {
@@ -129,8 +131,8 @@ func (b *BaseExp) GetPos() *FilePos {
 }
 
 type BlockExp struct {
-	BaseExp `yaml:",inline"`
-	Block   []Stmt `yaml:"b"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Block   []Stmt `yaml:"b" json:"b"`
 }
 
 func createBlock(block []Stmt) Stmt {
@@ -142,9 +144,9 @@ func createSelect(block []Stmt) Stmt {
 }
 
 type SelectorExp struct {
-	BaseExp  `yaml:",inline"`
-	X Stmt   `yaml:"x"`
-	Sel     string `yaml:"n"`
+	BaseExp `yaml:",inline" json:",inline"`
+	X       Stmt   `yaml:"x" json:"x"`
+	Sel     string `yaml:"n" json:"n"`
 }
 
 func createSelector(x Stmt, sel string) Stmt {
@@ -152,8 +154,8 @@ func createSelector(x Stmt, sel string) Stmt {
 }
 
 type GenExp struct {
-	BaseExp `yaml:",inline"`
-	Spec    []Stmt `yaml:"s"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Spec    []Stmt `yaml:"s" json:"s"`
 }
 
 func createGen(s string, spec []Stmt) Stmt {
@@ -164,18 +166,19 @@ func createGen(s string, spec []Stmt) Stmt {
 }
 
 type AssignExp struct {
-	BaseExp `yaml:",inline"`
-	Lhs     []Stmt `yaml:"l"`
-	Rhs     []Stmt `yaml:"r"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Tok     string `yaml:"o" json:"o"`
+	Lhs     []Stmt `yaml:"l" json:"l"`
+	Rhs     []Stmt `yaml:"r" json:"r"`
 }
 
-func createAssign(lhs, rhs []Stmt) Stmt {
-	return &AssignExp{BaseExp: BaseExp{Type: ExpTypeAssign}, Lhs: lhs, Rhs: rhs}
+func createAssign(lhs, rhs []Stmt, tok token.Token) Stmt {
+	return &AssignExp{BaseExp: BaseExp{Type: ExpTypeAssign}, Lhs: lhs, Rhs: rhs, Tok: tok.String()}
 }
 
 type OpaqueExp struct {
-	BaseExp `yaml:",inline"`
-	Opaque  string `yaml:"o"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Opaque  string `yaml:"o" json:"o"`
 }
 
 func createOpaque(o string) Stmt {
@@ -183,9 +186,9 @@ func createOpaque(o string) Stmt {
 }
 
 type TypeSpecExp struct {
-	BaseExp  `yaml:",inline"`
-	Name     string `yaml:"n"`
-	TypeSpec Stmt   `yaml:"ts"`
+	BaseExp  `yaml:",inline" json:",inline"`
+	Name     string `yaml:"n" json:"n"`
+	TypeSpec Stmt   `yaml:"ts" json:"ts"`
 }
 
 func createTypeSpec(name string, t Stmt) Stmt {
@@ -193,10 +196,10 @@ func createTypeSpec(name string, t Stmt) Stmt {
 }
 
 type ValueSpecExp struct {
-	BaseExp  `yaml:",inline"`
-	Names    []string `yaml:"l"`
-	Values   []Stmt   `yaml:"r"`
-	TypeSpec Stmt     `yaml:"ts"`
+	BaseExp  `yaml:",inline" json:",inline"`
+	Names    []string `yaml:"l" json:"l"`
+	Values   []Stmt   `yaml:"r" json:"r"`
+	TypeSpec Stmt     `yaml:"ts" json:"ts"`
 }
 
 func createValueSpec(names []string, t Stmt, rhs []Stmt) Stmt {
@@ -205,8 +208,8 @@ func createValueSpec(names []string, t Stmt, rhs []Stmt) Stmt {
 }
 
 type IdentExp struct {
-	BaseExp `yaml:",inline"`
-	Obj     `yaml:"o"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Obj     `yaml:"o" json:"o"`
 }
 
 func createIdent(obj Obj) Stmt {
@@ -214,10 +217,10 @@ func createIdent(obj Obj) Stmt {
 }
 
 type BinaryExp struct {
-	BaseExp  `yaml:",inline"`
-	Operator string `yaml:"o"`
-	Lhs      Stmt   `yaml:"l"`
-	Rhs      Stmt   `yaml:"r"`
+	BaseExp  `yaml:",inline" json:",inline"`
+	Operator string `yaml:"o" json:"o"`
+	Lhs      Stmt   `yaml:"l" json:"l"`
+	Rhs      Stmt   `yaml:"r" json:"r"`
 }
 
 func createBinary(o string, l, r Stmt) Stmt {
@@ -225,11 +228,11 @@ func createBinary(o string, l, r Stmt) Stmt {
 }
 
 type IfExp struct {
-	BaseExp `yaml:",inline"`
-	Init    Stmt   `yaml:"i"`
-	Cond    Stmt   `yaml:"c"`
-	Else    Stmt   `yaml:"e"`
-	Body    []Stmt `yaml:"b"`
+	BaseExp `yaml:",inline" json:",inline"`
+	Init    Stmt   `yaml:"i" json:"i"`
+	Cond    Stmt   `yaml:"c" json:"c"`
+	Else    Stmt   `yaml:"e" json:"e"`
+	Body    []Stmt `yaml:"b" json:"b"`
 }
 
 func createIf(i, c, e Stmt, b []Stmt) Stmt {
@@ -237,9 +240,9 @@ func createIf(i, c, e Stmt, b []Stmt) Stmt {
 }
 
 type UnaryExp struct {
-	BaseExp  `yaml:",inline"`
-	Operator string `yaml:"o"`
-	Lhs      Stmt   `yaml:"l"`
+	BaseExp  `yaml:",inline" json:",inline"`
+	Operator string `yaml:"o" json:"o"`
+	Lhs      Stmt   `yaml:"l" json:"l"`
 }
 
 func createUnary(o string, l Stmt) Stmt {
@@ -247,10 +250,10 @@ func createUnary(o string, l Stmt) Stmt {
 }
 
 type CallExp struct {
-	BaseExp  `yaml:",inline"`
-	Callee   Stmt   `yaml:"c"`
-	Variadic bool   `yaml:"v"`
-	In       []Stmt `yaml:"i"`
+	BaseExp  `yaml:",inline" json:",inline"`
+	Callee   Stmt   `yaml:"c" json:"c"`
+	Variadic bool   `yaml:"v" json:"v"`
+	In       []Stmt `yaml:"i" json:"i"`
 }
 
 func createCall(callee Stmt, isV token.Pos, in []Stmt) Stmt {
@@ -258,23 +261,40 @@ func createCall(callee Stmt, isV token.Pos, in []Stmt) Stmt {
 }
 
 type FuncDesc struct {
-	Pos  FilePos `yaml:"p"`
-	Recv Obj     `yaml:"r"`
-	Name string  `yaml:"n"`
-	In   []Obj   `yaml:"in"`
-	Out  []Obj   `yaml:"out"`
-	Body Stmt    `yaml:"body"`
+	Pos  FilePos `yaml:"p" json:"p"`
+	Recv Obj     `yaml:"r" json:"r"`
+	Name string  `yaml:"n" json:"n"`
+	In   []Obj   `yaml:"in" json:"in"`
+	Out  []Obj   `yaml:"out" json:"out"`
+	Body Stmt    `yaml:"body" json:"body"`
+}
+
+type ParseError struct {
+	Err      error
+	Node     ast.Node
+	Position token.Position
+}
+
+func (p ParseError) Error() string {
+	return p.Err.Error() + " at pos " + p.Position.String()
+}
+
+func WantProcess(node ast.Node) *ParseError {
+	return &ParseError{
+		Err:  errors.New("want process " + reflect.TypeOf(node).String()),
+		Node: node,
+	}
 }
 
 type DumperContext struct {
-	fileSet *token.FileSet `yaml:"-"`
-	pkg     *ast.Package   `yaml:"-"`
+	fileSet *token.FileSet `yaml:"-" json:"-"`
+	pkg     *ast.Package   `yaml:"-" json:"-"`
 
-	RevFilesMapping map[string]int `yaml:"-"`
-	FilesMapping    map[int]string `yaml:"file_mapping"`
+	RevFilesMapping map[string]int `yaml:"-" json:"-"`
+	FilesMapping    map[int]string `yaml:"file_mapping" json:"file_mapping"`
 
-	ImportStmts      []ImportStmt `yaml:"imports"`
-	FuncDescriptions []FuncDesc   `yaml:"functions"`
+	ImportStmts      []ImportStmt `yaml:"imports" json:"imports"`
+	FuncDescriptions []FuncDesc   `yaml:"functions" json:"functions"`
 }
 
 func (d *DumperContext) ToPos(pos ast.Node) FilePos {
@@ -306,10 +326,12 @@ func (d *DumperContext) Visit(node ast.Node) (w ast.Visitor) {
 		var fn FuncDesc
 		fn.Pos = d.ToPos(n)
 
-		for _, r := range n.Recv.List {
-			fn.Recv = Obj{
-				Name: r.Names[0].Name,
-				Type: d.stringifyNode(r.Type),
+		if n.Recv != nil {
+			for _, r := range n.Recv.List {
+				fn.Recv = Obj{
+					Name: r.Names[0].Name,
+					Type: d.stringifyNode(r.Type),
+				}
 			}
 		}
 
@@ -354,24 +376,40 @@ func (d *DumperContext) stringifyNode(expr ast.Node) string {
 }
 
 func (d *DumperContext) parseStmt(stmt ast.Stmt) Stmt {
+	if stmt == nil {
+		return nil
+	}
+
 	var s = d.parseStmt_(stmt)
 	*s.GetPos() = d.ToPos(stmt)
 	return s
 }
 
 func (d *DumperContext) parseDeclExp(decl ast.Decl) Stmt {
+	if decl == nil {
+		return nil
+	}
+
 	var s = d.parseDeclExp_(decl)
 	//*s.GetPos() = d.ToPos(decl)
 	return s
 }
 
 func (d *DumperContext) parseExp(x ast.Expr) Stmt {
+	if x == nil {
+		return nil
+	}
+
 	var s = d.parseExp_(x)
 	*s.GetPos() = d.ToPos(x)
 	return s
 }
 
 func (d *DumperContext) parseSpec(spec ast.Spec) Stmt {
+	if spec == nil {
+		return nil
+	}
+
 	var s = d.parseSpec_(spec)
 	*s.GetPos() = d.ToPos(spec)
 	return s
@@ -395,7 +433,7 @@ func (d *DumperContext) parseStmt_(stmt ast.Stmt) Stmt {
 			rhs = append(rhs, d.parseExp(r))
 		}
 
-		return createAssign(lhs, rhs)
+		return createAssign(lhs, rhs, stmt.Tok)
 	case *ast.SelectStmt:
 		var block []Stmt
 		if stmt.Body != nil {
@@ -449,7 +487,7 @@ func (d *DumperContext) parseStmt_(stmt ast.Stmt) Stmt {
 	case *ast.BadStmt:
 		return createOpaque("")
 	default:
-		panic("want process " + reflect.TypeOf(stmt).String())
+		panic(WantProcess(stmt))
 	}
 }
 
@@ -463,11 +501,11 @@ func (d *DumperContext) parseDeclExp_(decl ast.Decl) Stmt {
 
 		return createGen(decl.Tok.String(), specs)
 	case *ast.FuncDecl:
-		panic("want process " + reflect.TypeOf(decl).String())
+		panic(WantProcess(decl))
 	case *ast.BadDecl:
-		panic("want process " + reflect.TypeOf(decl).String())
+		panic(WantProcess(decl))
 	default:
-		panic("want process " + reflect.TypeOf(decl).String())
+		panic(WantProcess(decl))
 	}
 }
 
@@ -483,6 +521,12 @@ func (d *DumperContext) parseExp_(x ast.Expr) Stmt {
 		}
 	case *ast.BasicLit:
 		return createOpaque(d.stringifyNode(exp))
+	case *ast.FuncLit:
+		return createOpaque(d.stringifyNode(exp))
+	case *ast.CompositeLit:
+		return createOpaque(d.stringifyNode(exp))
+	case *ast.ArrayType:
+		return createOpaque(d.stringifyNode(exp))
 
 	case *ast.CallExpr:
 		var block []Stmt
@@ -497,8 +541,6 @@ func (d *DumperContext) parseExp_(x ast.Expr) Stmt {
 	case *ast.BinaryExpr:
 		return createBinary(
 			exp.Op.String(), d.parseExp(exp.X), d.parseExp(exp.Y))
-	case *ast.FuncLit:
-		return createOpaque(d.stringifyNode(exp))
 	case *ast.StarExpr:
 		return createOpaque(d.stringifyNode(exp))
 	case *ast.UnaryExpr:
@@ -516,9 +558,9 @@ func (d *DumperContext) parseExp_(x ast.Expr) Stmt {
 	case *ast.TypeAssertExpr:
 		return createOpaque(d.stringifyNode(exp))
 	case *ast.BadExpr:
-		panic("want process " + reflect.TypeOf(exp).String())
+		panic(WantProcess(exp))
 	default:
-		panic("want process " + reflect.TypeOf(exp).String())
+		panic(WantProcess(exp))
 	}
 }
 
@@ -545,7 +587,7 @@ func (d *DumperContext) parseSpec_(spec ast.Spec) Stmt {
 	case *ast.ImportSpec:
 		panic("invalid stmt " + reflect.TypeOf(spec).String())
 	default:
-		panic("want process " + reflect.TypeOf(spec).String())
+		panic(WantProcess(spec))
 	}
 }
 
@@ -556,15 +598,34 @@ func (n2 NullReader) Write(p []byte) (n int, err error) {
 }
 
 func main() {
+	var use_json bool
 	var pkgName, cachePath string
 	if len(os.Args) == 1 {
-		pkgName = "github.com/Myriad-Dreamin/boj-v6/cmd/generate/controller_binding/inner/model"
+		pkgName = "github.com/Myriad-Dreamin/boj-v6/cmd/generate/model/submission"
 		cachePath = ".cache/ast_dump"
+
+		use_json = true
 	} else {
 		pkgName, cachePath = os.Args[1], os.Args[2]
+
+        if len(os.Args) > 3 && os.Args[3] == "-use-yaml" {
+            use_json = false
+        } else {
+            use_json = true
+        }
 	}
 
 	var fileSet = token.NewFileSet()
+
+	defer func() {
+		if err := recover(); err != nil {
+			parse_err := err.(*ParseError)
+			if parse_err.Node != nil {
+				parse_err.Position = fileSet.Position(parse_err.Node.Pos())
+			}
+			panic(parse_err)
+		}
+	}()
 
 	pkg, err := parsePkg(pkgName, fileSet, parser.ParseComments|parser.DeclarationErrors)
 	sugar.HandlerError0(err)
@@ -610,7 +671,12 @@ func main() {
 	sugar.HandlerError0(err)
 	defer f.Close()
 
-	e := yaml.NewEncoder(f)
-	e.SetIndent(2)
-	sugar.HandlerError0(e.Encode(dumperContext))
+	if use_json {
+		e := json.NewEncoder(f)
+		sugar.HandlerError0(e.Encode(dumperContext))
+	} else {
+		e := yaml.NewEncoder(f)
+		e.SetIndent(2)
+		sugar.HandlerError0(e.Encode(dumperContext))
+	}
 }

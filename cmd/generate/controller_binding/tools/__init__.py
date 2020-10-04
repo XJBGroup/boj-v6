@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Union, List, Optional, Tuple
 
 from exception import GolangToolInvokeError
-from go_ast.persistence import YAMLAstDeserializer
+from go_ast.persistence import JSONAstDeserializer
 
 
 @dataclass
@@ -74,7 +74,12 @@ class GolangToolsImpl(object):
 
     def go_version_repr(self, timeout: Optional[float] = None) -> Tuple[int, int, int]:
         version = self.go_version(timeout=timeout)
-        main_version, major, minor = map(int, version.split()[2][2:].split('.'))
+        version = list(map(int, version.split()[2][2:].split('.')))
+        if len(version) == 3:
+            main_version, major, minor = version
+        else:
+            main_version, major = version
+            minor = None
         return main_version, major, minor
 
     def is_golang_using_go_module(self):
@@ -111,7 +116,7 @@ class AstDumperImpl(object):
         self.config = kwargs.get('config') or GolangToolsConfig()
         self.toolset = kwargs.get('toolset') or GolangToolsImpl(**kwargs)
 
-        self.deserializer = YAMLAstDeserializer()
+        self.deserializer = JSONAstDeserializer()
 
     def dump_ast(self, dumping_package):
         cache_path = os.path.join(self.config.dump_cache_path, dumping_package)

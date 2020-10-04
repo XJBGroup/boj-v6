@@ -37,6 +37,7 @@ type Controller struct {
 	cfg                *config.ServerConfig
 	key                string
 	problemKey         string
+	serviceName         string
 	dispatcher         submission.Dispatcher
 
 	resolver module.Module

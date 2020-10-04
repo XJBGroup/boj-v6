@@ -24,9 +24,18 @@ class CachedIO:
         file_name = os.path.realpath(file_name)
 
         if file_name in CachedIO.cached:
-            CachedIO.cached[file_name] = content
+            CachedIO.cached[file_name] = content.decode() if isinstance(content, bytes) else content
 
         open(file_name, *args, **kwargs).write(content)
+
+    @staticmethod
+    def open_write_bytes(file_name, content, *args, **kwargs):
+        file_name = os.path.realpath(file_name)
+
+        if file_name in CachedIO.cached:
+            CachedIO.cached[file_name] = content
+
+        open(file_name, *args, **kwargs).write(content.encode())
 
     @staticmethod
     def open_digest(file_name):

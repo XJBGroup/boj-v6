@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Optional
 
 from config import Loader
-from go_ast import FuncDesc, AssignExp, VarDeclExp, CallExp, OpaqueExp, Stmt, SelectorExp, Object, IdentExp
+from go_ast import FuncDesc, AssignExp, VarDeclExp, CallExp, OpaqueExp, Stmt, SelectorExp, Object, IdentExp, BinaryExp, \
+    UnaryExp
 
 
 @dataclass
@@ -15,8 +16,6 @@ class Context(object):
     insert_points: dict
     stmt_index: int = 0
     created_context: bool = False
-    created_ok: bool = False
-    created_err: bool = False
 
 
 def escape(s):
@@ -28,17 +27,24 @@ class StubLoader(Loader):
     def __init__(self):
         super().__init__()
 
+        # noinspection PyUnusedLocal
+        fn_sub_handler_type = type(self.check_assign_exp)
+
         self.fn_sub_handlers = {
             AssignExp: self.check_assign_exp,
             VarDeclExp: self.check_var_decl_exp,
             CallExp: self.check_call_exp,
-        }  # type: Dict[type, lambda _:[_]]
+
+        }  # type: Dict[type, fn_sub_handler_type]
+
+        # noinspection PyUnusedLocal
+        chained_stub_handler_type = type(self.invoking_stub_context)
 
         invoking_stub_handlers = {
             'Context': self.invoking_stub_context,
             'Serve': self.invoking_stub_serve,
             'ServeKeyed': self.invoking_stub_serve_keyed,
-        }  # type: Dict[str, lambda _:[_]]
+        }  # type: Dict[str, chained_stub_handler_type]
 
         stub_handlers = {
             'GetID': self.stub_get_id,
@@ -46,7 +52,7 @@ class StubLoader(Loader):
             'AbortIf': self.stub_abort_if,
             'AbortIfHint': self.stub_abort_if_hint,
             'Bind': self.stub_bind,
-        }  # type: Dict[str, lambda _:[_]]
+        }  # type: Dict[str, chained_stub_handler_type]
 
         stub_handlers.update(invoking_stub_handlers)
 
@@ -57,14 +63,29 @@ class StubLoader(Loader):
             'ThenRef': self.promise_then_ref,
             'CatchRef': self.promise_catch_ref,
             'FinallyRef': self.promise_finally_ref,
-        }  # type: Dict[str, lambda _:[_]]
+        }  # type: Dict[str, chained_stub_handler_type]
 
         self.callee_fn_handlers = {
             'Binder': stub_handlers,
             'Stub': stub_handlers,
             'InvokingStub': invoking_stub_handlers,
             'Promise': promise_handlers,
-        }  # type: Dict[str, Dict[str, lambda _:[_]]]
+        }  # type: Dict[str, Dict[str, chained_stub_handler_type]]
+
+        self.stub_variables = {
+            'Ok': Object.create('ok', 'bool'),
+            'Err': Object.create('err', 'error'),
+            'Int64': Object.create('stubInt64', 'int64'),
+            'Int32': Object.create('stubInt32', 'int32'),
+            'Int16': Object.create('stubInt16', 'int16'),
+            'Int8': Object.create('stubInt8', 'int8'),
+            'Int': Object.create('stubInt', 'int'),
+            'Uint64': Object.create('stubUint64', 'uint64'),
+            'Uint32': Object.create('stubUint32', 'uint32'),
+            'Uint16': Object.create('stubUint16', 'uint16'),
+            'Uint8': Object.create('stubUint8', 'uint8'),
+            'Uint': Object.create('stubUint', 'uint'),
+        }
 
     def handle_function(self, func: FuncDesc):
         items = []
@@ -115,17 +136,78 @@ class StubLoader(Loader):
             items.append(item)
         return
 
+    def check_replace_stub_variable_item(self, context: Context, lhs, res):
+        if isinstance(lhs, SelectorExp):
+            if lhs.x.body_content != context.fn.recv.name:
+                return lhs
+
+            maybe_stub_variable = lhs.name
+            if maybe_stub_variable not in self.stub_variables:
+                return lhs
+
+            decl = self.stub_variables[maybe_stub_variable]
+            self.must_create_decl(context, decl, res)
+            return decl
+        return lhs
+
+    def check_replace_stub_variable(self, context: Context, xhs: List[Stmt], res):
+        handling = None
+        for i, lhs in enumerate(xhs):
+            decl = self.check_replace_stub_variable_item(context, lhs, res)
+            if lhs == decl:
+                continue
+            xhs[i] = decl
+            if decl.name == 'err':
+                if handling:
+                    raise KeyError(f"already find a catchable object {handling}")
+                handling = 'E'
+            elif decl.name == 'ok':
+                if handling:
+                    raise KeyError(f"already find a catchable object {handling}")
+                handling = 'O'
+        return handling
+
+    def check_replace_stub_variable_exp(self, context: Context, xhs: Stmt, res):
+        if isinstance(xhs, BinaryExp):
+            xhs.lhs = self.check_replace_stub_variable_exp(context, xhs.lhs, res)
+            xhs.rhs = self.check_replace_stub_variable_exp(context, xhs.rhs, res)
+            return xhs
+
+        if isinstance(xhs, UnaryExp):
+            xhs.lhs = self.check_replace_stub_variable_exp(context, xhs.lhs, res)
+            return xhs
+
+        if isinstance(xhs, CallExp):
+            self.check_replace_stub_variable(context, xhs.ins, res)
+            return xhs
+
+        return self.check_replace_stub_variable_item(context, xhs, res)
+
     def check_assign_exp(self, context: Context, a: AssignExp):
+        res = []
+        handling = self.check_replace_stub_variable(context, a.lhs, res)
+        self.check_replace_stub_variable(context, a.rhs, res)
+        if handling:
+            if handling == 'E':
+                return self.global_exception_handler(context, a, res)
+            elif handling == 'O':
+                return self.global_bool_handler(context, a, res)
+            else:
+                raise AssertionError("catchable object should be either error or bool")
+
         if len(a.rhs) != 1:
-            return [a]
+            return res + [a]
+
         rhs = a.rhs[0]
         if not isinstance(rhs, CallExp):
-            return [a]
+            return res + [a]
 
-        return self.handle_stub_call(context, a.lhs, rhs, a)
+        return res + self.handle_stub_call(context, a.lhs, rhs, [a])
 
     def check_call_exp(self, context: Context, a: CallExp):
-        return self.handle_stub_call(context, [], a, a)
+        res = []
+        self.check_replace_stub_variable(context, a.ins, res)
+        return res + self.handle_stub_call(context, [], a, [a])
 
     def resolve_service_method_handler(self, _: Context, _service, method, key: Optional[str]):
         _ = self
@@ -145,17 +227,17 @@ class StubLoader(Loader):
                 callee = callee.x
             elif isinstance(callee, CallExp):
                 if not isinstance(callee.callee, SelectorExp):
-                    return [raw]
+                    return raw
                 q.append((callee.callee.name, callee.ins))
                 callee = callee.callee.x
             elif isinstance(callee, IdentExp):
                 if callee.body_content != context.fn.recv.name:
-                    return [raw]
+                    return raw
                 callee = None
             else:
                 raise TypeError(f'unknown callee ast, content: {callee.body_content} type: {type(callee)}')
 
-        start_stub, current_type = False, None
+        start_stub, current_type = False, 'Stub'
 
         res = []
         while len(q):
@@ -168,10 +250,14 @@ class StubLoader(Loader):
                     raise AssertionError("unknown type of invoker")
                 if current_type not in self.callee_fn_handlers:
                     if not start_stub:
-                        return [raw]
+                        return raw
                     raise AssertionError(f"maybe a bug, want type dict {current_type}")
-                start_stub = True
                 handlers = self.callee_fn_handlers[current_type]
+                if not start_stub and p[0] not in handlers:
+                    return raw
+                start_stub = True
+                if p[0] not in handlers:
+                    raise KeyError(f'not registered stub type in scope {current_type}, want handler name is {p[0]}')
                 current_type, res_sub = handlers[p[0]](context, [] if len(q) else lhs, p[1])
                 res.extend(res_sub)
             else:
@@ -206,14 +292,18 @@ class StubLoader(Loader):
 
     # noinspection PyUnresolvedReferences
     def stub_do_get_id(self, context: Context, lhs: List[Stmt], k: str):
-        id_name = lhs[0].ident.name.title()
+        raw = lhs[0].ident.name
+        id_name = raw.title()
 
         res = self.must_create_context(context, [])
         res = self.must_create_ok_decl(context, res)
         context.context_vars[id_name] = Object.create(id_name, 'uint')
+        context.local_vars[raw] = Object.create(raw, 'uint')
 
-        res.append(OpaqueExp.create(f"context.{id_name}, ok = snippet.ParseUint(c, {k})"))
+        res.append(OpaqueExp.create(f"var {raw} uint"))
+        res.append(OpaqueExp.create(f"{raw}, ok = snippet.ParseUint(c, {k})"))
         res.append(OpaqueExp.create("if !ok {\nreturn\n}"))
+        res.append(OpaqueExp.create(f"stubContext.{id_name} = {raw}"))
 
         return None, res
 
@@ -235,7 +325,12 @@ class StubLoader(Loader):
         _ = self
 
         rest_args = ','.join(map(str, rhs))
-        assertion = assertion.body_content
+
+        res = []
+        assertion = str(self.check_replace_stub_variable_exp(context, assertion, res))
+        if len(res) != 0:
+            raise LookupError(f"input of the assertion is not defined: {res}")
+
         return None, [
             OpaqueExp.create(
                 f"""if {assertion} {{
@@ -265,7 +360,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
             local_var = context.local_vars[bc]
             cc = bc.title()
             context.context_vars[cc] = Object.create(cc, local_var.type)
-            res.append(OpaqueExp.create(f"context.{cc} = {bc}"))
+            res.append(OpaqueExp.create(f"stubContext.{cc} = {bc}"))
             res.append(OpaqueExp.create(f"if !snippet.BindRequest(c, {bc}) {{\nreturn\n}}"))
         return None, res
 
@@ -281,7 +376,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
             local_var = context.local_vars[bc]
             tbc = bc.title()
             context.context_vars[tbc] = Object.create(tbc, local_var.type)
-            res.append(OpaqueExp.create(f"context.{tbc} = {bc}"))
+            res.append(OpaqueExp.create(f"stubContext.{tbc} = {bc}"))
 
         return 'InvokingStub', res
 
@@ -310,7 +405,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
                     method_desc[0].append(local_var)
                     context.context_vars[tbc] = Object.create(tbc, local_var.type)
                     if binding != last_one:
-                        res.append(OpaqueExp.create(f"context.{tbc} = {bc}"))
+                        res.append(OpaqueExp.create(f"stubContext.{tbc} = {bc}"))
                     continue
                 raise KeyError(f'can not bind {repr(binding)} to service method')
 
@@ -335,7 +430,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
             #
             # method_desc[1].append(Object.create('err', 'error'))
         if_stmt = [
-            f"if err = {serve_handler}(&context, ); err != nil {{"
+            f"if err = {serve_handler}(&stubContext, ); err != nil {{"
             f'{self.create_promise_handler(context, "catch")}\n'
             f'{self.create_promise_handler(context, "finally")}\nsnippet.DoReport(c, err)\nreturn\n}} else {{']
 
@@ -343,7 +438,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
             bc = binding.body_content
             tbc = bc.title()
             if bc in context.local_vars:
-                if_stmt.append(f"{bc} = context.{tbc}")
+                if_stmt.append(f"{bc} = stubContext.{tbc}")
 
         if_stmt.append(f'{self.create_promise_handler(context, "then")}\n'
                        f'{self.create_promise_handler(context, "finally")}}}')
@@ -398,23 +493,25 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
         if not context.created_context:
             context.created_context = True
             res.append(
-                OpaqueExp.create(f"var context {context.fn.name}Context")
+                OpaqueExp.create(f"var stubContext {context.fn.name}Context")
             )
         return res
 
-    def must_create_ok_decl(self, context: Context, res):
+    def must_create_decl(self, context: Context, decl: Object, res):
         _ = self
-        if not context.created_ok:
-            context.created_ok = True
-            res.append(OpaqueExp.create(f"var ok bool"))
+        if decl.name not in context.local_vars:
+            context.local_vars[decl.name] = decl
+            res.append(OpaqueExp.create(f"var {decl.name} {decl.type}"))
         return res
 
+    ok_decl = Object.create('ok', 'bool')
+    err_decl = Object.create('err', 'error')
+
+    def must_create_ok_decl(self, context: Context, res):
+        return self.must_create_decl(context, StubLoader.ok_decl, res)
+
     def must_create_err_decl(self, context: Context, res):
-        _ = self
-        if not context.created_err:
-            context.created_err = True
-            res.append(OpaqueExp.create(f"var err error"))
-        return res
+        return self.must_create_decl(context, StubLoader.err_decl, res)
 
     # noinspection PyMethodMayBeStatic
     def create_promise_handler(self, context, handler_type):
@@ -425,3 +522,13 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
     # noinspection PyMethodMayBeStatic
     def get_promise_handler(self, context, handler_type):
         return context.insert_points.get(f'_ = "serve_promise_{handler_type}_handler{context.stmt_index}"', [])
+
+    def global_exception_handler(self, context: Context, a: AssignExp, res):
+        print(a)
+        # todo
+        return res + [a]
+
+    def global_bool_handler(self, context: Context, a: AssignExp, res):
+        print(a)
+        # todo
+        return res + [a]
