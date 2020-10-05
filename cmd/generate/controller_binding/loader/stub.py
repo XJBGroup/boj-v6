@@ -10,16 +10,25 @@ from go_ast import FuncDesc, AssignExp, VarDeclExp, CallExp, OpaqueExp, Stmt, Se
 @dataclass
 class Context(object):
     fn: FuncDesc
+    extended_methods: dict
     context_vars: dict
     local_vars: dict
     service_methods: dict
     insert_points: dict
+    insert_items_list: List[Dict]
     stmt_index: int = 0
+    exception_ttl: int = 1
+    last_exception_index: int = Optional[None]
+    last_exception_ok_index: int = Optional[None]
     created_context: bool = False
 
 
 def escape(s):
     return s.replace('"', '\\"')
+
+
+def do_capitalize(name):
+    return name[0].upper() + name[1:]
 
 
 class StubLoader(Loader):
@@ -52,6 +61,7 @@ class StubLoader(Loader):
             'AbortIf': self.stub_abort_if,
             'AbortIfHint': self.stub_abort_if_hint,
             'Bind': self.stub_bind,
+            'OnErr': self.stub_on_error,
         }  # type: Dict[str, chained_stub_handler_type]
 
         stub_handlers.update(invoking_stub_handlers)
@@ -89,21 +99,24 @@ class StubLoader(Loader):
 
     def handle_function(self, func: FuncDesc):
         items = []
+        opaque_items_list = []
         context = Context(
             fn=func,
-            context_vars=dict(), local_vars=dict(),
-            service_methods=dict(), insert_points=dict())
+            context_vars=dict(), local_vars=dict(), insert_items_list=list(),
+            extended_methods=dict(), service_methods=dict(), insert_points=dict())
         for i, item in enumerate(func.body.items):
+            context.insert_items_list.append(context.insert_points)
             context.stmt_index = i
             new_items = []
             self.handle_stmt(item, context, new_items)
-            for x_item in new_items:
-                if isinstance(x_item, OpaqueExp):
-                    for k, v in context.insert_points.items():
-                        x_item.opaque = x_item.opaque.replace(k, '\n'.join(map(str, v)))
-            context.insert_points.clear()
+            opaque_items_list.append(filter(lambda o_item: isinstance(o_item, OpaqueExp), new_items))
             items.extend(new_items)
+            context.insert_points = dict()
 
+        for opaque_items, insert_points in zip(opaque_items_list, context.insert_items_list):
+            for x_item in opaque_items:
+                for k, v in insert_points.items():
+                    x_item.opaque = x_item.opaque.replace(k, '\n'.join(map(str, v)))
         func.body.items = items
         res = []
         if context.created_context:
@@ -124,7 +137,7 @@ class StubLoader(Loader):
 
         interface_sub_services = '\n'.join(interface_sub_services)
         res.append(OpaqueExp.create(f"""\ntype {func.name}Service interface {{\n{interface_sub_services}\n}}"""))
-
+        res.extend(context.extended_methods.values())
         res.append(func)
         return res
 
@@ -293,7 +306,7 @@ class StubLoader(Loader):
     # noinspection PyUnresolvedReferences
     def stub_do_get_id(self, context: Context, lhs: List[Stmt], k: str):
         raw = lhs[0].ident.name
-        id_name = raw.title()
+        id_name = do_capitalize(raw)
 
         res = self.must_create_context(context, [])
         res = self.must_create_ok_decl(context, res)
@@ -358,11 +371,37 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
                 raise KeyError(f'can not bind {repr(binding)}')
             res = self.must_create_context(context, res)
             local_var = context.local_vars[bc]
-            cc = bc.title()
+            cc = do_capitalize(bc)
             context.context_vars[cc] = Object.create(cc, local_var.type)
             res.append(OpaqueExp.create(f"stubContext.{cc} = {bc}"))
             res.append(OpaqueExp.create(f"if !snippet.BindRequest(c, {bc}) {{\nreturn\n}}"))
         return None, res
+
+    def stub_on_error(self, context: Context, lhs: List[Stmt], rhs: List[Stmt]):
+        assert len(lhs) == 0
+        assert len(rhs) >= 2
+        if context.last_exception_index + context.exception_ttl < context.stmt_index:
+            raise LookupError(
+                f"exception could not handle, it is too far, "
+                f"current index {context.stmt_index}, last {context.last_exception_index}, "
+                f"ttl: {context.exception_ttl}")
+
+        error_handler = f'Stub{do_capitalize(context.fn.name)}ErrorHandler{context.stmt_index}'
+        if error_handler in context.extended_methods:
+            raise KeyError(f"method {error_handler} is already exists in current struct scope")
+        capturing = rhs[2:]
+
+        _, func_sign_body = rhs[1].body_content.split('{', maxsplit=1)
+
+        capturing_args = ', '.join(map(
+            lambda st: f'{st.ident.name} {self.find_local_type(context, st.ident)}', capturing))
+        context.extended_methods[error_handler] = OpaqueExp.create(
+            f'func ({context.fn.recv.name} {context.fn.recv.type}) {error_handler}(err error, '
+            f'{capturing_args}) error {{{func_sign_body}')
+        capturing_input = ','.join(map(lambda st: st.ident.name, capturing))
+        self.get_promise_handler(context, 'catch', context.last_exception_index).append(
+            OpaqueExp.create(f'err = {context.fn.recv.name}.{error_handler}(err, {capturing_input})'))
+        return None, []
 
     def invoking_stub_context(self, context: Context, _: List[Stmt], rhs: List[Stmt]):
         _ = self
@@ -374,7 +413,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
                 raise KeyError(f'can not serve {repr(binding)}')
             res = self.must_create_context(context, res)
             local_var = context.local_vars[bc]
-            tbc = bc.title()
+            tbc = do_capitalize(bc)
             context.context_vars[tbc] = Object.create(tbc, local_var.type)
             res.append(OpaqueExp.create(f"stubContext.{tbc} = {bc}"))
 
@@ -395,7 +434,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
 
             for binding in rhs:
                 bc = binding.body_content
-                tbc = bc.title()
+                tbc = do_capitalize(bc)
                 if tbc in context.context_vars:
                     method_desc[0].append(context.context_vars[tbc])
                     continue
@@ -419,7 +458,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
             #
             # for i, binding in enumerate(rhs):
             #     bc = binding.body_content
-            #     tbc = bc.title()
+            #     tbc = do_capitalize(bc)
             #
             #     if tbc in context.context_vars:
             #         method_desc[0][i].append(context.context_vars[tbc])
@@ -436,7 +475,7 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
 
         for binding in rhs:
             bc = binding.body_content
-            tbc = bc.title()
+            tbc = do_capitalize(bc)
             if bc in context.local_vars:
                 if_stmt.append(f"{bc} = stubContext.{tbc}")
 
@@ -514,21 +553,38 @@ snippet.DoReportHintRaw(c, "Assertion Failed: want {escape(assertion)}", {hint},
         return self.must_create_decl(context, StubLoader.err_decl, res)
 
     # noinspection PyMethodMayBeStatic
-    def create_promise_handler(self, context, handler_type):
-        insert_point = f'_ = "serve_promise_{handler_type}_handler{context.stmt_index}"'
-        context.insert_points[insert_point] = []
+    def create_promise_handler(self, context, handler_type, index=None):
+        index = index or context.stmt_index
+        insert_point = f'_ = "serve_promise_{handler_type}_handler{index}"'
+        context.insert_items_list[index][insert_point] = []
         return insert_point
 
     # noinspection PyMethodMayBeStatic
-    def get_promise_handler(self, context, handler_type):
-        return context.insert_points.get(f'_ = "serve_promise_{handler_type}_handler{context.stmt_index}"', [])
+    def get_promise_handler(self, context, handler_type, index=None):
+        index = index or context.stmt_index
+        return context.insert_items_list[index].get(f'_ = "serve_promise_{handler_type}_handler{index}"', [])
 
     def global_exception_handler(self, context: Context, a: AssignExp, res):
         print(a)
         # todo
-        return res + [a]
+        context.last_exception_index = context.stmt_index
+        if_stmt = OpaqueExp.create(
+            f'{self.create_promise_handler(context, "catch")}\n'
+            f"if err != nil {{\nreturn\n}}")
+        return res + [a, if_stmt]
 
     def global_bool_handler(self, context: Context, a: AssignExp, res):
         print(a)
         # todo
-        return res + [a]
+        context.last_excetion_ok_index = context.stmt_index
+        if_stmt = OpaqueExp.create(
+            f'{self.create_promise_handler(context, "catch_ok")}\n'
+            f"if !ok {{\nreturn\n}}")
+        return res + [a, if_stmt]
+
+    def find_local_type(self, context, ident):
+        _ = self
+        if len(ident.type) != 0:
+            return ident.type
+        if ident.name in context.local_vars:
+            return context.local_vars[ident.name].type

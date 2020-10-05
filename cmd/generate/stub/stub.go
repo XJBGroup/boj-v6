@@ -16,7 +16,7 @@ type Stub interface {
 	AbortIfHint(cond bool, hint int, args ...interface{})
 	Bind(request interface{}) Promise
 
-	OnErr(err error, handler func(err error) error)
+	OnErr(err error, handler func(err error) error, capturing ...interface{})
 	//Next() Promise
 	//Await(Promise) func(func())
 	//Emit(name string, eventArgs ...interface{}) Promise

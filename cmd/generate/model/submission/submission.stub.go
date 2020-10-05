@@ -101,7 +101,7 @@ func (ctrl *Controller) PostSubmission(c controller.MContext) {
 
 			return err
 		}
-	})
+	}, s)
 
 	c.JSON(http.StatusOK, api.PostSubmissionReply{
 		Code: types.CodeOK,
