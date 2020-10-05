@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Union, List, Optional, Tuple
 
 from exception import GolangToolInvokeError
@@ -16,6 +17,28 @@ class GolangToolsConfig(object):
     dump_cache_path: str = '.cache/ast_dump'
     force_update: bool = False
     verbose: bool = False
+
+
+def use_cache_json(cache_path):
+    def wrap_func(f):
+        def wrap(self, *args, **kwargs):
+            cached, cached_path = None, os.path.join(self.config.dump_cache_path, cache_path)
+            if os.path.exists(cached_path):
+                cached = json.load(open(cached_path, 'r+'))
+                if cached['golang_pack_cache_expired'] < datetime.now().timestamp():
+                    cached = None
+
+            if not cached:
+                cached = {
+                    'payload': f(self, *args, **kwargs),
+                    'golang_pack_cache_expired': datetime.now().timestamp() + 86400000,
+                }
+                json.dump(cached, open(cached_path, 'w'))
+            return cached['payload']
+
+        return wrap
+
+    return wrap_func
 
 
 class GolangToolsImpl(object):
@@ -66,13 +89,15 @@ class GolangToolsImpl(object):
     def go_env(self, cmd: Union[List[str], str], timeout: Optional[float] = None) -> str:
         return self.run_command(['go env'] + cmd, timeout)
 
+    @use_cache_json('.go-env.json')
     def go_env_obj(self, timeout: Optional[float] = None) -> dict:
         return json.loads(self.go_env(['-json'], timeout=timeout))
 
     def go_version(self, timeout: Optional[float] = None) -> str:
         return self.run_command(['go version'], timeout)
 
-    def go_version_repr(self, timeout: Optional[float] = None) -> Tuple[int, int, int]:
+    @use_cache_json('.go-version.json')
+    def go_version_repr(self, timeout: Optional[float] = None) -> List[int]:
         version = self.go_version(timeout=timeout)
         version = list(map(int, version.split()[2][2:].split('.')))
         if len(version) == 3:
@@ -80,12 +105,12 @@ class GolangToolsImpl(object):
         else:
             main_version, major = version
             minor = None
-        return main_version, major, minor
+        return [main_version, major, minor]
 
     def is_golang_using_go_module(self):
         version = self.go_version_repr()
         go_module_env = self.env.get('GO111MODULE')
-        if version > (1, 13, -1):
+        if version > [1, 13, -1]:
             if go_module_env == 'off':
                 return False
             return True

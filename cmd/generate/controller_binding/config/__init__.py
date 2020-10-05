@@ -42,6 +42,7 @@ class ModuleConfig(object):
 @dataclass
 class ParseConfig(object):
     force_update: bool = False
+    auto_fmt: bool = False
 
 
 @dataclass

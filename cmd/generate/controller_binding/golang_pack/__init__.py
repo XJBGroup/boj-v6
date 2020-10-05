@@ -183,7 +183,8 @@ require (\n    {requires}\n)\n
         dir_name = os.path.dirname(target_file)
         os.makedirs(dir_name, exist_ok=True)
         cached_io.open_write_bytes(target_file, (''.join(source_pieces)), 'wb')
-        self.toolset.go_fmt([target_file])
+        if self.config.parse.auto_fmt:
+            self.toolset.go_fmt([target_file])
 
     def eval_file(self, file, target):
 

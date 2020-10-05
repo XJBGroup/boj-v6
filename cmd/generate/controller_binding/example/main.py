@@ -23,6 +23,7 @@ if __name__ == '__main__':
         ),
         parse=ParseConfig(
             force_update=False,
+            auto_fmt=False,
         ),
         plugins=[
             CopySourcePlugin(),

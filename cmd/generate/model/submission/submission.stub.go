@@ -44,7 +44,9 @@ type Controller struct {
 }
 
 func (ctrl *Controller) PostSubmission(c controller.MContext) {
-	ctrl.AbortIf(c.IsAborted())
+	if c.IsAborted() {
+		return
+	}
 
 	// Step: Bind Request
 

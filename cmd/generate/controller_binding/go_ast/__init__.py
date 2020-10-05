@@ -1,9 +1,25 @@
+import abc
 from typing import List
 
-import go_ast.decorator
 from utils import simplify_path
 from utils.cache_io import cached_io
-from .decorator import use_file_mapping
+
+
+class HasFileMapping(abc.ABC):
+
+    def use_file_mapping(self, mp):
+        pos_prop = getattr(self, 'pos', None)
+        if pos_prop:
+            pos_prop.use_file_mapping(mp)
+        mp_attrs = getattr(self.__class__, 'file_mapping_attrs', None)
+        if mp_attrs:
+            for prop_name in mp_attrs:
+                p = getattr(self, prop_name)
+                if isinstance(p, list):
+                    for sp in p:
+                        sp.use_file_mapping(mp)
+                elif p:
+                    p.use_file_mapping(mp)
 
 
 class Object(object):
@@ -84,10 +100,10 @@ class FilesMapping(object):
         return simplify_path(self.mapping[self.mapping_key_type(k)])
 
 
-@use_file_mapping('items')
-class ImportStmts(object):
-    @use_file_mapping
-    class Item(object):
+class ImportStmts(HasFileMapping):
+    file_mapping_attrs = ('items',)
+
+    class Item(HasFileMapping):
         def __init__(self, doc_tree):
             self.pos = FilePos(doc_tree['p'])
             self.alias = doc_tree['alias']
@@ -119,8 +135,9 @@ class Stmt(WithFilePos):
         return Stmt.polymorphic[doc_tree['t']](doc_tree)
 
 
-@use_file_mapping('lhs', 'rhs')
-class BinaryExp(Stmt):
+class BinaryExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('lhs', 'rhs')
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.o = doc_tree['o']
@@ -131,8 +148,9 @@ class BinaryExp(Stmt):
         return str(self.lhs) + self.o + str(self.rhs)
 
 
-@use_file_mapping('lhs')
-class UnaryExp(Stmt):
+class UnaryExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('lhs',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.o = doc_tree['o']
@@ -144,8 +162,9 @@ class UnaryExp(Stmt):
         return self.o + str(self.lhs)
 
 
-@use_file_mapping('callee', 'ins')
-class CallExp(Stmt):
+class CallExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('callee', 'ins')
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.callee = Stmt.create_stmt(doc_tree['c'])  # type: Stmt
@@ -153,8 +172,7 @@ class CallExp(Stmt):
         self.ins = list(map(Stmt.create_stmt, doc_tree.get('i') or []))  # type: List[Stmt]
 
 
-@use_file_mapping
-class OpaqueExp(Stmt):
+class OpaqueExp(HasFileMapping, Stmt):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.opaque = "" if doc_tree is None else doc_tree["o"]
@@ -169,8 +187,9 @@ class OpaqueExp(Stmt):
         return self.opaque
 
 
-@use_file_mapping('lhs', 'rhs')
-class AssignExp(Stmt):
+class AssignExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('lhs', 'rhs')
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.lhs = list(map(Stmt.create_stmt, doc_tree['l']))  # type: List[Stmt]
@@ -181,8 +200,8 @@ class AssignExp(Stmt):
         return (','.join(map(str, self.lhs))) + f" {self.tok} " + (','.join(map(str, self.rhs)))
 
 
-@use_file_mapping('items')
-class BlockExp(Stmt):
+class BlockExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('items',)
 
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
@@ -192,34 +211,33 @@ class BlockExp(Stmt):
         return '\n'.join(map(str, self.items))
 
 
-@use_file_mapping
 class SelectExp(BlockExp):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
 
 
-@use_file_mapping
-class IfExp(Stmt):
+class IfExp(HasFileMapping, Stmt):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
 
 
-@use_file_mapping
-class IdentExp(Stmt):
+class IdentExp(HasFileMapping, Stmt):
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.ident = Object(doc_tree['o'])
 
 
-@use_file_mapping('decls')
-class VarDeclExp(Stmt):
+class VarDeclExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('decls',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.decls = list(map(Stmt.create_stmt, doc_tree['s']))  # type: List[VarSpecExp]
 
 
-@use_file_mapping('values', 'type_spec')
-class VarSpecExp(Stmt):
+class VarSpecExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('values', 'type_spec')
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.names = doc_tree['l']
@@ -233,8 +251,9 @@ class VarSpecExp(Stmt):
             self.type_spec = None
 
 
-@use_file_mapping('type_spec')
-class TypeSpecExp(Stmt):
+class TypeSpecExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('type_spec',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.names = doc_tree['n']
@@ -244,8 +263,9 @@ class TypeSpecExp(Stmt):
             self.type_spec = None
 
 
-@use_file_mapping('x')
-class SelectorExp(Stmt):
+class SelectorExp(HasFileMapping, Stmt):
+    file_mapping_attrs = ('x',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.x = Stmt.create_stmt(doc_tree['x'])  # type: Stmt
@@ -269,14 +289,16 @@ Stmt.polymorphic = {
 }
 
 
-@use_file_mapping('items')
 class FuncBody(BlockExp):
+    file_mapping_attrs = ('items',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
 
 
-@use_file_mapping('body')
-class FuncDesc(WithFilePos):
+class FuncDesc(HasFileMapping, WithFilePos):
+    file_mapping_attrs = ('body',)
+
     def __init__(self, doc_tree):
         super().__init__(doc_tree)
         self.recv = Object(doc_tree['r'])
@@ -301,8 +323,8 @@ class FuncDesc(WithFilePos):
         return f'func ({self.recv.name} {self.recv.type}) {self.name}({ins}) {outs} {{\n{str(self.body)}\n}}'
 
 
-@use_file_mapping('items')
-class FuncDescs(object):
+class FuncDescs(HasFileMapping, object):
+    file_mapping_attrs = ('items',)
 
     def __init__(self, doc_tree):
         self.items = list(map(FuncDesc, doc_tree))
