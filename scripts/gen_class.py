@@ -1,80 +1,6 @@
-import os
 import random
 import re
 from typing import Union, Callable, Any
-
-class_defs = \
-    """
-Swagger:
-  swagger: str
-  info: Info
-  basePath: str
-  paths: Dict[str, Dict[str, PathItem]]
-  definitions: Dict[str, Schema]
-------
-Info:
-  description: str
-  title: str
-  version: str
-------
-PathItem:
-  consumes: List[str]
-  produces: List[str]
-  tags: List[str]
-  operationId: str
-  parameters: List[Parameter]
-  responses: Dict[str, ResponseDesc]
-------
-Parameter:
-  type: str
-  description: str
-  name: str
-  in: str
-  required: bool
-  schema: Schema
-  allowEmptyValue: bool
-------
-ResponseDesc:
-  description: str
-  schema: Schema
-------
-Schema:
-  id: str
-  ref, $ref: str
-  schemaUrl: str
-  description: str
-  type: Union[str, List[str]]
-  nullable: bool
-  format: str
-  title: str
-  default: object
-  maximum: float
-  exclusiveMaximum: bool
-  minimum: float
-  exclusiveMinimum: bool
-  maxLength: int
-  minLength: int
-  pattern: str
-  maxItems: int
-  minItems: int
-  uniqueItems: bool
-  multipleOf: float
-  enum: List[object]
-  maxProperties: int
-  minProperties: int
-  required: List[str]
-  items: Union[Schema, List[Schema]]
-  allOf: List[Schema]
-  oneOf: List[Schema]
-  anyOf: List[Schema]
-  not: Schema
-  properties: Dict[str, Schema]
-  additionalProperties: Union[Schema, bool]
-  patternProperties: Dict[str, Schema]
-  dependencies: Dict[str, Union[Schema, List[str]]]
-  additionalItems: Union[Schema, bool]
-  definitions: Dict[str, Schema]
-"""
 
 
 def indented(indenting_lines, base_indent=4, indent=0):
@@ -320,9 +246,8 @@ default_values = {
     'dict': "dict()",
 }
 
-if __name__ == '__main__':
-    current_path = os.path.dirname(__file__)
-    f = open(f'{current_path}/swagger_data_classes.py', 'w', encoding='utf8')
+def main(target_path, class_defs):
+    f = open(target_path, 'w', encoding='utf8')
     lines = ['from typing import *']
 
     for class_def in reversed(re.split('---+\n', class_defs)):
@@ -355,7 +280,6 @@ if __name__ == '__main__':
         for k, v in class_props.items():
             class_props_lines.append(f"{v.dict_field}: Union[None, '{v.type_str}']")
 
-
         def create_method(insert_point, signature, decorators=None):
             method, method_body = [], []
             insert_point.append(method)
@@ -365,13 +289,11 @@ if __name__ == '__main__':
             method.append(method_body)
             return method_body
 
-
         def create_if(insert_point, cond):
             insert_point.append(f'if {cond}:')
             if_block = []
             insert_point.append(if_block)
             return if_block
-
 
         body = create_method(lines, '__init__(self)')
         for k, v in class_props.items():
@@ -402,7 +324,6 @@ if __name__ == '__main__':
 
     code = indented(lines, 4)
 
-
     def do_optimize(c, optimized_block):
         codes = []
         last_xx = 0
@@ -414,7 +335,6 @@ if __name__ == '__main__':
             last_xx = optimized_r
         codes.append(c[last_xx:])
         return ''.join(codes)
-
 
     optimized = []
     for m in re.finditer(r'([ ]*)g_a_cpc_x\s*=\s*(\S*)[^ ]*([ ]*)(\S*)\s*=\s*g_a_cpc_x(\s+)', code):

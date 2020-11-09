@@ -10,7 +10,7 @@
 
 ### CountContest
 
-The uri/restful key of this method is `/contest-count@GET`
+restful key: `/contest-count@GET`
 
 <!--beg l desc_CountContest -->
 
@@ -66,7 +66,7 @@ responses:
 
 ### ListContest
 
-The uri/restful key of this method is `/contest-list@GET`
+restful key: `/contest-list@GET`
 
 <!--beg l desc_ListContest -->
 
@@ -122,7 +122,7 @@ responses:
 
 ### CountContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem-count@GET`
+restful key: `/contest/{cid}/problem-count@GET`
 
 <!--beg l desc_CountContestProblem -->
 
@@ -184,7 +184,7 @@ responses:
 
 ### ListContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem-list@GET`
+restful key: `/contest/{cid}/problem-list@GET`
 
 <!--beg l desc_ListContestProblem -->
 
@@ -246,7 +246,7 @@ responses:
 
 ### CountContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-count@GET`
+restful key: `/contest/{cid}/problem/{pid}/desc-count@GET`
 
 <!--beg l desc_CountContestProblemDesc -->
 
@@ -314,7 +314,7 @@ responses:
 
 ### ListContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-list@GET`
+restful key: `/contest/{cid}/problem/{pid}/desc-list@GET`
 
 <!--beg l desc_ListContestProblemDesc -->
 
@@ -382,7 +382,7 @@ responses:
 
 ### ChangeContestProblemDescriptionRef
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc/ref@POST`
+restful key: `/contest/{cid}/problem/{pid}/desc/ref@POST`
 
 <!--beg l desc_ChangeContestProblemDescriptionRef -->
 
@@ -432,7 +432,7 @@ responses:
 
 ### DeleteContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@DELETE`
+restful key: `/contest/{cid}/problem/{pid}/desc@DELETE`
 
 <!--beg l desc_DeleteContestProblemDesc -->
 
@@ -482,7 +482,7 @@ responses:
 
 ### GetContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@GET`
+restful key: `/contest/{cid}/problem/{pid}/desc@GET`
 
 <!--beg l desc_GetContestProblemDesc -->
 
@@ -532,7 +532,7 @@ responses:
 
 ### PostContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@POST`
+restful key: `/contest/{cid}/problem/{pid}/desc@POST`
 
 <!--beg l desc_PostContestProblemDesc -->
 
@@ -582,7 +582,7 @@ responses:
 
 ### PutContestProblemDesc
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@PUT`
+restful key: `/contest/{cid}/problem/{pid}/desc@PUT`
 
 <!--beg l desc_PutContestProblemDesc -->
 
@@ -632,7 +632,7 @@ responses:
 
 ### DeleteContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}@DELETE`
+restful key: `/contest/{cid}/problem/{pid}@DELETE`
 
 <!--beg l desc_DeleteContestProblem -->
 
@@ -682,7 +682,7 @@ responses:
 
 ### GetContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}@GET`
+restful key: `/contest/{cid}/problem/{pid}@GET`
 
 <!--beg l desc_GetContestProblem -->
 
@@ -726,7 +726,7 @@ responses:
 
 ### PutContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem/{pid}@PUT`
+restful key: `/contest/{cid}/problem/{pid}@PUT`
 
 <!--beg l desc_PutContestProblem -->
 
@@ -776,7 +776,7 @@ responses:
 
 ### PostContestProblem
 
-The uri/restful key of this method is `/contest/{cid}/problem@POST`
+restful key: `/contest/{cid}/problem@POST`
 
 <!--beg l desc_PostContestProblem -->
 
@@ -820,7 +820,7 @@ responses:
 
 ### ListContestUsers
 
-The uri/restful key of this method is `/contest/{cid}/user-list@GET`
+restful key: `/contest/{cid}/user-list@GET`
 
 <!--beg l desc_ListContestUsers -->
 
@@ -858,7 +858,7 @@ responses:
 
 ### DeleteContest
 
-The uri/restful key of this method is `/contest/{cid}@DELETE`
+restful key: `/contest/{cid}@DELETE`
 
 <!--beg l desc_DeleteContest -->
 
@@ -902,7 +902,7 @@ responses:
 
 ### GetContest
 
-The uri/restful key of this method is `/contest/{cid}@GET`
+restful key: `/contest/{cid}@GET`
 
 <!--beg l desc_GetContest -->
 
@@ -940,7 +940,7 @@ responses:
 
 ### PutContest
 
-The uri/restful key of this method is `/contest/{cid}@PUT`
+restful key: `/contest/{cid}@PUT`
 
 <!--beg l desc_PutContest -->
 
@@ -984,7 +984,7 @@ responses:
 
 ### PostContest
 
-The uri/restful key of this method is `/contest@POST`
+restful key: `/contest@POST`
 
 <!--beg l desc_PostContest -->
 

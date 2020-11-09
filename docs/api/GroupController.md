@@ -10,7 +10,7 @@
 
 ### CountGroup
 
-The uri/restful key of this method is `/group-count@GET`
+restful key: `/group-count@GET`
 
 <!--beg l desc_CountGroup -->
 
@@ -66,7 +66,7 @@ responses:
 
 ### ListGroup
 
-The uri/restful key of this method is `/group-list@GET`
+restful key: `/group-list@GET`
 
 <!--beg l desc_ListGroup -->
 
@@ -122,7 +122,7 @@ responses:
 
 ### PutGroupOwner
 
-The uri/restful key of this method is `/group/{gid}/owner@PUT`
+restful key: `/group/{gid}/owner@PUT`
 
 <!--beg l desc_PutGroupOwner -->
 
@@ -166,7 +166,7 @@ responses:
 
 ### GetGroupMembers
 
-The uri/restful key of this method is `/group/{gid}/user-list@GET`
+restful key: `/group/{gid}/user-list@GET`
 
 <!--beg l desc_GetGroupMembers -->
 
@@ -228,7 +228,7 @@ responses:
 
 ### PostGroupMember
 
-The uri/restful key of this method is `/group/{gid}/user/{id}@POST`
+restful key: `/group/{gid}/user/{id}@POST`
 
 <!--beg l desc_PostGroupMember -->
 
@@ -278,7 +278,7 @@ responses:
 
 ### DeleteGroup
 
-The uri/restful key of this method is `/group/{gid}@DELETE`
+restful key: `/group/{gid}@DELETE`
 
 <!--beg l desc_DeleteGroup -->
 
@@ -322,7 +322,7 @@ responses:
 
 ### GetGroup
 
-The uri/restful key of this method is `/group/{gid}@GET`
+restful key: `/group/{gid}@GET`
 
 <!--beg l desc_GetGroup -->
 
@@ -360,7 +360,7 @@ responses:
 
 ### PutGroup
 
-The uri/restful key of this method is `/group/{gid}@PUT`
+restful key: `/group/{gid}@PUT`
 
 <!--beg l desc_PutGroup -->
 
@@ -404,7 +404,7 @@ responses:
 
 ### PostGroup
 
-The uri/restful key of this method is `/group@POST`
+restful key: `/group@POST`
 
 <!--beg l desc_PostGroup -->
 

@@ -10,7 +10,7 @@
 
 ### RemoveGroupingPolicy
 
-The uri/restful key of this method is `/policy/group@DELETE`
+restful key: `/policy/group@DELETE`
 
 <!--beg l desc_RemoveGroupingPolicy -->
 
@@ -48,7 +48,7 @@ responses:
 
 ### HasGroupingPolicy
 
-The uri/restful key of this method is `/policy/group@GET`
+restful key: `/policy/group@GET`
 
 <!--beg l desc_HasGroupingPolicy -->
 
@@ -92,7 +92,7 @@ responses:
 
 ### AddGroupingPolicy
 
-The uri/restful key of this method is `/policy/group@POST`
+restful key: `/policy/group@POST`
 
 <!--beg l desc_AddGroupingPolicy -->
 
@@ -130,7 +130,7 @@ responses:
 
 ### RemovePolicy
 
-The uri/restful key of this method is `/policy@DELETE`
+restful key: `/policy@DELETE`
 
 <!--beg l desc_RemovePolicy -->
 
@@ -168,7 +168,7 @@ responses:
 
 ### HasPolicy
 
-The uri/restful key of this method is `/policy@GET`
+restful key: `/policy@GET`
 
 <!--beg l desc_HasPolicy -->
 
@@ -218,7 +218,7 @@ responses:
 
 ### AddPolicy
 
-The uri/restful key of this method is `/policy@POST`
+restful key: `/policy@POST`
 
 <!--beg l desc_AddPolicy -->
 

@@ -10,7 +10,7 @@
 
 ### PostSubmission
 
-The uri/restful key of this method is `/problem/{pid}/submission@POST`
+restful key: `/problem/{pid}/submission@POST`
 
 <!--beg l desc_PostSubmission -->
 
@@ -54,7 +54,7 @@ responses:
 
 ### CountSubmission
 
-The uri/restful key of this method is `/submission-count@GET`
+restful key: `/submission-count@GET`
 
 <!--beg l desc_CountSubmission -->
 
@@ -140,7 +140,7 @@ responses:
 
 ### ListSubmission
 
-The uri/restful key of this method is `/submission-list@GET`
+restful key: `/submission-list@GET`
 
 <!--beg l desc_ListSubmission -->
 
@@ -226,7 +226,7 @@ responses:
 
 ### GetSubmissionContent
 
-The uri/restful key of this method is `/submission/{sid}/content@GET`
+restful key: `/submission/{sid}/content@GET`
 
 <!--beg l desc_GetSubmissionContent -->
 
@@ -264,7 +264,7 @@ responses:
 
 ### DeleteSubmission
 
-The uri/restful key of this method is `/submission/{sid}@DELETE`
+restful key: `/submission/{sid}@DELETE`
 
 <!--beg l desc_DeleteSubmission -->
 
@@ -308,7 +308,7 @@ responses:
 
 ### GetSubmission
 
-The uri/restful key of this method is `/submission/{sid}@GET`
+restful key: `/submission/{sid}@GET`
 
 <!--beg l desc_GetSubmission -->
 

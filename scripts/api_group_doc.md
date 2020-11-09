@@ -12,7 +12,7 @@
 <!-- group_body_doc -->
 ### {{operationId}}
 
-The uri/restful key of this method is `{{key}}`
+restful key: `{{key}}`
 
 !!insert_field:desc_{{operationId}}!!
 

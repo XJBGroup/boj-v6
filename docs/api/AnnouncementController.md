@@ -10,7 +10,7 @@
 
 ### CountAnnouncement
 
-The uri/restful key of this method is `/announcement-count@GET`
+restful key: `/announcement-count@GET`
 
 <!--beg l desc_CountAnnouncement -->
 
@@ -43,7 +43,7 @@ responses:
 
 ### ListAnnouncement
 
-The uri/restful key of this method is `/announcement-list@GET`
+restful key: `/announcement-list@GET`
 
 <!--beg l desc_ListAnnouncement -->
 
@@ -87,7 +87,7 @@ responses:
 
 ### DeleteAnnouncement
 
-The uri/restful key of this method is `/announcement/{aid}@DELETE`
+restful key: `/announcement/{aid}@DELETE`
 
 <!--beg l desc_DeleteAnnouncement -->
 
@@ -131,7 +131,7 @@ responses:
 
 ### GetAnnouncement
 
-The uri/restful key of this method is `/announcement/{aid}@GET`
+restful key: `/announcement/{aid}@GET`
 
 <!--beg l desc_GetAnnouncement -->
 
@@ -169,7 +169,7 @@ responses:
 
 ### PutAnnouncement
 
-The uri/restful key of this method is `/announcement/{aid}@PUT`
+restful key: `/announcement/{aid}@PUT`
 
 <!--beg l desc_PutAnnouncement -->
 
@@ -213,7 +213,7 @@ responses:
 
 ### PostAnnouncement
 
-The uri/restful key of this method is `/announcement@POST`
+restful key: `/announcement@POST`
 
 <!--beg l desc_PostAnnouncement -->
 

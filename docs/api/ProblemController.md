@@ -10,7 +10,7 @@
 
 ### CountProblem
 
-The uri/restful key of this method is `/problem-count@GET`
+restful key: `/problem-count@GET`
 
 <!--beg l desc_CountProblem -->
 
@@ -66,7 +66,7 @@ responses:
 
 ### ListProblem
 
-The uri/restful key of this method is `/problem-list@GET`
+restful key: `/problem-list@GET`
 
 <!--beg l desc_ListProblem -->
 
@@ -122,7 +122,7 @@ responses:
 
 ### CountProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc-count@GET`
+restful key: `/problem/{pid}/desc-count@GET`
 
 <!--beg l desc_CountProblemDesc -->
 
@@ -184,7 +184,7 @@ responses:
 
 ### ListProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc-list@GET`
+restful key: `/problem/{pid}/desc-list@GET`
 
 <!--beg l desc_ListProblemDesc -->
 
@@ -246,7 +246,7 @@ responses:
 
 ### ChangeProblemDescriptionRef
 
-The uri/restful key of this method is `/problem/{pid}/desc/ref@POST`
+restful key: `/problem/{pid}/desc/ref@POST`
 
 <!--beg l desc_ChangeProblemDescriptionRef -->
 
@@ -290,7 +290,7 @@ responses:
 
 ### DeleteProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc@DELETE`
+restful key: `/problem/{pid}/desc@DELETE`
 
 <!--beg l desc_DeleteProblemDesc -->
 
@@ -334,7 +334,7 @@ responses:
 
 ### GetProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc@GET`
+restful key: `/problem/{pid}/desc@GET`
 
 <!--beg l desc_GetProblemDesc -->
 
@@ -378,7 +378,7 @@ responses:
 
 ### PostProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc@POST`
+restful key: `/problem/{pid}/desc@POST`
 
 <!--beg l desc_PostProblemDesc -->
 
@@ -422,7 +422,7 @@ responses:
 
 ### PutProblemDesc
 
-The uri/restful key of this method is `/problem/{pid}/desc@PUT`
+restful key: `/problem/{pid}/desc@PUT`
 
 <!--beg l desc_PutProblemDesc -->
 
@@ -466,7 +466,7 @@ responses:
 
 ### ProblemFSReadConfig
 
-The uri/restful key of this method is `/problem/{pid}/fs/config@GET`
+restful key: `/problem/{pid}/fs/config@GET`
 
 <!--beg l desc_ProblemFSReadConfig -->
 
@@ -510,7 +510,7 @@ responses:
 
 ### ProblemFSWriteConfig
 
-The uri/restful key of this method is `/problem/{pid}/fs/config@POST`
+restful key: `/problem/{pid}/fs/config@POST`
 
 <!--beg l desc_ProblemFSWriteConfig -->
 
@@ -554,7 +554,7 @@ responses:
 
 ### ProblemFSPutConfig
 
-The uri/restful key of this method is `/problem/{pid}/fs/config@PUT`
+restful key: `/problem/{pid}/fs/config@PUT`
 
 <!--beg l desc_ProblemFSPutConfig -->
 
@@ -598,7 +598,7 @@ responses:
 
 ### ProblemFSZipRead
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory/zip@GET`
+restful key: `/problem/{pid}/fs/directory/zip@GET`
 
 <!--beg l desc_ProblemFSZipRead -->
 
@@ -642,7 +642,7 @@ responses:
 
 ### ProblemFSZipWrite
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory/zip@POST`
+restful key: `/problem/{pid}/fs/directory/zip@POST`
 
 <!--beg l desc_ProblemFSZipWrite -->
 
@@ -686,7 +686,7 @@ responses:
 
 ### ProblemFSRemoveAll
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory@DELETE`
+restful key: `/problem/{pid}/fs/directory@DELETE`
 
 <!--beg l desc_ProblemFSRemoveAll -->
 
@@ -730,7 +730,7 @@ responses:
 
 ### ProblemFSLS
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory@GET`
+restful key: `/problem/{pid}/fs/directory@GET`
 
 <!--beg l desc_ProblemFSLS -->
 
@@ -774,7 +774,7 @@ responses:
 
 ### ProblemFSWrites
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory@POST`
+restful key: `/problem/{pid}/fs/directory@POST`
 
 <!--beg l desc_ProblemFSWrites -->
 
@@ -818,7 +818,7 @@ responses:
 
 ### ProblemFSMkdir
 
-The uri/restful key of this method is `/problem/{pid}/fs/directory@PUT`
+restful key: `/problem/{pid}/fs/directory@PUT`
 
 <!--beg l desc_ProblemFSMkdir -->
 
@@ -862,7 +862,7 @@ responses:
 
 ### ProblemFSRead
 
-The uri/restful key of this method is `/problem/{pid}/fs/file/content@GET`
+restful key: `/problem/{pid}/fs/file/content@GET`
 
 <!--beg l desc_ProblemFSRead -->
 
@@ -906,7 +906,7 @@ responses:
 
 ### ProblemFSRemove
 
-The uri/restful key of this method is `/problem/{pid}/fs/file@DELETE`
+restful key: `/problem/{pid}/fs/file@DELETE`
 
 <!--beg l desc_ProblemFSRemove -->
 
@@ -950,7 +950,7 @@ responses:
 
 ### ProblemFSStat
 
-The uri/restful key of this method is `/problem/{pid}/fs/file@GET`
+restful key: `/problem/{pid}/fs/file@GET`
 
 <!--beg l desc_ProblemFSStat -->
 
@@ -994,7 +994,7 @@ responses:
 
 ### ProblemFSWrite
 
-The uri/restful key of this method is `/problem/{pid}/fs/file@POST`
+restful key: `/problem/{pid}/fs/file@POST`
 
 <!--beg l desc_ProblemFSWrite -->
 
@@ -1038,7 +1038,7 @@ responses:
 
 ### DeleteProblem
 
-The uri/restful key of this method is `/problem/{pid}@DELETE`
+restful key: `/problem/{pid}@DELETE`
 
 <!--beg l desc_DeleteProblem -->
 
@@ -1082,7 +1082,7 @@ responses:
 
 ### GetProblem
 
-The uri/restful key of this method is `/problem/{pid}@GET`
+restful key: `/problem/{pid}@GET`
 
 <!--beg l desc_GetProblem -->
 
@@ -1120,7 +1120,7 @@ responses:
 
 ### PutProblem
 
-The uri/restful key of this method is `/problem/{pid}@PUT`
+restful key: `/problem/{pid}@PUT`
 
 <!--beg l desc_PutProblem -->
 
@@ -1164,7 +1164,7 @@ responses:
 
 ### PostProblem
 
-The uri/restful key of this method is `/problem@POST`
+restful key: `/problem@POST`
 
 <!--beg l desc_PostProblem -->
 

@@ -10,7 +10,7 @@
 
 ### CountComment
 
-The uri/restful key of this method is `/comment-count@GET`
+restful key: `/comment-count@GET`
 
 <!--beg l desc_CountComment -->
 
@@ -72,7 +72,7 @@ responses:
 
 ### ListComment
 
-The uri/restful key of this method is `/comment-list@GET`
+restful key: `/comment-list@GET`
 
 <!--beg l desc_ListComment -->
 
@@ -134,7 +134,7 @@ responses:
 
 ### DeleteComment
 
-The uri/restful key of this method is `/comment/{cmid}@DELETE`
+restful key: `/comment/{cmid}@DELETE`
 
 <!--beg l desc_DeleteComment -->
 
@@ -178,7 +178,7 @@ responses:
 
 ### GetComment
 
-The uri/restful key of this method is `/comment/{cmid}@GET`
+restful key: `/comment/{cmid}@GET`
 
 <!--beg l desc_GetComment -->
 
@@ -216,7 +216,7 @@ responses:
 
 ### PutComment
 
-The uri/restful key of this method is `/comment/{cmid}@PUT`
+restful key: `/comment/{cmid}@PUT`
 
 <!--beg l desc_PutComment -->
 
@@ -260,7 +260,7 @@ responses:
 
 ### PostComment
 
-The uri/restful key of this method is `/comment@POST`
+restful key: `/comment@POST`
 
 <!--beg l desc_PostComment -->
 

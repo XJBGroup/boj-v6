@@ -10,7 +10,7 @@
 
 ### CountUser
 
-The uri/restful key of this method is `/user-count@GET`
+restful key: `/user-count@GET`
 
 <!--beg l desc_CountUser -->
 
@@ -54,7 +54,7 @@ responses:
 
 ### ListUser
 
-The uri/restful key of this method is `/user-list@GET`
+restful key: `/user-list@GET`
 
 <!--beg l desc_ListUser -->
 
@@ -98,7 +98,7 @@ responses:
 
 ### RefreshToken
 
-The uri/restful key of this method is `/user-token@GET`
+restful key: `/user-token@GET`
 
 <!--beg l desc_RefreshToken -->
 
@@ -131,7 +131,7 @@ responses:
 
 ### LoginUser
 
-The uri/restful key of this method is `/user/login@POST`
+restful key: `/user/login@POST`
 
 <!--beg l desc_LoginUser -->
 
@@ -169,7 +169,7 @@ responses:
 
 ### Register
 
-The uri/restful key of this method is `/user/register@POST`
+restful key: `/user/register@POST`
 
 <!--beg l desc_Register -->
 
@@ -207,7 +207,7 @@ responses:
 
 ### BindEmail
 
-The uri/restful key of this method is `/user/{id}/email@PUT`
+restful key: `/user/{id}/email@PUT`
 
 <!--beg l desc_BindEmail -->
 
@@ -251,7 +251,7 @@ responses:
 
 ### InspectUser
 
-The uri/restful key of this method is `/user/{id}/inspect@GET`
+restful key: `/user/{id}/inspect@GET`
 
 <!--beg l desc_InspectUser -->
 
@@ -289,7 +289,7 @@ responses:
 
 ### ChangePassword
 
-The uri/restful key of this method is `/user/{id}/password@PUT`
+restful key: `/user/{id}/password@PUT`
 
 <!--beg l desc_ChangePassword -->
 
@@ -333,7 +333,7 @@ responses:
 
 ### DeleteUser
 
-The uri/restful key of this method is `/user/{id}@DELETE`
+restful key: `/user/{id}@DELETE`
 
 <!--beg l desc_DeleteUser -->
 
@@ -377,7 +377,7 @@ responses:
 
 ### GetUser
 
-The uri/restful key of this method is `/user/{id}@GET`
+restful key: `/user/{id}@GET`
 
 <!--beg l desc_GetUser -->
 
@@ -415,7 +415,7 @@ responses:
 
 ### PutUser
 
-The uri/restful key of this method is `/user/{id}@PUT`
+restful key: `/user/{id}@PUT`
 
 <!--beg l desc_PutUser -->
 
