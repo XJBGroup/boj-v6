@@ -16,10 +16,18 @@ The uri/restful key of this method is `{{key}}`
 
 !!insert_field:desc_{{operationId}}!!
 
+{{params_head}}
 {{params_body}}
+{{response_head}}
+{{response_body}}
+
 <!-- group_params_body_doc -->
 + `{{name}}`: {{type}}{{required}}: {{desc}}
-    !!insert_field:desc_{{operationId}}_{{name}}!!
+    !!insert_field:desc_{{operationId}}_params_{{name}}!!
+
+<!-- group_response_body_doc -->
++ code: `{{code}}`, type: {{type}}
+    !!insert_field:desc_{{operationId}}_response_{{code}}_{{type}}!!
 
 <!-- local_object_reference_doc -->
 

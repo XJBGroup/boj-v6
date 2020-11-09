@@ -16,29 +16,51 @@ The uri/restful key of this method is `/contest-count@GET`
 
 <!--end l-->
 
+parameters:
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_CountContest_before_id -->
+    <!--beg l desc_CountContest_params_before_id -->
     
     <!--end l-->
 
 
 + `order`: [string](#string): 
-    <!--beg l desc_CountContest_order -->
+    <!--beg l desc_CountContest_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_CountContest_page -->
+    <!--beg l desc_CountContest_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_CountContest_page_size -->
+    <!--beg l desc_CountContest_params_page_size -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_CountContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [CountContestReply](#CountContestReply)
+    <!--beg l desc_CountContest_response_200_[CountContestReply](#CountContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_CountContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -50,29 +72,51 @@ The uri/restful key of this method is `/contest-list@GET`
 
 <!--end l-->
 
+parameters:
 
 + `order`: [string](#string): 
-    <!--beg l desc_ListContest_order -->
+    <!--beg l desc_ListContest_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_ListContest_page -->
+    <!--beg l desc_ListContest_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_ListContest_page_size -->
+    <!--beg l desc_ListContest_params_page_size -->
     
     <!--end l-->
 
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_ListContest_before_id -->
+    <!--beg l desc_ListContest_params_before_id -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_ListContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [ListContestReply](#ListContestReply)
+    <!--beg l desc_ListContest_response_200_[ListContestReply](#ListContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_ListContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -84,35 +128,57 @@ The uri/restful key of this method is `/contest/{cid}/problem-count@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_CountContestProblem_cid -->
+    <!--beg l desc_CountContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_CountContestProblem_before_id -->
+    <!--beg l desc_CountContestProblem_params_before_id -->
     
     <!--end l-->
 
 
 + `order`: [string](#string): 
-    <!--beg l desc_CountContestProblem_order -->
+    <!--beg l desc_CountContestProblem_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_CountContestProblem_page -->
+    <!--beg l desc_CountContestProblem_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_CountContestProblem_page_size -->
+    <!--beg l desc_CountContestProblem_params_page_size -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_CountContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [CountContestProblemReply](#CountContestProblemReply)
+    <!--beg l desc_CountContestProblem_response_200_[CountContestProblemReply](#CountContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_CountContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -124,35 +190,57 @@ The uri/restful key of this method is `/contest/{cid}/problem-list@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_ListContestProblem_cid -->
+    <!--beg l desc_ListContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `order`: [string](#string): 
-    <!--beg l desc_ListContestProblem_order -->
+    <!--beg l desc_ListContestProblem_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_ListContestProblem_page -->
+    <!--beg l desc_ListContestProblem_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_ListContestProblem_page_size -->
+    <!--beg l desc_ListContestProblem_params_page_size -->
     
     <!--end l-->
 
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_ListContestProblem_before_id -->
+    <!--beg l desc_ListContestProblem_params_before_id -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_ListContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [ListContestProblemReply](#ListContestProblemReply)
+    <!--beg l desc_ListContestProblem_response_200_[ListContestProblemReply](#ListContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_ListContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -164,41 +252,63 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-count@G
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_CountContestProblemDesc_cid -->
+    <!--beg l desc_CountContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_CountContestProblemDesc_pid -->
+    <!--beg l desc_CountContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `order`: [string](#string): 
-    <!--beg l desc_CountContestProblemDesc_order -->
+    <!--beg l desc_CountContestProblemDesc_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_CountContestProblemDesc_page -->
+    <!--beg l desc_CountContestProblemDesc_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_CountContestProblemDesc_page_size -->
+    <!--beg l desc_CountContestProblemDesc_params_page_size -->
     
     <!--end l-->
 
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_CountContestProblemDesc_before_id -->
+    <!--beg l desc_CountContestProblemDesc_params_before_id -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_CountContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [CountContestProblemDescReply](#CountContestProblemDescReply)
+    <!--beg l desc_CountContestProblemDesc_response_200_[CountContestProblemDescReply](#CountContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_CountContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -210,41 +320,63 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-list@GE
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_ListContestProblemDesc_cid -->
+    <!--beg l desc_ListContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_ListContestProblemDesc_pid -->
+    <!--beg l desc_ListContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `order`: [string](#string): 
-    <!--beg l desc_ListContestProblemDesc_order -->
+    <!--beg l desc_ListContestProblemDesc_params_order -->
     
     <!--end l-->
 
 
 + `page`: [integer](#integer): 
-    <!--beg l desc_ListContestProblemDesc_page -->
+    <!--beg l desc_ListContestProblemDesc_params_page -->
     
     <!--end l-->
 
 
 + `page_size`: [integer](#integer): 
-    <!--beg l desc_ListContestProblemDesc_page_size -->
+    <!--beg l desc_ListContestProblemDesc_params_page_size -->
     
     <!--end l-->
 
 
 + `before_id`: [integer](#integer): 
-    <!--beg l desc_ListContestProblemDesc_before_id -->
+    <!--beg l desc_ListContestProblemDesc_params_before_id -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_ListContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [ListContestProblemDescReply](#ListContestProblemDescReply)
+    <!--beg l desc_ListContestProblemDesc_response_200_[ListContestProblemDescReply](#ListContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_ListContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -256,23 +388,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc/ref@POS
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_ChangeContestProblemDescriptionRef_cid -->
+    <!--beg l desc_ChangeContestProblemDescriptionRef_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_ChangeContestProblemDescriptionRef_pid -->
+    <!--beg l desc_ChangeContestProblemDescriptionRef_params_pid -->
     
     <!--end l-->
 
 
 + `ChangeContestProblemDescriptionRefRequest`: [ChangeContestProblemDescriptionRefRequest](#ChangeContestProblemDescriptionRefRequest): 
-    <!--beg l desc_ChangeContestProblemDescriptionRef_ChangeContestProblemDescriptionRefRequest -->
+    <!--beg l desc_ChangeContestProblemDescriptionRef_params_ChangeContestProblemDescriptionRefRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_ChangeContestProblemDescriptionRef_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [ChangeContestProblemDescriptionRefReply](#ChangeContestProblemDescriptionRefReply)
+    <!--beg l desc_ChangeContestProblemDescriptionRef_response_200_[ChangeContestProblemDescriptionRefReply](#ChangeContestProblemDescriptionRefReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_ChangeContestProblemDescriptionRef_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -284,23 +438,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@DELETE`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_DeleteContestProblemDesc_cid -->
+    <!--beg l desc_DeleteContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_DeleteContestProblemDesc_pid -->
+    <!--beg l desc_DeleteContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `DeleteContestProblemDescRequest`: [DeleteContestProblemDescRequest](#DeleteContestProblemDescRequest): 
-    <!--beg l desc_DeleteContestProblemDesc_DeleteContestProblemDescRequest -->
+    <!--beg l desc_DeleteContestProblemDesc_params_DeleteContestProblemDescRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_DeleteContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [DeleteContestProblemDescReply](#DeleteContestProblemDescReply)
+    <!--beg l desc_DeleteContestProblemDesc_response_200_[DeleteContestProblemDescReply](#DeleteContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_DeleteContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -312,23 +488,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_GetContestProblemDesc_cid -->
+    <!--beg l desc_GetContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_GetContestProblemDesc_pid -->
+    <!--beg l desc_GetContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `name`: [string](#string): 
-    <!--beg l desc_GetContestProblemDesc_name -->
+    <!--beg l desc_GetContestProblemDesc_params_name -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_GetContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [GetContestProblemDescReply](#GetContestProblemDescReply)
+    <!--beg l desc_GetContestProblemDesc_response_200_[GetContestProblemDescReply](#GetContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_GetContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -340,23 +538,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@POST`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_PostContestProblemDesc_cid -->
+    <!--beg l desc_PostContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_PostContestProblemDesc_pid -->
+    <!--beg l desc_PostContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `PostContestProblemDescRequest`: [PostContestProblemDescRequest](#PostContestProblemDescRequest): 
-    <!--beg l desc_PostContestProblemDesc_PostContestProblemDescRequest -->
+    <!--beg l desc_PostContestProblemDesc_params_PostContestProblemDescRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PostContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PostContestProblemDescReply](#PostContestProblemDescReply)
+    <!--beg l desc_PostContestProblemDesc_response_200_[PostContestProblemDescReply](#PostContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PostContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -368,23 +588,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@PUT`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_PutContestProblemDesc_cid -->
+    <!--beg l desc_PutContestProblemDesc_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_PutContestProblemDesc_pid -->
+    <!--beg l desc_PutContestProblemDesc_params_pid -->
     
     <!--end l-->
 
 
 + `PutContestProblemDescRequest`: [PutContestProblemDescRequest](#PutContestProblemDescRequest): 
-    <!--beg l desc_PutContestProblemDesc_PutContestProblemDescRequest -->
+    <!--beg l desc_PutContestProblemDesc_params_PutContestProblemDescRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PutContestProblemDesc_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PutContestProblemDescReply](#PutContestProblemDescReply)
+    <!--beg l desc_PutContestProblemDesc_response_200_[PutContestProblemDescReply](#PutContestProblemDescReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PutContestProblemDesc_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -396,23 +638,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@DELETE`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_DeleteContestProblem_cid -->
+    <!--beg l desc_DeleteContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_DeleteContestProblem_pid -->
+    <!--beg l desc_DeleteContestProblem_params_pid -->
     
     <!--end l-->
 
 
 + `DeleteContestProblemRequest`: [DeleteContestProblemRequest](#DeleteContestProblemRequest): 
-    <!--beg l desc_DeleteContestProblem_DeleteContestProblemRequest -->
+    <!--beg l desc_DeleteContestProblem_params_DeleteContestProblemRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_DeleteContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [DeleteContestProblemReply](#DeleteContestProblemReply)
+    <!--beg l desc_DeleteContestProblem_response_200_[DeleteContestProblemReply](#DeleteContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_DeleteContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -424,17 +688,39 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_GetContestProblem_cid -->
+    <!--beg l desc_GetContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_GetContestProblem_pid -->
+    <!--beg l desc_GetContestProblem_params_pid -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_GetContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [GetContestProblemReply](#GetContestProblemReply)
+    <!--beg l desc_GetContestProblem_response_200_[GetContestProblemReply](#GetContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_GetContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -446,23 +732,45 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@PUT`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_PutContestProblem_cid -->
+    <!--beg l desc_PutContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `pid`: [string](#string) (required): 
-    <!--beg l desc_PutContestProblem_pid -->
+    <!--beg l desc_PutContestProblem_params_pid -->
     
     <!--end l-->
 
 
 + `PutContestProblemRequest`: [PutContestProblemRequest](#PutContestProblemRequest): 
-    <!--beg l desc_PutContestProblem_PutContestProblemRequest -->
+    <!--beg l desc_PutContestProblem_params_PutContestProblemRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PutContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PutContestProblemReply](#PutContestProblemReply)
+    <!--beg l desc_PutContestProblem_response_200_[PutContestProblemReply](#PutContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PutContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -474,17 +782,39 @@ The uri/restful key of this method is `/contest/{cid}/problem@POST`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_PostContestProblem_cid -->
+    <!--beg l desc_PostContestProblem_params_cid -->
     
     <!--end l-->
 
 
 + `PostContestProblemRequest`: [PostContestProblemRequest](#PostContestProblemRequest): 
-    <!--beg l desc_PostContestProblem_PostContestProblemRequest -->
+    <!--beg l desc_PostContestProblem_params_PostContestProblemRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PostContestProblem_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PostContestProblemReply](#PostContestProblemReply)
+    <!--beg l desc_PostContestProblem_response_200_[PostContestProblemReply](#PostContestProblemReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PostContestProblem_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -496,11 +826,33 @@ The uri/restful key of this method is `/contest/{cid}/user-list@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_ListContestUsers_cid -->
+    <!--beg l desc_ListContestUsers_params_cid -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_ListContestUsers_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [ListContestUsersReply](#ListContestUsersReply)
+    <!--beg l desc_ListContestUsers_response_200_[ListContestUsersReply](#ListContestUsersReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_ListContestUsers_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -512,17 +864,39 @@ The uri/restful key of this method is `/contest/{cid}@DELETE`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_DeleteContest_cid -->
+    <!--beg l desc_DeleteContest_params_cid -->
     
     <!--end l-->
 
 
 + `DeleteContestRequest`: [DeleteContestRequest](#DeleteContestRequest): 
-    <!--beg l desc_DeleteContest_DeleteContestRequest -->
+    <!--beg l desc_DeleteContest_params_DeleteContestRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_DeleteContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [DeleteContestReply](#DeleteContestReply)
+    <!--beg l desc_DeleteContest_response_200_[DeleteContestReply](#DeleteContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_DeleteContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -534,11 +908,33 @@ The uri/restful key of this method is `/contest/{cid}@GET`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_GetContest_cid -->
+    <!--beg l desc_GetContest_params_cid -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_GetContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [GetContestReply](#GetContestReply)
+    <!--beg l desc_GetContest_response_200_[GetContestReply](#GetContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_GetContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -550,17 +946,39 @@ The uri/restful key of this method is `/contest/{cid}@PUT`
 
 <!--end l-->
 
+parameters:
 
 + `cid`: [string](#string) (required): 
-    <!--beg l desc_PutContest_cid -->
+    <!--beg l desc_PutContest_params_cid -->
     
     <!--end l-->
 
 
 + `PutContestRequest`: [PutContestRequest](#PutContestRequest): 
-    <!--beg l desc_PutContest_PutContestRequest -->
+    <!--beg l desc_PutContest_params_PutContestRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PutContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PutContestReply](#PutContestReply)
+    <!--beg l desc_PutContest_response_200_[PutContestReply](#PutContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PutContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -572,11 +990,33 @@ The uri/restful key of this method is `/contest@POST`
 
 <!--end l-->
 
+parameters:
 
 + `PostContestRequest`: [PostContestRequest](#PostContestRequest): 
-    <!--beg l desc_PostContest_PostContestRequest -->
+    <!--beg l desc_PostContest_params_PostContestRequest -->
     
     <!--end l-->
+
+
+responses:
+
++ code: `200`, type: [genericResponse](#genericResponse)
+    <!--beg l desc_PostContest_response_200_[genericResponse](#genericResponse) -->
+    
+    <!--end l-->
+
+
++ code: `200`, type: [PostContestReply](#PostContestReply)
+    <!--beg l desc_PostContest_response_200_[PostContestReply](#PostContestReply) -->
+    
+    <!--end l-->
+
+
++ code: `500`, type: No Response
+    <!--beg l desc_PostContest_response_500_No Response -->
+    
+    <!--end l-->
+
 
 
 
@@ -585,6 +1025,130 @@ The uri/restful key of this method is `/contest@POST`
 
 
 
+### [genericResponse](./ObjectModelSpec.md#genericResponse)
+
++ type: [object](#genericResponse)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `error`: object: 
+        <!--beg l desc_{{object_name}}_error -->
+        
+        <!--end l-->
+
+    + `params`: object: 
+        <!--beg l desc_{{object_name}}_params -->
+        
+        <!--end l-->
+
+    
+### [CountContestReply](./ObjectModelSpec.md#CountContestReply)
+
++ type: [object](#CountContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [ListContestReply](./ObjectModelSpec.md#ListContestReply)
+
++ type: [object](#ListContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [CountContestProblemReply](./ObjectModelSpec.md#CountContestProblemReply)
+
++ type: [object](#CountContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [ListContestProblemReply](./ObjectModelSpec.md#ListContestProblemReply)
+
++ type: [object](#ListContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [CountContestProblemDescReply](./ObjectModelSpec.md#CountContestProblemDescReply)
+
++ type: [object](#CountContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: integer: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [ListContestProblemDescReply](./ObjectModelSpec.md#ListContestProblemDescReply)
+
++ type: [object](#ListContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
 ### [ChangeContestProblemDescriptionRefRequest](./ObjectModelSpec.md#ChangeContestProblemDescriptionRefRequest)
 
 + type: [object](#ChangeContestProblemDescriptionRefRequest)
@@ -602,6 +1166,18 @@ The uri/restful key of this method is `/contest@POST`
         <!--end l-->
 
     
+### [ChangeContestProblemDescriptionRefReply](./ObjectModelSpec.md#ChangeContestProblemDescriptionRefReply)
+
++ type: [object](#ChangeContestProblemDescriptionRefReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
 ### [DeleteContestProblemDescRequest](./ObjectModelSpec.md#DeleteContestProblemDescRequest)
 
 + type: [object](#DeleteContestProblemDescRequest)
@@ -610,6 +1186,35 @@ The uri/restful key of this method is `/contest@POST`
     
     + `name`: string: 
         <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    
+### [DeleteContestProblemDescReply](./ObjectModelSpec.md#DeleteContestProblemDescReply)
+
++ type: [object](#DeleteContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
+### [GetContestProblemDescReply](./ObjectModelSpec.md#GetContestProblemDescReply)
+
++ type: [object](#GetContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: string: 
+        <!--beg l desc_{{object_name}}_data -->
         
         <!--end l-->
 
@@ -631,6 +1236,18 @@ The uri/restful key of this method is `/contest@POST`
         <!--end l-->
 
     
+### [PostContestProblemDescReply](./ObjectModelSpec.md#PostContestProblemDescReply)
+
++ type: [object](#PostContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
 ### [PutContestProblemDescRequest](./ObjectModelSpec.md#PutContestProblemDescRequest)
 
 + type: [object](#PutContestProblemDescRequest)
@@ -648,12 +1265,53 @@ The uri/restful key of this method is `/contest@POST`
         <!--end l-->
 
     
+### [PutContestProblemDescReply](./ObjectModelSpec.md#PutContestProblemDescReply)
+
++ type: [object](#PutContestProblemDescReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
 ### [DeleteContestProblemRequest](./ObjectModelSpec.md#DeleteContestProblemRequest)
 
 + type: [object](#DeleteContestProblemRequest)
 
 + fields:
     
+    
+### [DeleteContestProblemReply](./ObjectModelSpec.md#DeleteContestProblemReply)
+
++ type: [object](#DeleteContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
+### [GetContestProblemReply](./ObjectModelSpec.md#GetContestProblemReply)
+
++ type: [object](#GetContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: : 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
     
 ### [PutContestProblemRequest](./ObjectModelSpec.md#PutContestProblemRequest)
 
@@ -668,6 +1326,18 @@ The uri/restful key of this method is `/contest@POST`
 
     + `title`: string: 
         <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [PutContestProblemReply](./ObjectModelSpec.md#PutContestProblemReply)
+
++ type: [object](#PutContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
         
         <!--end l-->
 
@@ -694,12 +1364,75 @@ The uri/restful key of this method is `/contest@POST`
         <!--end l-->
 
     
+### [PostContestProblemReply](./ObjectModelSpec.md#PostContestProblemReply)
+
++ type: [object](#PostContestProblemReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: : 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
+### [ListContestUsersReply](./ObjectModelSpec.md#ListContestUsersReply)
+
++ type: [object](#ListContestUsersReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: array: 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
+    
 ### [DeleteContestRequest](./ObjectModelSpec.md#DeleteContestRequest)
 
 + type: [object](#DeleteContestRequest)
 
 + fields:
     
+    
+### [DeleteContestReply](./ObjectModelSpec.md#DeleteContestReply)
+
++ type: [object](#DeleteContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
+### [GetContestReply](./ObjectModelSpec.md#GetContestReply)
+
++ type: [object](#GetContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: : 
+        <!--beg l desc_{{object_name}}_data -->
+        
+        <!--end l-->
+
     
 ### [PutContestRequest](./ObjectModelSpec.md#PutContestRequest)
 
@@ -743,6 +1476,18 @@ The uri/restful key of this method is `/contest@POST`
         <!--end l-->
 
     
+### [PutContestReply](./ObjectModelSpec.md#PutContestReply)
+
++ type: [object](#PutContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    
 ### [PostContestRequest](./ObjectModelSpec.md#PostContestRequest)
 
 + type: [object](#PostContestRequest)
@@ -771,6 +1516,23 @@ The uri/restful key of this method is `/contest@POST`
 
     + `title`: string: 
         <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [PostContestReply](./ObjectModelSpec.md#PostContestReply)
+
++ type: [object](#PostContestReply)
+
++ fields:
+    
+    + `code`: integer: 
+        <!--beg l desc_{{object_name}}_code -->
+        
+        <!--end l-->
+
+    + `data`: : 
+        <!--beg l desc_{{object_name}}_data -->
         
         <!--end l-->
 

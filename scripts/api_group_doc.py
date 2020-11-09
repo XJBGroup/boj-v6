@@ -16,10 +16,10 @@ class ApiGroupDocRenderer(object):
         docs = render.get_doc(
             self.template, list(map(doc_splitter, [
                 'group', 'group_body', 'group_params_body',
-                'local_object_reference', 'object', 'object_field', ]))
+                'local_object_reference', 'object', 'object_field', 'group_response_body']))
         )
         self.group_doc, self.group_body_doc, self.group_params_body_doc = docs[0:3]
-        self.local_object_reference_doc, self.object_doc, self.object_field_doc = docs[3:]
+        self.local_object_reference_doc, self.object_doc, self.object_field_doc, self.group_response_body_doc = docs[3:]
 
     def render(self, swagger, methods):
         for tag, items in methods.items():
@@ -88,9 +88,40 @@ class ApiGroupDocRenderer(object):
                         ['required', ' (required)' if raw_param.required else ''],
                         ['desc', raw_param.description or ''],
                     ]))
+        responses_body_parts = []
+        if path_item.item.responses:
+            for code, response_desc in path_item.item.responses.items():
+                if response_desc.schema and response_desc.schema.allOf:
+                    for sub_schema in response_desc.schema.allOf:
+                        assert sub_schema.ref.startswith('#/definitions/')
+                        ref = sub_schema.ref[len('#/definitions/'):]
+                        schema = swagger.definitions[ref]
+                        object_references[ref] = schema
+                        responses_body_parts.append(render.replace_meta_data_all(
+                            self.group_response_body_doc, [
+                                ['code', code],
+                                ['type', f'[{ref}](#{ref})'],
+                            ]
+                        ))
+                else:
+                    responses_body_parts.append(render.replace_meta_data_all(
+                        self.group_response_body_doc, [
+                            ['code', code],
+                            ['type', f'No Response'],
+                        ]
+                    ))
+        param_null_spec = ''
+        if len(params_body_parts) == 0:
+            param_null_spec = '\n+ the api does not have any input.'
+        response_null_spec = ''
+        if len(responses_body_parts) == 0:
+            response_null_spec = '\n+ the api does not have any response (or just return `{code: 0}`).'
         return render.replace_meta_data_all(
             self.group_body_doc, [
+                ['params_head', f'parameters:{param_null_spec}'],
                 ['params_body', ''.join(params_body_parts)],
+                ['response_head', f'responses:{response_null_spec}'],
+                ['response_body', ''.join(responses_body_parts)],
                 ['operationId', path_item.item.operationId],
                 ['key', path_item.key],
             ])
