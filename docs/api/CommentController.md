@@ -1,6 +1,10 @@
 
 # Api Group Documentation (CommentController)
 
+<!--beg l desc_CommentController -->
+
+<!--end l-->
+
 
 ## CountComment
 
@@ -145,6 +149,7 @@ The uri/restful key of this method is `/comment@POST`
     <!--beg l desc_PostComment_PostCommentRequest -->
     
     <!--end l-->
+
 
 
 

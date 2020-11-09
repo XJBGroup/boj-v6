@@ -1,6 +1,10 @@
 
 # Api Group Documentation (SubmissionController)
 
+<!--beg l desc_SubmissionController -->
+
+<!--end l-->
+
 
 ## PostSubmission
 
@@ -185,6 +189,7 @@ The uri/restful key of this method is `/submission/{sid}@GET`
     <!--beg l desc_GetSubmission_sid -->
     
     <!--end l-->
+
 
 
 

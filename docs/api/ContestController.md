@@ -1,6 +1,10 @@
 
 # Api Group Documentation (ContestController)
 
+<!--beg l desc_ContestController -->
+
+<!--end l-->
+
 
 ## CountContest
 
@@ -529,6 +533,7 @@ The uri/restful key of this method is `/contest@POST`
     <!--beg l desc_PostContest_PostContestRequest -->
     
     <!--end l-->
+
 
 
 

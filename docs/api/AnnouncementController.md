@@ -1,6 +1,10 @@
 
 # Api Group Documentation (AnnouncementController)
 
+<!--beg l desc_AnnouncementController -->
+
+<!--end l-->
+
 
 ## CountAnnouncement
 
@@ -39,7 +43,7 @@ The uri/restful key of this method is `/announcement-list@GET`
 The uri/restful key of this method is `/announcement/{aid}@DELETE`
 
 <!--beg l desc_DeleteAnnouncement -->
-[get](#GetAnnouncement)
+
 <!--end l-->
 
 
@@ -105,6 +109,7 @@ The uri/restful key of this method is `/announcement@POST`
     <!--beg l desc_PostAnnouncement_PostAnnouncementRequest -->
     
     <!--end l-->
+
 
 
 

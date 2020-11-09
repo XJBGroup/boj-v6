@@ -1,6 +1,10 @@
 
 # Api Group Documentation (GroupController)
 
+<!--beg l desc_GroupController -->
+
+<!--end l-->
+
 
 ## CountGroup
 
@@ -218,6 +222,7 @@ The uri/restful key of this method is `/group@POST`
     <!--beg l desc_PostGroup_PostGroupRequest -->
     
     <!--end l-->
+
 
 
 

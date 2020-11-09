@@ -1,6 +1,10 @@
 
 # Api Group Documentation (UserController)
 
+<!--beg l desc_UserController -->
+
+<!--end l-->
+
 
 ## CountUser
 
@@ -200,6 +204,7 @@ The uri/restful key of this method is `/user/{id}@PUT`
     <!--beg l desc_PutUser_PutUserRequest -->
     
     <!--end l-->
+
 
 
 

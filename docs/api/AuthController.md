@@ -1,6 +1,10 @@
 
 # Api Group Documentation (AuthController)
 
+<!--beg l desc_AuthController -->
+
+<!--end l-->
+
 
 ## RemoveGroupingPolicy
 
@@ -110,6 +114,7 @@ The uri/restful key of this method is `/policy@POST`
     <!--beg l desc_AddPolicy_AddPolicyRequest -->
     
     <!--end l-->
+
 
 
 

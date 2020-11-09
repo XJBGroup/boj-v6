@@ -1,6 +1,10 @@
 
 # Api Group Documentation (ProblemController)
 
+<!--beg l desc_ProblemController -->
+
+<!--end l-->
+
 
 ## CountProblem
 
@@ -585,6 +589,7 @@ The uri/restful key of this method is `/problem@POST`
     <!--beg l desc_PostProblem_PostProblemRequest -->
     
     <!--end l-->
+
 
 
 
