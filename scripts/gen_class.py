@@ -9,7 +9,7 @@ Swagger:
   swagger: str
   info: Info
   basePath: str
-  paths: Dict[str, PathItem]
+  paths: Dict[str, Dict[str, PathItem]]
 ------
 Info:
   description: str
@@ -25,6 +25,7 @@ PathItem:
   responses: Dict[str, ResponseDesc]
 ------
 Parameter:
+  type: str
   description: str
   name: str
   in: str
@@ -38,7 +39,7 @@ ResponseDesc:
 ------
 Schema:
   id: str
-  ref: str
+  ref, $ref: str
   schemaUrl: str
   description: str
   type: Union[str, List[str]]
@@ -228,7 +229,7 @@ class DictTypeAnnotation(object):
         return dph
 
 
-basic_type = ['str', 'list', 'int', 'float', 'dict', 'bool']
+basic_type = ['str', 'list', 'int', 'float', 'dict', 'bool', 'object']
 
 
 class DefaultAnnotationOperation(object):
@@ -247,6 +248,8 @@ class DefaultAnnotationOperation(object):
     def as_dict_constructor_ph(self, dk):
         if self.python_type == 'any':
             return [f'g_a_cpc_x = {self.type_str}.from_dict({dk})']
+        if self.python_type == 'object':
+            return [f'g_a_cpc_x = {dk}']
         return [f'g_a_cpc_x = {self.type_str}({dk})']
 
 
@@ -300,8 +303,9 @@ python_keys = ['and', 'as', 'assert', 'break', 'class', 'continue', 'def',
 
 
 class Prop(object):
-    def __init__(self, dict_field, t, type_str):
+    def __init__(self, dict_field, field_name, t, type_str):
         self.dict_field = dict_field
+        self.field_name = field_name
         self.t = t
         self.type_str = type_str
 
@@ -334,7 +338,12 @@ if __name__ == '__main__':
             if len(spec_item) == 0:
                 continue
             k, v = map(lambda x: x.strip(), spec_item.split(':', 1))
-            prop = Prop(k, TypeAnnotation.from_str(v), v)
+
+            if ',' in k:
+                k, fn = map(lambda x: x.strip(), k.split(','))
+            else:
+                fn = k
+            prop = Prop(k, fn, TypeAnnotation.from_str(v), v)
             if k in python_keys:
                 prop.dict_field = k + '_'
             class_props[k] = prop
@@ -378,8 +387,9 @@ if __name__ == '__main__':
         ])
         for k, v in class_props.items():
             # it is Optional[T]
-            body.append(f"ci.{v.dict_field} = getting = d.get('{k}', None)")
+            body.append(f"ci.{v.dict_field} = getting = d.get('{v.field_name}', None)")
             ib = create_if(body, 'getting is not None')
+            ib.append('g_a_cpc_x = None')
             ph = v.t.as_dict_constructor_ph('getting')
             if ph:
                 ib.extend(ph)
