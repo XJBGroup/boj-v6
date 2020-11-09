@@ -5,8 +5,10 @@
 
 <!--end l-->
 
+## Apis
 
-## CountContest
+
+### CountContest
 
 The uri/restful key of this method is `/contest-count@GET`
 
@@ -15,29 +17,32 @@ The uri/restful key of this method is `/contest-count@GET`
 <!--end l-->
 
 
-+ `before_id`: `integer`: 
++ `before_id`: [integer](#integer): 
     <!--beg l desc_CountContest_before_id -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_CountContest_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_CountContest_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_CountContest_page_size -->
     
     <!--end l-->
 
 
 
-## ListContest
+### ListContest
 
 The uri/restful key of this method is `/contest-list@GET`
 
@@ -46,29 +51,32 @@ The uri/restful key of this method is `/contest-list@GET`
 <!--end l-->
 
 
-+ `order`: `string`: 
++ `order`: [string](#string): 
     <!--beg l desc_ListContest_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_ListContest_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_ListContest_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_ListContest_before_id -->
     
     <!--end l-->
 
 
 
-## CountContestProblem
+### CountContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem-count@GET`
 
@@ -77,34 +85,38 @@ The uri/restful key of this method is `/contest/{cid}/problem-count@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_CountContestProblem_cid -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_CountContestProblem_before_id -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_CountContestProblem_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_CountContestProblem_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_CountContestProblem_page_size -->
     
     <!--end l-->
 
 
 
-## ListContestProblem
+### ListContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem-list@GET`
 
@@ -113,34 +125,38 @@ The uri/restful key of this method is `/contest/{cid}/problem-list@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_ListContestProblem_cid -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_ListContestProblem_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_ListContestProblem_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_ListContestProblem_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_ListContestProblem_before_id -->
     
     <!--end l-->
 
 
 
-## CountContestProblemDesc
+### CountContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-count@GET`
 
@@ -149,39 +165,44 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-count@G
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_CountContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_CountContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_CountContestProblemDesc_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_CountContestProblemDesc_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_CountContestProblemDesc_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_CountContestProblemDesc_before_id -->
     
     <!--end l-->
 
 
 
-## ListContestProblemDesc
+### ListContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-list@GET`
 
@@ -190,39 +211,44 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc-list@GE
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_ListContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_ListContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_ListContestProblemDesc_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_ListContestProblemDesc_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_ListContestProblemDesc_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_ListContestProblemDesc_before_id -->
     
     <!--end l-->
 
 
 
-## ChangeContestProblemDescriptionRef
+### ChangeContestProblemDescriptionRef
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc/ref@POST`
 
@@ -231,24 +257,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc/ref@POS
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_ChangeContestProblemDescriptionRef_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_ChangeContestProblemDescriptionRef_pid -->
     
     <!--end l-->
 
-+ `ChangeContestProblemDescriptionRefRequest`: `any`: 
+
++ `ChangeContestProblemDescriptionRefRequest`: [ChangeContestProblemDescriptionRefRequest](#ChangeContestProblemDescriptionRefRequest): 
     <!--beg l desc_ChangeContestProblemDescriptionRef_ChangeContestProblemDescriptionRefRequest -->
     
     <!--end l-->
 
 
 
-## DeleteContestProblemDesc
+### DeleteContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@DELETE`
 
@@ -257,24 +285,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@DELETE`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_DeleteContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_DeleteContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `DeleteContestProblemDescRequest`: `any`: 
+
++ `DeleteContestProblemDescRequest`: [DeleteContestProblemDescRequest](#DeleteContestProblemDescRequest): 
     <!--beg l desc_DeleteContestProblemDesc_DeleteContestProblemDescRequest -->
     
     <!--end l-->
 
 
 
-## GetContestProblemDesc
+### GetContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@GET`
 
@@ -283,24 +313,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_GetContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_GetContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `name`: `string`: 
+
++ `name`: [string](#string): 
     <!--beg l desc_GetContestProblemDesc_name -->
     
     <!--end l-->
 
 
 
-## PostContestProblemDesc
+### PostContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@POST`
 
@@ -309,24 +341,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@POST`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_PostContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_PostContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `PostContestProblemDescRequest`: `any`: 
+
++ `PostContestProblemDescRequest`: [PostContestProblemDescRequest](#PostContestProblemDescRequest): 
     <!--beg l desc_PostContestProblemDesc_PostContestProblemDescRequest -->
     
     <!--end l-->
 
 
 
-## PutContestProblemDesc
+### PutContestProblemDesc
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@PUT`
 
@@ -335,24 +369,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}/desc@PUT`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_PutContestProblemDesc_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_PutContestProblemDesc_pid -->
     
     <!--end l-->
 
-+ `PutContestProblemDescRequest`: `any`: 
+
++ `PutContestProblemDescRequest`: [PutContestProblemDescRequest](#PutContestProblemDescRequest): 
     <!--beg l desc_PutContestProblemDesc_PutContestProblemDescRequest -->
     
     <!--end l-->
 
 
 
-## DeleteContestProblem
+### DeleteContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}@DELETE`
 
@@ -361,24 +397,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@DELETE`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_DeleteContestProblem_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_DeleteContestProblem_pid -->
     
     <!--end l-->
 
-+ `DeleteContestProblemRequest`: `any`: 
+
++ `DeleteContestProblemRequest`: [DeleteContestProblemRequest](#DeleteContestProblemRequest): 
     <!--beg l desc_DeleteContestProblem_DeleteContestProblemRequest -->
     
     <!--end l-->
 
 
 
-## GetContestProblem
+### GetContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}@GET`
 
@@ -387,19 +425,20 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_GetContestProblem_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_GetContestProblem_pid -->
     
     <!--end l-->
 
 
 
-## PutContestProblem
+### PutContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem/{pid}@PUT`
 
@@ -408,24 +447,26 @@ The uri/restful key of this method is `/contest/{cid}/problem/{pid}@PUT`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_PutContestProblem_cid -->
     
     <!--end l-->
 
-+ `pid`: `string` (required): 
+
++ `pid`: [string](#string) (required): 
     <!--beg l desc_PutContestProblem_pid -->
     
     <!--end l-->
 
-+ `PutContestProblemRequest`: `any`: 
+
++ `PutContestProblemRequest`: [PutContestProblemRequest](#PutContestProblemRequest): 
     <!--beg l desc_PutContestProblem_PutContestProblemRequest -->
     
     <!--end l-->
 
 
 
-## PostContestProblem
+### PostContestProblem
 
 The uri/restful key of this method is `/contest/{cid}/problem@POST`
 
@@ -434,19 +475,20 @@ The uri/restful key of this method is `/contest/{cid}/problem@POST`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_PostContestProblem_cid -->
     
     <!--end l-->
 
-+ `PostContestProblemRequest`: `any`: 
+
++ `PostContestProblemRequest`: [PostContestProblemRequest](#PostContestProblemRequest): 
     <!--beg l desc_PostContestProblem_PostContestProblemRequest -->
     
     <!--end l-->
 
 
 
-## ListContestUsers
+### ListContestUsers
 
 The uri/restful key of this method is `/contest/{cid}/user-list@GET`
 
@@ -455,14 +497,14 @@ The uri/restful key of this method is `/contest/{cid}/user-list@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_ListContestUsers_cid -->
     
     <!--end l-->
 
 
 
-## DeleteContest
+### DeleteContest
 
 The uri/restful key of this method is `/contest/{cid}@DELETE`
 
@@ -471,19 +513,20 @@ The uri/restful key of this method is `/contest/{cid}@DELETE`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_DeleteContest_cid -->
     
     <!--end l-->
 
-+ `DeleteContestRequest`: `any`: 
+
++ `DeleteContestRequest`: [DeleteContestRequest](#DeleteContestRequest): 
     <!--beg l desc_DeleteContest_DeleteContestRequest -->
     
     <!--end l-->
 
 
 
-## GetContest
+### GetContest
 
 The uri/restful key of this method is `/contest/{cid}@GET`
 
@@ -492,14 +535,14 @@ The uri/restful key of this method is `/contest/{cid}@GET`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_GetContest_cid -->
     
     <!--end l-->
 
 
 
-## PutContest
+### PutContest
 
 The uri/restful key of this method is `/contest/{cid}@PUT`
 
@@ -508,19 +551,20 @@ The uri/restful key of this method is `/contest/{cid}@PUT`
 <!--end l-->
 
 
-+ `cid`: `string` (required): 
++ `cid`: [string](#string) (required): 
     <!--beg l desc_PutContest_cid -->
     
     <!--end l-->
 
-+ `PutContestRequest`: `any`: 
+
++ `PutContestRequest`: [PutContestRequest](#PutContestRequest): 
     <!--beg l desc_PutContest_PutContestRequest -->
     
     <!--end l-->
 
 
 
-## PostContest
+### PostContest
 
 The uri/restful key of this method is `/contest@POST`
 
@@ -529,11 +573,206 @@ The uri/restful key of this method is `/contest@POST`
 <!--end l-->
 
 
-+ `PostContestRequest`: `any`: 
++ `PostContestRequest`: [PostContestRequest](#PostContestRequest): 
     <!--beg l desc_PostContest_PostContestRequest -->
     
     <!--end l-->
 
 
 
+## Local Object Reference
+
+
+
+
+### [ChangeContestProblemDescriptionRefRequest](./ObjectModelSpec.md#ChangeContestProblemDescriptionRefRequest)
+
++ type: [object](#ChangeContestProblemDescriptionRefRequest)
+
++ fields:
+    
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    + `new_name`: string: 
+        <!--beg l desc_{{object_name}}_new_name -->
+        
+        <!--end l-->
+
+    
+### [DeleteContestProblemDescRequest](./ObjectModelSpec.md#DeleteContestProblemDescRequest)
+
++ type: [object](#DeleteContestProblemDescRequest)
+
++ fields:
+    
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    
+### [PostContestProblemDescRequest](./ObjectModelSpec.md#PostContestProblemDescRequest)
+
++ type: [object](#PostContestProblemDescRequest)
+
++ fields:
+    
+    + `content`: string: 
+        <!--beg l desc_{{object_name}}_content -->
+        
+        <!--end l-->
+
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    
+### [PutContestProblemDescRequest](./ObjectModelSpec.md#PutContestProblemDescRequest)
+
++ type: [object](#PutContestProblemDescRequest)
+
++ fields:
+    
+    + `content`: string: 
+        <!--beg l desc_{{object_name}}_content -->
+        
+        <!--end l-->
+
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    
+### [DeleteContestProblemRequest](./ObjectModelSpec.md#DeleteContestProblemRequest)
+
++ type: [object](#DeleteContestProblemRequest)
+
++ fields:
+    
+    
+### [PutContestProblemRequest](./ObjectModelSpec.md#PutContestProblemRequest)
+
++ type: [object](#PutContestProblemRequest)
+
++ fields:
+    
+    + `description_ref`: string: 
+        <!--beg l desc_{{object_name}}_description_ref -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [PostContestProblemRequest](./ObjectModelSpec.md#PostContestProblemRequest)
+
++ type: [object](#PostContestProblemRequest)
+
++ fields:
+    
+    + `config`: : 
+        <!--beg l desc_{{object_name}}_config -->
+        
+        <!--end l-->
+
+    + `description`: string: 
+        <!--beg l desc_{{object_name}}_description -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [DeleteContestRequest](./ObjectModelSpec.md#DeleteContestRequest)
+
++ type: [object](#DeleteContestRequest)
+
++ fields:
+    
+    
+### [PutContestRequest](./ObjectModelSpec.md#PutContestRequest)
+
++ type: [object](#PutContestRequest)
+
++ fields:
+    
+    + `board_frozen_duration`: integer: 
+        <!--beg l desc_{{object_name}}_board_frozen_duration -->
+        
+        <!--end l-->
+
+    + `config_path`: string: 
+        <!--beg l desc_{{object_name}}_config_path -->
+        
+        <!--end l-->
+
+    + `description`: string: 
+        <!--beg l desc_{{object_name}}_description -->
+        
+        <!--end l-->
+
+    + `end_duration`: integer: 
+        <!--beg l desc_{{object_name}}_end_duration -->
+        
+        <!--end l-->
+
+    + `role_path`: string: 
+        <!--beg l desc_{{object_name}}_role_path -->
+        
+        <!--end l-->
+
+    + `start_at`: string: 
+        <!--beg l desc_{{object_name}}_start_at -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [PostContestRequest](./ObjectModelSpec.md#PostContestRequest)
+
++ type: [object](#PostContestRequest)
+
++ fields:
+    
+    + `board_frozen_duration`: integer: 
+        <!--beg l desc_{{object_name}}_board_frozen_duration -->
+        
+        <!--end l-->
+
+    + `description`: string: 
+        <!--beg l desc_{{object_name}}_description -->
+        
+        <!--end l-->
+
+    + `end_duration`: integer: 
+        <!--beg l desc_{{object_name}}_end_duration -->
+        
+        <!--end l-->
+
+    + `start_at`: string: 
+        <!--beg l desc_{{object_name}}_start_at -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
 

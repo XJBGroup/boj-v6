@@ -5,8 +5,10 @@
 
 <!--end l-->
 
+## Apis
 
-## CountGroup
+
+### CountGroup
 
 The uri/restful key of this method is `/group-count@GET`
 
@@ -15,29 +17,32 @@ The uri/restful key of this method is `/group-count@GET`
 <!--end l-->
 
 
-+ `order`: `string`: 
++ `order`: [string](#string): 
     <!--beg l desc_CountGroup_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_CountGroup_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_CountGroup_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_CountGroup_before_id -->
     
     <!--end l-->
 
 
 
-## ListGroup
+### ListGroup
 
 The uri/restful key of this method is `/group-list@GET`
 
@@ -46,29 +51,32 @@ The uri/restful key of this method is `/group-list@GET`
 <!--end l-->
 
 
-+ `before_id`: `integer`: 
++ `before_id`: [integer](#integer): 
     <!--beg l desc_ListGroup_before_id -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_ListGroup_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_ListGroup_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_ListGroup_page_size -->
     
     <!--end l-->
 
 
 
-## PutGroupOwner
+### PutGroupOwner
 
 The uri/restful key of this method is `/group/{gid}/owner@PUT`
 
@@ -77,19 +85,20 @@ The uri/restful key of this method is `/group/{gid}/owner@PUT`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_PutGroupOwner_gid -->
     
     <!--end l-->
 
-+ `PutGroupOwnerRequest`: `any`: 
+
++ `PutGroupOwnerRequest`: [PutGroupOwnerRequest](#PutGroupOwnerRequest): 
     <!--beg l desc_PutGroupOwner_PutGroupOwnerRequest -->
     
     <!--end l-->
 
 
 
-## GetGroupMembers
+### GetGroupMembers
 
 The uri/restful key of this method is `/group/{gid}/user-list@GET`
 
@@ -98,34 +107,38 @@ The uri/restful key of this method is `/group/{gid}/user-list@GET`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_GetGroupMembers_gid -->
     
     <!--end l-->
 
-+ `order`: `string`: 
+
++ `order`: [string](#string): 
     <!--beg l desc_GetGroupMembers_order -->
     
     <!--end l-->
 
-+ `page`: `integer`: 
+
++ `page`: [integer](#integer): 
     <!--beg l desc_GetGroupMembers_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_GetGroupMembers_page_size -->
     
     <!--end l-->
 
-+ `before_id`: `integer`: 
+
++ `before_id`: [integer](#integer): 
     <!--beg l desc_GetGroupMembers_before_id -->
     
     <!--end l-->
 
 
 
-## PostGroupMember
+### PostGroupMember
 
 The uri/restful key of this method is `/group/{gid}/user/{id}@POST`
 
@@ -134,24 +147,26 @@ The uri/restful key of this method is `/group/{gid}/user/{id}@POST`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_PostGroupMember_gid -->
     
     <!--end l-->
 
-+ `id`: `string` (required): 
+
++ `id`: [string](#string) (required): 
     <!--beg l desc_PostGroupMember_id -->
     
     <!--end l-->
 
-+ `PostGroupMemberRequest`: `any`: 
+
++ `PostGroupMemberRequest`: [PostGroupMemberRequest](#PostGroupMemberRequest): 
     <!--beg l desc_PostGroupMember_PostGroupMemberRequest -->
     
     <!--end l-->
 
 
 
-## DeleteGroup
+### DeleteGroup
 
 The uri/restful key of this method is `/group/{gid}@DELETE`
 
@@ -160,19 +175,20 @@ The uri/restful key of this method is `/group/{gid}@DELETE`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_DeleteGroup_gid -->
     
     <!--end l-->
 
-+ `DeleteGroupRequest`: `any`: 
+
++ `DeleteGroupRequest`: [DeleteGroupRequest](#DeleteGroupRequest): 
     <!--beg l desc_DeleteGroup_DeleteGroupRequest -->
     
     <!--end l-->
 
 
 
-## GetGroup
+### GetGroup
 
 The uri/restful key of this method is `/group/{gid}@GET`
 
@@ -181,14 +197,14 @@ The uri/restful key of this method is `/group/{gid}@GET`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_GetGroup_gid -->
     
     <!--end l-->
 
 
 
-## PutGroup
+### PutGroup
 
 The uri/restful key of this method is `/group/{gid}@PUT`
 
@@ -197,19 +213,20 @@ The uri/restful key of this method is `/group/{gid}@PUT`
 <!--end l-->
 
 
-+ `gid`: `string` (required): 
++ `gid`: [string](#string) (required): 
     <!--beg l desc_PutGroup_gid -->
     
     <!--end l-->
 
-+ `PutGroupRequest`: `any`: 
+
++ `PutGroupRequest`: [PutGroupRequest](#PutGroupRequest): 
     <!--beg l desc_PutGroup_PutGroupRequest -->
     
     <!--end l-->
 
 
 
-## PostGroup
+### PostGroup
 
 The uri/restful key of this method is `/group@POST`
 
@@ -218,11 +235,86 @@ The uri/restful key of this method is `/group@POST`
 <!--end l-->
 
 
-+ `PostGroupRequest`: `any`: 
++ `PostGroupRequest`: [PostGroupRequest](#PostGroupRequest): 
     <!--beg l desc_PostGroup_PostGroupRequest -->
     
     <!--end l-->
 
 
 
+## Local Object Reference
+
+
+
+
+### [PutGroupOwnerRequest](./ObjectModelSpec.md#PutGroupOwnerRequest)
+
++ type: [object](#PutGroupOwnerRequest)
+
++ fields:
+    
+    + `owner_id`: integer: 
+        <!--beg l desc_{{object_name}}_owner_id -->
+        
+        <!--end l-->
+
+    
+### [PostGroupMemberRequest](./ObjectModelSpec.md#PostGroupMemberRequest)
+
++ type: [object](#PostGroupMemberRequest)
+
++ fields:
+    
+    
+### [DeleteGroupRequest](./ObjectModelSpec.md#DeleteGroupRequest)
+
++ type: [object](#DeleteGroupRequest)
+
++ fields:
+    
+    
+### [PutGroupRequest](./ObjectModelSpec.md#PutGroupRequest)
+
++ type: [object](#PutGroupRequest)
+
++ fields:
+    
+    + `description`: string: 
+        <!--beg l desc_{{object_name}}_description -->
+        
+        <!--end l-->
+
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    
+### [PostGroupRequest](./ObjectModelSpec.md#PostGroupRequest)
+
++ type: [object](#PostGroupRequest)
+
++ fields:
+    
+    + `description`: string: 
+        <!--beg l desc_{{object_name}}_description -->
+        
+        <!--end l-->
+
+    + `name`: string: 
+        <!--beg l desc_{{object_name}}_name -->
+        
+        <!--end l-->
+
+    + `owner_id`: integer: 
+        <!--beg l desc_{{object_name}}_owner_id -->
+        
+        <!--end l-->
+
+    + `owner_name`: string: 
+        <!--beg l desc_{{object_name}}_owner_name -->
+        
+        <!--end l-->
+
+    
 

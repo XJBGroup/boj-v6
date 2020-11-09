@@ -5,8 +5,10 @@
 
 <!--end l-->
 
+## Apis
 
-## CountAnnouncement
+
+### CountAnnouncement
 
 The uri/restful key of this method is `/announcement-count@GET`
 
@@ -16,8 +18,7 @@ The uri/restful key of this method is `/announcement-count@GET`
 
 
 
-
-## ListAnnouncement
+### ListAnnouncement
 
 The uri/restful key of this method is `/announcement-list@GET`
 
@@ -26,19 +27,20 @@ The uri/restful key of this method is `/announcement-list@GET`
 <!--end l-->
 
 
-+ `page`: `integer`: 
++ `page`: [integer](#integer): 
     <!--beg l desc_ListAnnouncement_page -->
     
     <!--end l-->
 
-+ `page_size`: `integer`: 
+
++ `page_size`: [integer](#integer): 
     <!--beg l desc_ListAnnouncement_page_size -->
     
     <!--end l-->
 
 
 
-## DeleteAnnouncement
+### DeleteAnnouncement
 
 The uri/restful key of this method is `/announcement/{aid}@DELETE`
 
@@ -47,19 +49,20 @@ The uri/restful key of this method is `/announcement/{aid}@DELETE`
 <!--end l-->
 
 
-+ `aid`: `string` (required): 
++ `aid`: [string](#string) (required): 
     <!--beg l desc_DeleteAnnouncement_aid -->
     
     <!--end l-->
 
-+ `DeleteAnnouncementRequest`: `any`: 
+
++ `DeleteAnnouncementRequest`: [DeleteAnnouncementRequest](#DeleteAnnouncementRequest): 
     <!--beg l desc_DeleteAnnouncement_DeleteAnnouncementRequest -->
     
     <!--end l-->
 
 
 
-## GetAnnouncement
+### GetAnnouncement
 
 The uri/restful key of this method is `/announcement/{aid}@GET`
 
@@ -68,14 +71,14 @@ The uri/restful key of this method is `/announcement/{aid}@GET`
 <!--end l-->
 
 
-+ `aid`: `string` (required): 
++ `aid`: [string](#string) (required): 
     <!--beg l desc_GetAnnouncement_aid -->
     
     <!--end l-->
 
 
 
-## PutAnnouncement
+### PutAnnouncement
 
 The uri/restful key of this method is `/announcement/{aid}@PUT`
 
@@ -84,19 +87,20 @@ The uri/restful key of this method is `/announcement/{aid}@PUT`
 <!--end l-->
 
 
-+ `aid`: `string` (required): 
++ `aid`: [string](#string) (required): 
     <!--beg l desc_PutAnnouncement_aid -->
     
     <!--end l-->
 
-+ `PutAnnouncementRequest`: `any`: 
+
++ `PutAnnouncementRequest`: [PutAnnouncementRequest](#PutAnnouncementRequest): 
     <!--beg l desc_PutAnnouncement_PutAnnouncementRequest -->
     
     <!--end l-->
 
 
 
-## PostAnnouncement
+### PostAnnouncement
 
 The uri/restful key of this method is `/announcement@POST`
 
@@ -105,11 +109,57 @@ The uri/restful key of this method is `/announcement@POST`
 <!--end l-->
 
 
-+ `PostAnnouncementRequest`: `any`: 
++ `PostAnnouncementRequest`: [PostAnnouncementRequest](#PostAnnouncementRequest): 
     <!--beg l desc_PostAnnouncement_PostAnnouncementRequest -->
     
     <!--end l-->
 
 
 
+## Local Object Reference
+
+
+
+
+### [DeleteAnnouncementRequest](./ObjectModelSpec.md#DeleteAnnouncementRequest)
+
++ type: [object](#DeleteAnnouncementRequest)
+
++ fields:
+    
+    
+### [PutAnnouncementRequest](./ObjectModelSpec.md#PutAnnouncementRequest)
+
++ type: [object](#PutAnnouncementRequest)
+
++ fields:
+    
+    + `content`: string: 
+        <!--beg l desc_{{object_name}}_content -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
+### [PostAnnouncementRequest](./ObjectModelSpec.md#PostAnnouncementRequest)
+
++ type: [object](#PostAnnouncementRequest)
+
++ fields:
+    
+    + `content`: string: 
+        <!--beg l desc_{{object_name}}_content -->
+        
+        <!--end l-->
+
+    + `title`: string: 
+        <!--beg l desc_{{object_name}}_title -->
+        
+        <!--end l-->
+
+    
 

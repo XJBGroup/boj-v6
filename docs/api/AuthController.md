@@ -5,8 +5,10 @@
 
 <!--end l-->
 
+## Apis
 
-## RemoveGroupingPolicy
+
+### RemoveGroupingPolicy
 
 The uri/restful key of this method is `/policy/group@DELETE`
 
@@ -15,14 +17,14 @@ The uri/restful key of this method is `/policy/group@DELETE`
 <!--end l-->
 
 
-+ `RemoveGroupingPolicyRequest`: `any`: 
++ `RemoveGroupingPolicyRequest`: [RemoveGroupingPolicyRequest](#RemoveGroupingPolicyRequest): 
     <!--beg l desc_RemoveGroupingPolicy_RemoveGroupingPolicyRequest -->
     
     <!--end l-->
 
 
 
-## HasGroupingPolicy
+### HasGroupingPolicy
 
 The uri/restful key of this method is `/policy/group@GET`
 
@@ -31,19 +33,20 @@ The uri/restful key of this method is `/policy/group@GET`
 <!--end l-->
 
 
-+ `subject`: `string`: 
++ `subject`: [string](#string): 
     <!--beg l desc_HasGroupingPolicy_subject -->
     
     <!--end l-->
 
-+ `group`: `string`: 
+
++ `group`: [string](#string): 
     <!--beg l desc_HasGroupingPolicy_group -->
     
     <!--end l-->
 
 
 
-## AddGroupingPolicy
+### AddGroupingPolicy
 
 The uri/restful key of this method is `/policy/group@POST`
 
@@ -52,14 +55,14 @@ The uri/restful key of this method is `/policy/group@POST`
 <!--end l-->
 
 
-+ `AddGroupingPolicyRequest`: `any`: 
++ `AddGroupingPolicyRequest`: [AddGroupingPolicyRequest](#AddGroupingPolicyRequest): 
     <!--beg l desc_AddGroupingPolicy_AddGroupingPolicyRequest -->
     
     <!--end l-->
 
 
 
-## RemovePolicy
+### RemovePolicy
 
 The uri/restful key of this method is `/policy@DELETE`
 
@@ -68,14 +71,14 @@ The uri/restful key of this method is `/policy@DELETE`
 <!--end l-->
 
 
-+ `RemovePolicyRequest`: `any`: 
++ `RemovePolicyRequest`: [RemovePolicyRequest](#RemovePolicyRequest): 
     <!--beg l desc_RemovePolicy_RemovePolicyRequest -->
     
     <!--end l-->
 
 
 
-## HasPolicy
+### HasPolicy
 
 The uri/restful key of this method is `/policy@GET`
 
@@ -84,24 +87,26 @@ The uri/restful key of this method is `/policy@GET`
 <!--end l-->
 
 
-+ `subject`: `string`: 
++ `subject`: [string](#string): 
     <!--beg l desc_HasPolicy_subject -->
     
     <!--end l-->
 
-+ `object`: `string`: 
+
++ `object`: [string](#string): 
     <!--beg l desc_HasPolicy_object -->
     
     <!--end l-->
 
-+ `action`: `string`: 
+
++ `action`: [string](#string): 
     <!--beg l desc_HasPolicy_action -->
     
     <!--end l-->
 
 
 
-## AddPolicy
+### AddPolicy
 
 The uri/restful key of this method is `/policy@POST`
 
@@ -110,11 +115,94 @@ The uri/restful key of this method is `/policy@POST`
 <!--end l-->
 
 
-+ `AddPolicyRequest`: `any`: 
++ `AddPolicyRequest`: [AddPolicyRequest](#AddPolicyRequest): 
     <!--beg l desc_AddPolicy_AddPolicyRequest -->
     
     <!--end l-->
 
 
 
+## Local Object Reference
+
+
+
+
+### [RemoveGroupingPolicyRequest](./ObjectModelSpec.md#RemoveGroupingPolicyRequest)
+
++ type: [object](#RemoveGroupingPolicyRequest)
+
++ fields:
+    
+    + `group`: string: 
+        <!--beg l desc_{{object_name}}_group -->
+        
+        <!--end l-->
+
+    + `subject`: string: 
+        <!--beg l desc_{{object_name}}_subject -->
+        
+        <!--end l-->
+
+    
+### [AddGroupingPolicyRequest](./ObjectModelSpec.md#AddGroupingPolicyRequest)
+
++ type: [object](#AddGroupingPolicyRequest)
+
++ fields:
+    
+    + `group`: string: 
+        <!--beg l desc_{{object_name}}_group -->
+        
+        <!--end l-->
+
+    + `subject`: string: 
+        <!--beg l desc_{{object_name}}_subject -->
+        
+        <!--end l-->
+
+    
+### [RemovePolicyRequest](./ObjectModelSpec.md#RemovePolicyRequest)
+
++ type: [object](#RemovePolicyRequest)
+
++ fields:
+    
+    + `action`: string: 
+        <!--beg l desc_{{object_name}}_action -->
+        
+        <!--end l-->
+
+    + `object`: string: 
+        <!--beg l desc_{{object_name}}_object -->
+        
+        <!--end l-->
+
+    + `subject`: string: 
+        <!--beg l desc_{{object_name}}_subject -->
+        
+        <!--end l-->
+
+    
+### [AddPolicyRequest](./ObjectModelSpec.md#AddPolicyRequest)
+
++ type: [object](#AddPolicyRequest)
+
++ fields:
+    
+    + `action`: string: 
+        <!--beg l desc_{{object_name}}_action -->
+        
+        <!--end l-->
+
+    + `object`: string: 
+        <!--beg l desc_{{object_name}}_object -->
+        
+        <!--end l-->
+
+    + `subject`: string: 
+        <!--beg l desc_{{object_name}}_subject -->
+        
+        <!--end l-->
+
+    
 

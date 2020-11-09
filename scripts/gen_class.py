@@ -10,6 +10,7 @@ Swagger:
   info: Info
   basePath: str
   paths: Dict[str, Dict[str, PathItem]]
+  definitions: Dict[str, Schema]
 ------
 Info:
   description: str

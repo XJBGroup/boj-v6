@@ -24,7 +24,7 @@ if __name__ == '__main__':
             list_ref.append(MethodDesc(k, m, v_item))
 
     # generate api documentation
-    ApiGroupDocRenderer().render(methods)
+    ApiGroupDocRenderer().render(swagger, methods)
 
     # generate api documentation
     ApiSpecDoc().render(methods)
