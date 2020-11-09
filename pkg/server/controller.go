@@ -46,7 +46,7 @@ func (srv *Server) PrepareService() bool {
 			functional.Decay(announcement.NewController(srv.Module))},
 		{"CommentController", new(*comment.Controller),
 			functional.Decay(comment.NewController(srv.Module))},
-		{"Controller", new(*submission.Controller),
+		{"SubmissionController", new(*submission.Controller),
 			functional.Decay(submission.NewController(srv.Module))},
 		{"UserController", new(*user.Controller),
 			functional.Decay(user.NewController(srv.Module))},

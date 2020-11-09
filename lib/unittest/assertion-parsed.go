@@ -3,17 +3,17 @@ package unittest
 import "github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 
 type Statement struct {
-	FN    string
-	F     unittest_types.CheckFunc
-	VArgs []interface{}
+	FN    string                   `json:"func_name"`
+	F     unittest_types.CheckFunc `json:"-"`
+	VArgs []interface{}            `json:"args"`
 }
 
 type TestCase struct {
-	Abstract bool
-	Path     string
-	Name     string
-	Meta     map[string]interface{}
-	Script   []Statement
+	Abstract bool                   `json:"abstract"`
+	Path     string                 `json:"path"`
+	Name     string                 `json:"name"`
+	Meta     map[string]interface{} `json:"meta"`
+	Script   []Statement            `json:"scripts"`
 }
 
 func (t *TestCase) GetMeta(k string) (v interface{}) {

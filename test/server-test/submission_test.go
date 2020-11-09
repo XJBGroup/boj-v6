@@ -27,7 +27,7 @@ func TestSubmissionUnit(t *testing.T) {
 		ch chan *submission.Submission
 	)
 
-	runUnitTestFileIsolated(t, "submission_test.yaml",
+	runUnitTestFileIsolatedWithSaveTestCases(t, "submission_test.yaml",
 		func(ctx *tester.Context) {
 
 			subscriber := ctx.Module.RequireImpl(new(submission.Subscriber)).(submission.Subscriber)

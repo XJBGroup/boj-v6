@@ -1,13 +1,19 @@
 package server_test
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest"
 	"github.com/Myriad-Dreamin/boj-v6/lib/unittest/unittest_types"
 	"github.com/Myriad-Dreamin/boj-v6/pkg/server"
 	"github.com/Myriad-Dreamin/boj-v6/test/tester"
 	"github.com/Myriad-Dreamin/minimum-lib/mock"
+	"github.com/Myriad-Dreamin/minimum-lib/sugar"
 	"hash/crc32"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -16,7 +22,56 @@ func runUnitTest(ctx *tester.Context, ts []*unittest.TestCase) {
 	runUnitTestCB(ctx, func() {}, ts)
 }
 
-func runUnitTestFileIsolated(t *testing.T, fileName string, options ...interface{}) {
+type dataRecord struct {
+	Comment        string      `json:"comment"`
+	RequestBody    []byte      `json:"request_body"`
+	RequestHeader  http.Header `json:"request_header"`
+	ResponseCode   int         `json:"response_code"`
+	ResponseBody   []byte      `json:"response_body"`
+	ResponseHeader http.Header `json:"response_header"`
+}
+
+type dataResult struct {
+	Handler string       `json:"handler"`
+	Method  string       `json:"method"`
+	Path    string       `json:"path"`
+	Records []dataRecord `json:"data_records"`
+}
+
+func runUnitTestFileIsolatedWithSaveTestCases(t *testing.T, fileName string, options ...interface{}) {
+	dataContext := runUnitTestFileIsolated(t, fileName, options...)
+	if dataContext == nil {
+		return
+	}
+
+	results := dataContext.DumpResults()
+
+	dataResults := make([]dataResult, len(results))
+	for i, result := range results {
+		dataResults[i].Handler = result.GetHandler()
+		dataResults[i].Method = result.GetMethod()
+		dataResults[i].Path = result.GetPath()
+
+		records := result.GetRecords()
+		dataResults[i].Records = make([]dataRecord, len(records))
+		for j, record := range records {
+			dataResults[i].Records[j].Comment = record.GetComment()
+			dataResults[i].Records[j].ResponseCode = record.GetResponseCode()
+			dataResults[i].Records[j].RequestBody = record.GetRequestBody()
+			dataResults[i].Records[j].RequestHeader = record.GetRequestHeader()
+			dataResults[i].Records[j].ResponseBody = record.GetResponseBody()
+			dataResults[i].Records[j].ResponseHeader = record.GetResponseHeader()
+		}
+	}
+
+	sugar.WithWriteFile(func(file *os.File) {
+		encoder := json.NewEncoder(file)
+		sugar.HandlerError0(encoder.Encode(dataResults))
+	}, fmt.Sprintf("../../docs/test_cases/%s.json",
+		strings.TrimSuffix(strings.TrimSuffix(filepath.Base(fileName), ".yaml"), ".yml")))
+}
+
+func runUnitTestFileIsolated(t *testing.T, fileName string, options ...interface{}) *tester.Context {
 	var (
 		optionCallback func()
 		optionInitFunc func(ctx *tester.Context)
@@ -31,8 +86,9 @@ func runUnitTestFileIsolated(t *testing.T, fileName string, options ...interface
 		}
 	}
 
-	srv.Context(t).ResetServerInstance().Main(func(ctx *tester.Context) {
-		g := unittest.Load(fileName, false, unittest.V1Opt)
+	instance := srv.Context(t).ResetServerInstance()
+	g := unittest.Load(fileName, false, unittest.V1Opt)
+	instance.Main(func(ctx *tester.Context) {
 		if optionInitFunc != nil {
 			optionInitFunc(ctx)
 		}
@@ -43,11 +99,12 @@ func runUnitTestFileIsolated(t *testing.T, fileName string, options ...interface
 			runUnitTest(ctx, g.TestCases)
 		}
 	})
+	return instance
 }
 
-func TestCRUDUnit(t *testing.T)    { runUnitTestFileIsolated(t, "test.crud.yaml") }
-func TestProblemUnit(t *testing.T) { runUnitTestFileIsolated(t, "problem_test.yaml") }
-func TestUnit(t *testing.T)        { runUnitTestFileIsolated(t, "test.yaml") }
+func TestCRUDUnit(t *testing.T)    { runUnitTestFileIsolatedWithSaveTestCases(t, "test.crud.yaml") }
+func TestProblemUnit(t *testing.T) { runUnitTestFileIsolatedWithSaveTestCases(t, "problem_test.yaml") }
+func TestUnit(t *testing.T)        { runUnitTestFileIsolatedWithSaveTestCases(t, "test.yaml") }
 
 func mapConvertString(f func(interface{}) string, x []interface{}) (s []string) {
 	s = make([]string, len(x))
@@ -88,6 +145,10 @@ func runUnitTestCB(ctx *tester.Context, cb func(), ts []*unittest.TestCase) {
 			if ok {
 				header = xheader.(map[string]string)
 			}
+
+			b, err := json.Marshal(tt)
+			sugar.HandlerError0(err)
+			header["UnitTestMeta"] = base64.StdEncoding.EncodeToString(b)
 
 			var mockResponse mock.ResponseI
 			switch method {
